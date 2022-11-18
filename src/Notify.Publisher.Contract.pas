@@ -13,7 +13,7 @@ type
     function Topic: String; overload;
     function Topic(const PValue: String): INotifyPublisher; overload;
     function MessageContent: String; overload;
-    function MessageContent(const PValue: String): String; overload;
+    function MessageContent(const PValue: String): INotifyPublisher; overload;
     function Title: String; overload;
     function Title(const PValue: String): INotifyPublisher; overload;
     function Tags: INotifyTags; overload;
@@ -28,6 +28,12 @@ type
     function Click(const PValue: String): INotifyPublisher; overload;
     function Action: INotifyAction; overload;
     function Action(const PValue: INotifyAction): INotifyPublisher; overload;
+    function AsJSONString: String;
+  end;
+
+  INotifyPublisherFactory = interface
+    ['{06D69619-D97A-4070-8056-846D181955D8}']
+    function Publisher: INotifyPublisher;
   end;
 
 implementation

@@ -7,6 +7,8 @@ uses
 
 type
   TNotifyProviderFactory = class(TInterfacedObject, INotifyProviderFactory)
+  strict private
+    const BaseURL = 'https://ntfy.sh/';
   public
     class function New: INotifyProviderFactory;
     function Provider: INotifyProvider; overload;
@@ -27,10 +29,10 @@ end;
 
 function TNotifyProviderFactory.Provider: INotifyProvider;
 begin
-  {$IF INDY}
-  Result := TNotityProviderIndy.New;
-  {$ELSEIF NETHTTP}
-  Result := TNotityProviderIndy.New; //have to implement NetHttp
+  {$IFDEF INDY}
+  Result := TNotityProviderIndy.New(BaseURL);
+  {$ELSE }
+  Result := TNotityProviderIndy.New(BaseURL);
   {$IFEND}
 end;
 

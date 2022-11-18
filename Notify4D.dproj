@@ -78,8 +78,8 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
-        <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>C:\Users\PRG1\Documents\Embarcadero\Studio\Projects\(None)</Manifest_File>
+        <BRCC_Defines>INDY;$(BRCC_Defines)</BRCC_Defines>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -100,6 +100,12 @@
         <DCCReference Include="src\Notify.Publisher.Contract.pas"/>
         <DCCReference Include="src\Notify.Action.Contract.pas"/>
         <DCCReference Include="src\Notify.Publisher.pas"/>
+        <DCCReference Include="src\Notify.Publisher.Factory.pas"/>
+        <DCCReference Include="src\Notify.Publisher.DTO.pas"/>
+        <DCCReference Include="src\Notify.JSON.Parser.pas"/>
+        <DCCReference Include="src\Notify.SmartPointer.pas"/>
+        <DCCReference Include="src\Notify.pas"/>
+        <DCCReference Include="sample\Notify.Sample.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

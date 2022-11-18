@@ -9,65 +9,75 @@ uses
   Notify.Publisher.Contract;
 
 type
-  TNotifyCore = class sealed(TInterfacedObject, INotify)
+  TNotifyCore = class sealed(TInterfacedObject, INotifyCore)
   strict private
     FProvider: INotifyProvider;
     FPublisher: INotifyPublisher;
   public
     constructor Create;
-    function Poll: INotify;
-    function Scheduled: INotify;
-    function Since(const PValue: String; const PFeytchType: TNotifyFectchType = TNotifyFectchType.DURATION): INotify; overload;
-    function Since(const PValue: Integer): INotify; overload;
-    function Listen: INotify;
-    function Publish: INotify;
-    function Notification(const PPublisher: INotifyPublisher): INotify;
+    class function New: INotifyCore;
+    function Poll: INotifyCore;
+    function Scheduled: INotifyCore;
+    function Since(const PValue: String; const PFeytchType: TNotifyFectchType = TNotifyFectchType.DURATION): INotifyCore; overload;
+    function Since(const PValue: Integer): INotifyCore; overload;
+    function Listen: INotifyCore;
+    function Publish: INotifyCore;
+    function Notification(const PPublisher: INotifyPublisher): INotifyCore;
   end;
 
 implementation
 
 uses
+  Notify.Publisher.Factory,
   Notify.Provider.Factory;
 
 { TNotifyCore }
 
 constructor TNotifyCore.Create;
 begin
-
+  FProvider := TNotifyProviderFactory.New.Provider;
+  FPublisher := TNotifyPublisherFactory.New.Publisher;
 end;
 
-function TNotifyCore.Listen: INotify;
+function TNotifyCore.Listen: INotifyCore;
 begin
 
 end;
 
-function TNotifyCore.Poll: INotify;
+class function TNotifyCore.New: INotifyCore;
+begin
+  Result := Self.Create;
+end;
+
+function TNotifyCore.Notification(const PPublisher: INotifyPublisher): INotifyCore;
+begin
+  Result := Self;
+  FPublisher := PPublisher;
+end;
+
+function TNotifyCore.Poll: INotifyCore;
 begin
 
 end;
 
-function TNotifyCore.Publish: INotify;
+function TNotifyCore.Publish: INotifyCore;
+begin
+  Result := Self;
+  FProvider.Publisher(FPublisher).Post;
+end;
+
+function TNotifyCore.Scheduled: INotifyCore;
 begin
 
 end;
 
-function TNotifyCore.Scheduled: INotify;
-begin
-
-end;
-
-function TNotifyCore.Since(const PValue: Integer): INotify;
+function TNotifyCore.Since(const PValue: Integer): INotifyCore;
 begin
 
 end;
 
 function TNotifyCore.Since(const PValue: String;
-  const PFeytchType: TNotifyFectchType): INotify;
-begin
-
-end;
-
-function TNotifyCore.Subject(const PValue: String): INotify;
+  const PFeytchType: TNotifyFectchType): INotifyCore;
 begin
 
 end;
