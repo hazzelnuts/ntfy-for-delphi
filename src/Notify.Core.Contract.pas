@@ -1,10 +1,11 @@
-unit Notify.Contract;
+unit Notify.Core.Contract;
 
 interface
 
 uses
   System.SysUtils,
   Notify.Types,
+  Notify.Provider.Contract,
   Notify.Publisher.Contract;
 
 type
@@ -16,7 +17,19 @@ type
     function Since(const PValue: Integer): INotifyCore; overload;
     function Listen: INotifyCore;
     function Publish: INotifyCore;
-    function Notification(const PPublisher: INotifyPublisher): INotifyCore;
+    function Notification(const PPublisher: INotifyPublisher): INotifyCore; overload;
+  end;
+
+  INotifyCoreFactory = interface
+    ['{9FCCC1D0-EB04-4307-8F4C-C5642F6F5A52}']
+    function Core: INotifyCore;
+  end;
+
+  INotifyCoreFacade = interface
+    ['{47D19A0C-9C4C-4389-B2CD-CE4515BB4F35}']
+    function Provider: INotifyProvider;
+    function Publisher: INotifyPublisher;
+    function Notify: INotifyCore;
   end;
 
 implementation

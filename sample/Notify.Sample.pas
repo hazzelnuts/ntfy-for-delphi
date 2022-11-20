@@ -1,23 +1,22 @@
-unit Notify.Sample;
+﻿unit Notify.Sample;
 
 interface
 
 uses
-  Notify;
+  Notify.Client;
 
 implementation
 
-var
-  LNotify: INotify;
-  LNotification: INotification;
-
 initialization
 
-  LNotification := TNotification.New
-    .Topic('something-very-strange')
-    .MessageContent('Test on Delphi');
+  Ntfy.Notification(
+    New.Publisher
+      .Topic('something-very-strange')
+      .MessageContent('This message is a new design 🚧')
+      .Title('Coming from an aplication')
+  );
 
-  LNotify := TNotify.New.Notification(LNotification).Publish;
+  Ntfy.Publish;
 
 finalization
 

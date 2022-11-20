@@ -4,7 +4,7 @@ interface
 
 uses
   Notify.Types,
-  Notify.Contract,
+  Notify.Core.Contract,
   Notify.Provider.Contract,
   Notify.Publisher.Contract;
 
@@ -16,14 +16,18 @@ type
   public
     constructor Create;
     class function New: INotifyCore;
+    class function NewInstance: TObject; override;
     function Poll: INotifyCore;
     function Scheduled: INotifyCore;
     function Since(const PValue: String; const PFeytchType: TNotifyFectchType = TNotifyFectchType.DURATION): INotifyCore; overload;
     function Since(const PValue: Integer): INotifyCore; overload;
     function Listen: INotifyCore;
     function Publish: INotifyCore;
-    function Notification(const PPublisher: INotifyPublisher): INotifyCore;
+    function Notification(const PPublisher: INotifyPublisher): INotifyCore; overload;
   end;
+
+var
+  NotifyCore: TNotifyCore;
 
 implementation
 
@@ -47,6 +51,13 @@ end;
 class function TNotifyCore.New: INotifyCore;
 begin
   Result := Self.Create;
+end;
+
+class function TNotifyCore.NewInstance: TObject;
+begin
+  if not (Assigned(NotifyCore)) then
+    NotifyCore := TNotifyCore(inherited NewInstance);
+  Result := NotifyCore;
 end;
 
 function TNotifyCore.Notification(const PPublisher: INotifyPublisher): INotifyCore;

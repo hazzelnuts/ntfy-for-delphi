@@ -5,7 +5,7 @@ program Notify4D;
 {$R *.res}
 
 uses
-  Notify.Contract in 'src\Notify.Contract.pas',
+  Notify.Core.Contract in 'src\Notify.Core.Contract.pas',
   Notify.Core in 'src\Notify.Core.pas',
   Notify.Provider.Indy in 'src\Notify.Provider.Indy.pas',
   Notify.Types in 'src\Notify.Types.pas',
@@ -18,8 +18,10 @@ uses
   Notify.Publisher.DTO in 'src\Notify.Publisher.DTO.pas',
   Notify.JSON.Parser in 'src\Notify.JSON.Parser.pas',
   Notify.SmartPointer in 'src\Notify.SmartPointer.pas',
-  Notify in 'src\Notify.pas',
-  Notify.Sample in 'sample\Notify.Sample.pas';
+  Notify.Facade in 'src\Notify.Facade.pas',
+  Notify.Sample in 'sample\Notify.Sample.pas',
+  Notify.Core.Factory in 'src\Notify.Core.Factory.pas',
+  Notify.Client in 'src\Notify.Client.pas';
 
 begin
 

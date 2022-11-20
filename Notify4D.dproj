@@ -91,7 +91,7 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="src\Notify.Contract.pas"/>
+        <DCCReference Include="src\Notify.Core.Contract.pas"/>
         <DCCReference Include="src\Notify.Core.pas"/>
         <DCCReference Include="src\Notify.Provider.Indy.pas"/>
         <DCCReference Include="src\Notify.Types.pas"/>
@@ -104,8 +104,10 @@
         <DCCReference Include="src\Notify.Publisher.DTO.pas"/>
         <DCCReference Include="src\Notify.JSON.Parser.pas"/>
         <DCCReference Include="src\Notify.SmartPointer.pas"/>
-        <DCCReference Include="src\Notify.pas"/>
+        <DCCReference Include="src\Notify.Facade.pas"/>
         <DCCReference Include="sample\Notify.Sample.pas"/>
+        <DCCReference Include="src\Notify.Core.Factory.pas"/>
+        <DCCReference Include="src\Notify.Client.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -928,6 +930,7 @@
                 <Platform value="Win32">True</Platform>
                 <Platform value="Win64">False</Platform>
             </Platforms>
+            <ModelSupport>False</ModelSupport>
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>
     </ProjectExtensions>
