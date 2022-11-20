@@ -5,20 +5,20 @@ interface
 uses
   Notify.Core.Contract,
   Notify.Provider.Contract,
-  Notify.Publisher.Contract,
+  Notify.Notification.Contract,
   Notify.Action.Contract;
 
 type
   TNotifyCoreFacade = class sealed(TInterfacedObject, INotifyCoreFacade)
   strict private
     FNotifyProviderFactory: INotifyProviderFactory;
-    FNotifyPublisherFactory: INotifyPublisherFactory;
+    FNotifyPublisherFactory: INotifyNotificationFactory;
     FNotifyCoreFactory: INotifyCoreFactory;
   public
     constructor Create;
     class function New: INotifyCoreFacade;
     function Provider: INotifyProvider;
-    function Publisher: INotifyPublisher;
+    function Notification: INotifyNotification;
     function Notify: INotifyCore;
   end;
 
@@ -26,7 +26,7 @@ implementation
 
 uses
   Notify.Provider.Factory,
-  Notify.Publisher.Factory,
+  Notify.Notification.Factory,
   Notify.Core.Factory;
 
 { TNotifyCoreFacade }
@@ -39,7 +39,7 @@ end;
 constructor TNotifyCoreFacade.Create;
 begin
   FNotifyProviderFactory := TNotifyProviderFactory.New;
-  FNotifyPublisherFactory := TNotifyPublisherFactory.New;
+  FNotifyPublisherFactory := TNotifyNotificationFactory.New;
   FNotifyCoreFactory := TNotifyCoreFactory.New;
 end;
 
@@ -53,9 +53,9 @@ begin
   Result := FNotifyProviderFactory.Provider;
 end;
 
-function TNotifyCoreFacade.Publisher: INotifyPublisher;
+function TNotifyCoreFacade.Notification: INotifyNotification;
 begin
-  Result := FNotifyPublisherFactory.Publisher;
+  Result := FNotifyPublisherFactory.Notification;
 end;
 
 end.

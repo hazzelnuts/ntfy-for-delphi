@@ -3,12 +3,12 @@ unit Notify.Provider.Contract;
 interface
 
 uses
-  Notify.Publisher.Contract;
+  Notify.Notification.Contract;
 
 type
   INotifyProvider = interface
     ['{4A4C86DB-6176-404E-A317-BA789ED4848B}']
-    function Publisher(const PValue: INotifyPublisher): INotifyProvider;
+    function Publisher(const PValue: INotifyNotification): INotifyProvider;
     function Get: INotifyProvider;
     function Post: INotifyProvider;
   end;

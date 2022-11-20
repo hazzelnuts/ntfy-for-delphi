@@ -4,6 +4,8 @@ interface
 
 uses System.Classes, System.Json, Rest.Json, System.Generics.Collections, Rest.JsonReflect;
 
+{$M+}
+
 type
   TArrayMapper = class
   protected

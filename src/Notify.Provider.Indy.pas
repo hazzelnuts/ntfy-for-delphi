@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Classes, IdBaseComponent, IdComponent, IdIOHandler,
   IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL, IdTCPConnection,
   IdTCPClient, IdHTTP, IdStream, IdGlobal, Notify.Provider.Contract,
-  Notify.Publisher.Contract;
+  Notify.Notification.Contract;
 
 type
   TNotityProviderIndy = class(TInterfacedObject, INotifyProvider)
@@ -15,13 +15,13 @@ type
     FIOHandlerSSL: TIdSSLIOHandlerSocketOpenSSL;
     FIdHTTP: TIdHTTP;
     FIdEventStream: TIdEventStream;
-    FPublisher: INotifyPublisher;
+    FPublisher: INotifyNotification;
     procedure OnWriteEvent(const ABuffer: TIdBytes; AOffset, ACount: Longint; var VResult: Longint);
   public
     constructor Create(const PBaseURL: String);
     destructor Destroy; override;
     class function New(const PBaseURL: String): INotifyProvider;
-    function Publisher(const PValue: INotifyPublisher): INotifyProvider;
+    function Publisher(const PValue: INotifyNotification): INotifyProvider;
     function Get: INotifyProvider;
     function Post: INotifyProvider;
   end;
@@ -128,7 +128,7 @@ begin
 end;
 
 function TNotityProviderIndy.Publisher(
-  const PValue: INotifyPublisher): INotifyProvider;
+  const PValue: INotifyNotification): INotifyProvider;
 begin
   Result := Self;
   FPublisher := PValue;

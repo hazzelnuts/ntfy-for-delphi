@@ -6,7 +6,7 @@ uses
   System.SysUtils,
   Notify.Types,
   Notify.Provider.Contract,
-  Notify.Publisher.Contract;
+  Notify.Notification.Contract;
 
 type
   INotifyCore = interface
@@ -17,7 +17,7 @@ type
     function Since(const PValue: Integer): INotifyCore; overload;
     function Listen: INotifyCore;
     function Publish: INotifyCore;
-    function Notification(const PPublisher: INotifyPublisher): INotifyCore; overload;
+    function Notification(const PNotification: INotifyNotification): INotifyCore; overload;
   end;
 
   INotifyCoreFactory = interface
@@ -28,7 +28,7 @@ type
   INotifyCoreFacade = interface
     ['{47D19A0C-9C4C-4389-B2CD-CE4515BB4F35}']
     function Provider: INotifyProvider;
-    function Publisher: INotifyPublisher;
+    function Notification: INotifyNotification;
     function Notify: INotifyCore;
   end;
 

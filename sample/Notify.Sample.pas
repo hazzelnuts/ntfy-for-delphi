@@ -10,10 +10,10 @@ implementation
 initialization
 
   Ntfy.Notification(
-    New.Publisher
-      .Topic('something-very-strange')
-      .MessageContent('This message is a new design 🚧')
-      .Title('Coming from an aplication')
+    New.Notification
+      .Topic('notify-delphi-integration-8jh27d')
+      .MessageContent('📌 Working with headers today')
+      .Title('Testing')
   );
 
   Ntfy.Publish;

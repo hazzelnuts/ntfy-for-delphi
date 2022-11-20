@@ -4,12 +4,12 @@ interface
 
 uses
   Notify.Action.Contract,
-  Notify.Publisher.Contract,
+  Notify.Notification.Contract,
   Notify.Core.Contract;
 
 type
   INotify = INotifyCore;
-  IPublisher = INotifyPublisher;
+  IPublisher = INotifyNotification;
   IAction = INotifyAction;
 
 var

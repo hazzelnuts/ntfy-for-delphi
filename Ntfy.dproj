@@ -8,7 +8,7 @@
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Console</AppType>
-        <MainSource>Notify4D.dpr</MainSource>
+        <MainSource>Ntfy.dpr</MainSource>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
         <Base>true</Base>
@@ -50,7 +50,7 @@
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-        <SanitizedProjectName>Notify4D</SanitizedProjectName>
+        <SanitizedProjectName>Ntfy</SanitizedProjectName>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <DCC_UsePackage>DBXSqliteDriver;IndyIPCommon;RESTComponents;bindcompdbx;DBXInterBaseDriver;vcl;IndyIPServer;vclactnband;vclFireDAC;IndySystem;bindcompvclsmp;tethering;svnui;bindcompvclwinx;dsnapcon;FireDACADSDriver;FireDACMSAccDriver;fmxFireDAC;vclimg;FireDAC;vcltouch;vcldb;bindcompfmx;svn;FireDACSqliteDriver;FireDACPgDriver;inetdb;soaprtl;DbxCommonDriver;fmx;FireDACIBDriver;fmxdae;xmlrtl;soapmidas;vcledge;fmxobj;vclwinx;rtl;DbxClientDriver;CustomIPTransport;vcldsnap;dbexpress;IndyCore;vclx;bindcomp;appanalytics;dsnap;FireDACCommon;IndyIPClient;bindcompvcl;RESTBackendComponents;VCLRESTComponents;soapserver;dbxcds;VclSmp;adortl;vclie;bindengine;DBXMySQLDriver;CloudService;dsnapxml;FireDACMySQLDriver;dbrtl;IndyProtocols;inetdbxpress;FireDACCommonODBC;FireDACCommonDriver;inet;fmxase;$(DCC_UsePackage)</DCC_UsePackage>
@@ -93,20 +93,20 @@
         </DelphiCompile>
         <DCCReference Include="src\Notify.Core.Contract.pas"/>
         <DCCReference Include="src\Notify.Core.pas"/>
+        <DCCReference Include="src\Notify.Core.Factory.pas"/>
         <DCCReference Include="src\Notify.Provider.Indy.pas"/>
-        <DCCReference Include="src\Notify.Types.pas"/>
         <DCCReference Include="src\Notify.Provider.Contract.pas"/>
         <DCCReference Include="src\Notify.Provider.Factory.pas"/>
-        <DCCReference Include="src\Notify.Publisher.Contract.pas"/>
         <DCCReference Include="src\Notify.Action.Contract.pas"/>
-        <DCCReference Include="src\Notify.Publisher.pas"/>
-        <DCCReference Include="src\Notify.Publisher.Factory.pas"/>
-        <DCCReference Include="src\Notify.Publisher.DTO.pas"/>
+        <DCCReference Include="src\Notify.Notification.Contract.pas"/>
+        <DCCReference Include="src\Notify.Notification.pas"/>
+        <DCCReference Include="src\Notify.Notification.Factory.pas"/>
+        <DCCReference Include="src\Notify.Notification.DTO.pas"/>
         <DCCReference Include="src\Notify.JSON.Parser.pas"/>
         <DCCReference Include="src\Notify.SmartPointer.pas"/>
+        <DCCReference Include="src\Notify.Types.pas"/>
         <DCCReference Include="src\Notify.Facade.pas"/>
         <DCCReference Include="sample\Notify.Sample.pas"/>
-        <DCCReference Include="src\Notify.Core.Factory.pas"/>
         <DCCReference Include="src\Notify.Client.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -130,13 +130,13 @@
                     <Excluded_Packages Name="$(BDSBIN)\dclofficexp270.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
                 <Source>
-                    <Source Name="MainSource">Notify4D.dpr</Source>
+                    <Source Name="MainSource">Ntfy.dpr</Source>
                 </Source>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="bin\Notify4D.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="bin\Ntfy.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
-                        <RemoteName>Notify4D.exe</RemoteName>
+                        <RemoteName>Ntfy.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

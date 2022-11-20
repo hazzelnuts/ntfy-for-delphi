@@ -6,13 +6,13 @@ uses
   Notify.Types,
   Notify.Core.Contract,
   Notify.Provider.Contract,
-  Notify.Publisher.Contract;
+  Notify.Notification.Contract;
 
 type
   TNotifyCore = class sealed(TInterfacedObject, INotifyCore)
   strict private
     FProvider: INotifyProvider;
-    FPublisher: INotifyPublisher;
+    FPublisher: INotifyNotification;
   public
     constructor Create;
     class function New: INotifyCore;
@@ -23,7 +23,7 @@ type
     function Since(const PValue: Integer): INotifyCore; overload;
     function Listen: INotifyCore;
     function Publish: INotifyCore;
-    function Notification(const PPublisher: INotifyPublisher): INotifyCore; overload;
+    function Notification(const PPublisher: INotifyNotification): INotifyCore; overload;
   end;
 
 var
@@ -32,7 +32,7 @@ var
 implementation
 
 uses
-  Notify.Publisher.Factory,
+  Notify.Notification.Factory,
   Notify.Provider.Factory;
 
 { TNotifyCore }
@@ -40,7 +40,7 @@ uses
 constructor TNotifyCore.Create;
 begin
   FProvider := TNotifyProviderFactory.New.Provider;
-  FPublisher := TNotifyPublisherFactory.New.Publisher;
+  FPublisher := TNotifyNotificationFactory.New.Notification;
 end;
 
 function TNotifyCore.Listen: INotifyCore;
@@ -60,7 +60,7 @@ begin
   Result := NotifyCore;
 end;
 
-function TNotifyCore.Notification(const PPublisher: INotifyPublisher): INotifyCore;
+function TNotifyCore.Notification(const PPublisher: INotifyNotification): INotifyCore;
 begin
   Result := Self;
   FPublisher := PPublisher;
