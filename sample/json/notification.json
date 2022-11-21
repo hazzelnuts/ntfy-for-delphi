@@ -1,0 +1,18 @@
+{
+  "topic": "mytopic",
+  "message": "Disk space is low at 5.1 GB",
+  "title": "Low disk space alert",
+  "tags": ["warning","cd"],
+  "priority": 4,
+  "attach": "https://filesrv.lan/space.jpg",
+  "filename": "diskspace.jpg",
+  "click": "https://homecamera.lan/xasds1h2xsSsa/",
+  "actions": [
+    { 
+      "action": "view",
+      "label": "Open portal",
+      "url": "https://home.nest.com/",
+      "clear": true
+    }
+  ]
+}

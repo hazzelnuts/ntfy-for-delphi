@@ -3,6 +3,7 @@ unit Notify.Client;
 interface
 
 uses
+  Notify.Types,
   Notify.Action.Contract,
   Notify.Notification.Contract,
   Notify.Core.Contract;
@@ -11,6 +12,7 @@ type
   INotify = INotifyCore;
   IPublisher = INotifyNotification;
   IAction = INotifyAction;
+  TNtfyPriority = TNotifyPriority;
 
 var
   New: INotifyCoreFacade;

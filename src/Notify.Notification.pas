@@ -3,6 +3,7 @@ unit Notify.Notification;
 interface
 
 uses
+  Notify.Types,
   Notify.Action.Contract,
   Notify.Notification.Contract;
 
@@ -13,31 +14,32 @@ type
     FMessageContent: String;
     FTitle: String;
     FTags: INotifyTags;
-    FPriority: Integer;
+    FPriority: TNotifyPriority;
     FAttach: String;
     FFileName: String;
     FClick: String;
     FAction: INotifyAction;
   public
     class function New: INotifyNotification;
+    constructor Create;
     function Topic: String; overload;
-    function Topic(const PValue: String): INotifyNotification; overload;
+    function Topic(const AValue: String): INotifyNotification; overload;
     function MessageContent: String; overload;
-    function MessageContent(const PValue: String): INotifyNotification; overload;
+    function MessageContent(const AValue: String): INotifyNotification; overload;
     function Title: String; overload;
-    function Title(const PValue: String): INotifyNotification; overload;
+    function Title(const AValue: String): INotifyNotification; overload;
     function Tags: INotifyTags; overload;
-    function Tags(const PValue: INotifyTags): INotifyNotification; overload;
-    function Priority: Integer; overload;
-    function Priority(const PValue: Integer): INotifyNotification; overload;
+    function Tags(const AValue: INotifyTags): INotifyNotification; overload;
+    function Priority: TNotifyPriority; overload;
+    function Priority(const AValue: TNotifyPriority): INotifyNotification; overload;
     function Attach: String; overload;
-    function Attach(const PValue: String): INotifyNotification; overload;
+    function Attach(const AValue: String): INotifyNotification; overload;
     function FileName: String; overload;
-    function FileName(const PValue: String): INotifyNotification; overload;
+    function FileName(const AValue: String): INotifyNotification; overload;
     function Click: String overload;
-    function Click(const PValue: String): INotifyNotification; overload;
+    function Click(const AValue: String): INotifyNotification; overload;
     function Action: INotifyAction; overload;
-    function Action(const PValue: INotifyAction): INotifyNotification; overload;
+    function Action(const AValue: INotifyAction): INotifyNotification; overload;
     function AsJSONString: String;
   end;
 
@@ -54,10 +56,10 @@ begin
   Result := FAction;
 end;
 
-function TNotifyNotification.Action(const PValue: INotifyAction): INotifyNotification;
+function TNotifyNotification.Action(const AValue: INotifyAction): INotifyNotification;
 begin
   Result := Self;
-  FAction := PValue;
+  FAction := AValue;
 end;
 
 function TNotifyNotification.AsJSONString: String;
@@ -66,6 +68,9 @@ var
 begin
   LNotification.Value.Topic := FTopic;
   LNotification.Value.MessageContent := FMessageContent;
+  LNotification.Value.Priority := Ord(FPriority);
+  LNotification.Value.Title := FTitle;
+  LNotification.Value.Tags.AddRange(FTags);
   Result := LNotification.Value.AsJson;
 end;
 
@@ -74,16 +79,21 @@ begin
   Result := FAttach;
 end;
 
-function TNotifyNotification.Attach(const PValue: String): INotifyNotification;
+function TNotifyNotification.Attach(const AValue: String): INotifyNotification;
 begin
   Result := Self;
-  FAttach := PValue;
+  FAttach := AValue;
 end;
 
-function TNotifyNotification.Click(const PValue: String): INotifyNotification;
+function TNotifyNotification.Click(const AValue: String): INotifyNotification;
 begin
   Result := Self;
-  FClick := PValue;
+  FClick := AValue;
+end;
+
+constructor TNotifyNotification.Create;
+begin
+  FPriority := TNotifyPriority.DEFAULT;
 end;
 
 function TNotifyNotification.Click: String;
@@ -96,16 +106,16 @@ begin
   Result := FFileName;
 end;
 
-function TNotifyNotification.FileName(const PValue: String): INotifyNotification;
+function TNotifyNotification.FileName(const AValue: String): INotifyNotification;
 begin
   Result := Self;
-  FFileName := PValue;
+  FFileName := AValue;
 end;
 
-function TNotifyNotification.MessageContent(const PValue: String): INotifyNotification;
+function TNotifyNotification.MessageContent(const AValue: String): INotifyNotification;
 begin
   Result := Self;
-  FMessageContent := PValue;
+  FMessageContent := AValue;
 end;
 
 class function TNotifyNotification.New: INotifyNotification;
@@ -118,13 +128,13 @@ begin
   Result := FMessageContent;
 end;
 
-function TNotifyNotification.Priority(const PValue: Integer): INotifyNotification;
+function TNotifyNotification.Priority(const AValue: TNotifyPriority): INotifyNotification;
 begin
   Result := Self;
-  FPriority := PValue;
+  FPriority := AValue;
 end;
 
-function TNotifyNotification.Priority: Integer;
+function TNotifyNotification.Priority: TNotifyPriority;
 begin
   Result := FPriority;
 end;
@@ -134,16 +144,16 @@ begin
   Result := FTags;
 end;
 
-function TNotifyNotification.Tags(const PValue: INotifyTags): INotifyNotification;
+function TNotifyNotification.Tags(const AValue: INotifyTags): INotifyNotification;
 begin
   Result := Self;
-  FTags := PValue;
+  FTags := AValue;
 end;
 
-function TNotifyNotification.Title(const PValue: String): INotifyNotification;
+function TNotifyNotification.Title(const AValue: String): INotifyNotification;
 begin
   Result := Self;
-  FTitle := PValue;
+  FTitle := AValue;
 end;
 
 function TNotifyNotification.Title: String;
@@ -151,10 +161,10 @@ begin
   Result := FTitle;
 end;
 
-function TNotifyNotification.Topic(const PValue: String): INotifyNotification;
+function TNotifyNotification.Topic(const AValue: String): INotifyNotification;
 begin
   Result := Self;
-  FTopic := PValue;
+  FTopic := AValue;
 end;
 
 function TNotifyNotification.Topic: String;

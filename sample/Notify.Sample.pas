@@ -12,11 +12,13 @@ initialization
   Ntfy.Notification(
     New.Notification
       .Topic('notify-delphi-integration-8jh27d')
-      .MessageContent('📌 Working with headers today')
-      .Title('Testing')
+      .Title('Work time')
+      .MessageContent('Ending for today...')
+      .Priority(TNtfyPriority.MIN)
+      .Tags(['ice_cream'])
   );
 
-  Ntfy.Publish;
+  Ntfy.Delay('1min').Publish;
 
 finalization
 

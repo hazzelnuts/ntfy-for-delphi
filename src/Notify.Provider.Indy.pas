@@ -15,13 +15,14 @@ type
     FIOHandlerSSL: TIdSSLIOHandlerSocketOpenSSL;
     FIdHTTP: TIdHTTP;
     FIdEventStream: TIdEventStream;
-    FPublisher: INotifyNotification;
+    FNotification: INotifyNotification;
     procedure OnWriteEvent(const ABuffer: TIdBytes; AOffset, ACount: Longint; var VResult: Longint);
   public
     constructor Create(const PBaseURL: String);
     destructor Destroy; override;
     class function New(const PBaseURL: String): INotifyProvider;
-    function Publisher(const PValue: INotifyNotification): INotifyProvider;
+    function Notification(const AValue: INotifyNotification): INotifyProvider;
+    function AddHeader(const PName: String; AValue: String): INotifyProvider;
     function Get: INotifyProvider;
     function Post: INotifyProvider;
   end;
@@ -29,6 +30,12 @@ type
 implementation
 
 { TNotityProviderIndy }
+
+function TNotityProviderIndy.AddHeader(const PName: String; AValue: String): INotifyProvider;
+begin
+  Result := Self;
+  FIdHTTP.Request.CustomHeaders.AddValue(PName, AValue);
+end;
 
 constructor TNotityProviderIndy.Create(const PBaseURL: String);
 begin
@@ -95,11 +102,10 @@ end;
 
 function TNotityProviderIndy.Post: INotifyProvider;
 var
-  LURL: String;
   LBody: String;
 begin
   Result := Self;
-  LBody := FPublisher.AsJSONString;
+  LBody := FNotification.AsJSONString;
   FIdHTTP.Post(FBaseUrl, TStringStream.Create(LBody));
 
   Writeln('Response from server: ');
@@ -123,15 +129,12 @@ begin
   Writeln(Format('Pragma: %s', [FIdHTTP.Response.Pragma]));
   Writeln('===================================');
 
-  Sleep(10000);
-
 end;
 
-function TNotityProviderIndy.Publisher(
-  const PValue: INotifyNotification): INotifyProvider;
+function TNotityProviderIndy.Notification(const AValue: INotifyNotification): INotifyProvider;
 begin
   Result := Self;
-  FPublisher := PValue;
+  FNotification := AValue;
 end;
 
 end.

@@ -8,9 +8,10 @@ uses
 type
   INotifyProvider = interface
     ['{4A4C86DB-6176-404E-A317-BA789ED4848B}']
-    function Publisher(const PValue: INotifyNotification): INotifyProvider;
+    function Notification(const AValue: INotifyNotification): INotifyProvider;
     function Get: INotifyProvider;
     function Post: INotifyProvider;
+    function AddHeader(const PName: String; AValue: String): INotifyProvider;
   end;
 
   INotifyProviderFactory = interface

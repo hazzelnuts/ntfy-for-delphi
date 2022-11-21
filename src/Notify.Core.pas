@@ -12,18 +12,17 @@ type
   TNotifyCore = class sealed(TInterfacedObject, INotifyCore)
   strict private
     FProvider: INotifyProvider;
-    FPublisher: INotifyNotification;
   public
     constructor Create;
     class function New: INotifyCore;
     class function NewInstance: TObject; override;
     function Poll: INotifyCore;
-    function Scheduled: INotifyCore;
-    function Since(const PValue: String; const PFeytchType: TNotifyFectchType = TNotifyFectchType.DURATION): INotifyCore; overload;
-    function Since(const PValue: Integer): INotifyCore; overload;
+    function Delay(const AValue: String): INotifyCore;
+    function Since(const AValue: String; const PFeytchType: TNotifyFectchType = TNotifyFectchType.DURATION): INotifyCore; overload;
+    function Since(const AValue: Integer): INotifyCore; overload;
     function Listen: INotifyCore;
     function Publish: INotifyCore;
-    function Notification(const PPublisher: INotifyNotification): INotifyCore; overload;
+    function Notification(const ANotification: INotifyNotification): INotifyCore; overload;
   end;
 
 var
@@ -32,7 +31,7 @@ var
 implementation
 
 uses
-  Notify.Notification.Factory,
+  System.SysUtils,
   Notify.Provider.Factory;
 
 { TNotifyCore }
@@ -40,7 +39,6 @@ uses
 constructor TNotifyCore.Create;
 begin
   FProvider := TNotifyProviderFactory.New.Provider;
-  FPublisher := TNotifyNotificationFactory.New.Notification;
 end;
 
 function TNotifyCore.Listen: INotifyCore;
@@ -60,10 +58,10 @@ begin
   Result := NotifyCore;
 end;
 
-function TNotifyCore.Notification(const PPublisher: INotifyNotification): INotifyCore;
+function TNotifyCore.Notification(const ANotification: INotifyNotification): INotifyCore;
 begin
   Result := Self;
-  FPublisher := PPublisher;
+  FProvider.Notification(ANotification);
 end;
 
 function TNotifyCore.Poll: INotifyCore;
@@ -74,20 +72,21 @@ end;
 function TNotifyCore.Publish: INotifyCore;
 begin
   Result := Self;
-  FProvider.Publisher(FPublisher).Post;
+  FProvider.Post;
 end;
 
-function TNotifyCore.Scheduled: INotifyCore;
+function TNotifyCore.Delay(const AValue: String): INotifyCore;
+begin
+  Result := Self;
+  FProvider.AddHeader('Delay', AValue);
+end;
+
+function TNotifyCore.Since(const AValue: Integer): INotifyCore;
 begin
 
 end;
 
-function TNotifyCore.Since(const PValue: Integer): INotifyCore;
-begin
-
-end;
-
-function TNotifyCore.Since(const PValue: String;
+function TNotifyCore.Since(const AValue: String;
   const PFeytchType: TNotifyFectchType): INotifyCore;
 begin
 

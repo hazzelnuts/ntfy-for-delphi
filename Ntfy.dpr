@@ -21,7 +21,8 @@ uses
   Notify.Types in 'src\Notify.Types.pas',
   Notify.Facade in 'src\Notify.Facade.pas',
   Notify.Sample in 'sample\Notify.Sample.pas',
-  Notify.Client in 'src\Notify.Client.pas';
+  Notify.Client in 'src\Notify.Client.pas',
+  Notify.Actions.DTO in 'src\Notify.Actions.DTO.pas';
 
 begin
 

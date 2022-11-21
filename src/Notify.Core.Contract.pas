@@ -12,12 +12,12 @@ type
   INotifyCore = interface
     ['{AEDB3C31-D45F-4469-9427-9CEA5427A4E3}']
     function Poll: INotifyCore;
-    function Scheduled: INotifyCore;
-    function Since(const PValue: String; const PFeytchType: TNotifyFectchType = TNotifyFectchType.DURATION): INotifyCore; overload;
-    function Since(const PValue: Integer): INotifyCore; overload;
+    function Delay(const AValue: String): INotifyCore;
+    function Since(const AValue: String; const PFeytchType: TNotifyFectchType = TNotifyFectchType.DURATION): INotifyCore; overload;
+    function Since(const AValue: Integer): INotifyCore; overload;
     function Listen: INotifyCore;
     function Publish: INotifyCore;
-    function Notification(const PNotification: INotifyNotification): INotifyCore; overload;
+    function Notification(const ANotification: INotifyNotification): INotifyCore; overload;
   end;
 
   INotifyCoreFactory = interface

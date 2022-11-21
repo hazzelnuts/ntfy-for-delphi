@@ -1,16 +1,36 @@
-unit Notify.Notification.DTO;
+unit RootUnit;
 
 interface
 
 uses
-  Notify.JSON.Parser,
-  System.Generics.Collections,
-  REST.Json.Types,
-  Notify.Actions.DTO;
+  Pkg.Json.DTO, System.Generics.Collections, REST.Json.Types;
+
+{$M+}
 
 type
-  TNotifyNotificationDTO = class(TJsonDTO)
+  TActions = class
   private
+    [JSONName('action')]
+    FAction: string;
+    [JSONName('clear')]
+    FClear: Boolean;
+    [JSONName('label')]
+    FLabel: string;
+    [JSONName('url')]
+    FUrl: string;
+  published
+    property Action: string read FAction write FAction;
+    property Clear: Boolean read FClear write FClear;
+    property &Label: string read FLabel write FLabel;
+    property Url: string read FUrl write FUrl;
+  end;
+  
+  TRoot = class(TJsonDTO)
+  private
+    [JSONName('actions'), JSONMarshalled(False)]
+    FActionsArray: TArray<TActions>;
+    [GenericListReflect]
+    FActions: TObjectList<TActions>;
     [JSONName('attach')]
     FAttach: string;
     [JSONName('click')]
@@ -29,53 +49,49 @@ type
     FTitle: string;
     [JSONName('topic')]
     FTopic: string;
-    [GenericListReflect]
-    FActions: TObjectList<TNotifyActionsDTO>;
-    [JSONName('actions'), JSONMarshalled(False)]
-    FActionsArray: TArray<TNotifyActionsDTO>;
+    function GetActions: TObjectList<TActions>;
     function GetTags: TList<string>;
-    function GetActions: TObjectList<TNotifyActionsDto>;
   protected
     function GetAsJson: string; override;
   published
+    property Actions: TObjectList<TActions> read GetActions;
     property Attach: string read FAttach write FAttach;
     property Click: string read FClick write FClick;
     property Filename: string read FFilename write FFilename;
-    property MessageContent: string read FMessage write FMessage;
+    property Message: string read FMessage write FMessage;
     property Priority: Integer read FPriority write FPriority;
     property Tags: TList<string> read GetTags;
     property Title: string read FTitle write FTitle;
     property Topic: string read FTopic write FTopic;
-    property Actions: TObjectList<TNotifyActionsDTO> read GetActions;
   public
     destructor Destroy; override;
   end;
-
+  
 implementation
 
-{ TNotifyNotificationDTO }
+{ TRoot }
 
-destructor TNotifyNotificationDTO.Destroy;
+destructor TRoot.Destroy;
 begin
   GetTags.Free;
   GetActions.Free;
   inherited;
 end;
 
-function TNotifyNotificationDTO.GetTags: TList<string>;
+function TRoot.GetActions: TObjectList<TActions>;
+begin
+  Result := ObjectList<TActions>(FActions, FActionsArray);
+end;
+
+function TRoot.GetTags: TList<string>;
 begin
   Result := List<string>(FTags, FTagsArray);
 end;
 
-function TNotifyNotificationDTO.GetActions: TObjectList<TNotifyActionsDto>;
+function TRoot.GetAsJson: string;
 begin
-  Result := ObjectList<TNotifyActionsDTO>(FActions, FActionsArray);
-end;
-
-function TNotifyNotificationDTO.GetAsJson: string;
-begin
+  RefreshArray<TActions>(FActions, FActionsArray);
   RefreshArray<string>(FTags, FTagsArray);
-  RefreshArray<TNotifyActionsDTO>(FActions, FActionsArray);
   Result := inherited;
 end;
 
