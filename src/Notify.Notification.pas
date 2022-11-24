@@ -5,7 +5,8 @@ interface
 uses
   Notify.Types,
   Notify.Action.Contract,
-  Notify.Notification.Contract;
+  Notify.Notification.Contract,
+  System.Generics.Collections;
 
 type
   TNotifyNotification = class sealed(TInterfacedObject, INotifyNotification)
@@ -19,9 +20,11 @@ type
     FFileName: String;
     FClick: String;
     FAction: INotifyAction;
+    FActions: TDictionary<String, INotifyAction>;
   public
     class function New: INotifyNotification;
     constructor Create;
+    destructor Destroy; override;
     function Topic: String; overload;
     function Topic(const AValue: String): INotifyNotification; overload;
     function MessageContent: String; overload;
@@ -40,13 +43,16 @@ type
     function Click(const AValue: String): INotifyNotification; overload;
     function Action: INotifyAction; overload;
     function Action(const AValue: INotifyAction): INotifyNotification; overload;
+    function ClearActions: INotifyNotification; overload;
     function AsJSONString: String;
   end;
 
 implementation
 
 uses
+  System.SysUtils,
   Notify.SmartPointer,
+  Notify.Actions.DTO,
   Notify.Notification.DTO;
 
 { TNotifyNotification }
@@ -60,18 +66,43 @@ function TNotifyNotification.Action(const AValue: INotifyAction): INotifyNotific
 begin
   Result := Self;
   FAction := AValue;
+
+  if FActions.ContainsKey(AValue.&Label) then
+    FActions.Remove(AValue.&Label);
+
+  if FActions.Count >= 3 then
+    Exit;
+
+  FActions.Add(AValue.&Label, AValue);
+
 end;
 
 function TNotifyNotification.AsJSONString: String;
 var
-  LNotification: TSmartPointer<TNotifyNotificationDTO>;
+  LNotificationDTO: TSmartPointer<TNotifyNotificationDTO>;
+  LActionDTO: TNotifyActionsDTO;
+  LAction: INotifyAction;
 begin
-  LNotification.Value.Topic := FTopic;
-  LNotification.Value.MessageContent := FMessageContent;
-  LNotification.Value.Priority := Ord(FPriority);
-  LNotification.Value.Title := FTitle;
-  LNotification.Value.Tags.AddRange(FTags);
-  Result := LNotification.Value.AsJson;
+  LNotificationDTO.Value.Topic := FTopic;
+  LNotificationDTO.Value.MessageContent := FMessageContent;
+  LNotificationDTO.Value.Priority := Ord(FPriority);
+  LNotificationDTO.Value.Title := FTitle;
+  LNotificationDTO.Value.Tags.AddRange(FTags);
+
+  for LAction in FActions.Values do
+  begin
+    LActionDTO := TNotifyActionsDTO.Create;
+    LActionDTO.Action := NotifyActionTypesArray[LAction.&Type];
+    LActionDTO.&Label := LAction.&Label;
+    LActionDTO.Clear := LAction.Clear;
+
+    if LAction.&Type = TNotifyActionType.VIEW then
+      LActionDTO.Url := LAction.Url;
+
+    LNotificationDTO.Value.Actions.Add(LActionDTO);
+  end;
+
+  Result := LNotificationDTO.Value.AsJson;
 end;
 
 function TNotifyNotification.Attach: String;
@@ -85,6 +116,12 @@ begin
   FAttach := AValue;
 end;
 
+function TNotifyNotification.ClearActions: INotifyNotification;
+begin
+  Result := Self;
+  FActions.Clear;
+end;
+
 function TNotifyNotification.Click(const AValue: String): INotifyNotification;
 begin
   Result := Self;
@@ -94,6 +131,13 @@ end;
 constructor TNotifyNotification.Create;
 begin
   FPriority := TNotifyPriority.DEFAULT;
+  FActions := TDictionary<String, INotifyAction>.Create();
+end;
+
+destructor TNotifyNotification.Destroy;
+begin
+  FActions.Free;
+  inherited;
 end;
 
 function TNotifyNotification.Click: String;

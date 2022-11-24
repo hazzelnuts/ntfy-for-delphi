@@ -22,8 +22,12 @@ uses
   Notify.Facade in 'src\Notify.Facade.pas',
   Notify.Sample in 'sample\Notify.Sample.pas',
   Notify.Client in 'src\Notify.Client.pas',
-  Notify.Actions.DTO in 'src\Notify.Actions.DTO.pas';
+  Notify.Actions.DTO in 'src\Notify.Actions.DTO.pas',
+  Notify.Action in 'src\Notify.Action.pas',
+  Notify.Action.Factory in 'src\Notify.Action.Factory.pas';
 
 begin
+
+  ReportMemoryLeaksOnShutdown := True;
 
 end.

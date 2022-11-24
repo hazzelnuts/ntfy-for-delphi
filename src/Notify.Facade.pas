@@ -14,12 +14,14 @@ type
     FNotifyProviderFactory: INotifyProviderFactory;
     FNotifyPublisherFactory: INotifyNotificationFactory;
     FNotifyCoreFactory: INotifyCoreFactory;
+    FNotifyActionFactory: INotifyActionFactory;
   public
     constructor Create;
     class function New: INotifyCoreFacade;
     function Provider: INotifyProvider;
     function Notification: INotifyNotification;
     function Notify: INotifyCore;
+    function Action: INotifyAction;
   end;
 
 implementation
@@ -27,7 +29,8 @@ implementation
 uses
   Notify.Provider.Factory,
   Notify.Notification.Factory,
-  Notify.Core.Factory;
+  Notify.Core.Factory,
+  Notify.Action.Factory;
 
 { TNotifyCoreFacade }
 
@@ -36,11 +39,17 @@ begin
   Result := FNotifyCoreFactory.Core;
 end;
 
+function TNotifyCoreFacade.Action: INotifyAction;
+begin
+  Result := FNotifyActionFactory.Action;
+end;
+
 constructor TNotifyCoreFacade.Create;
 begin
   FNotifyProviderFactory := TNotifyProviderFactory.New;
   FNotifyPublisherFactory := TNotifyNotificationFactory.New;
   FNotifyCoreFactory := TNotifyCoreFactory.New;
+  FNotifyActionFactory := TNotifyActionFactory.New;
 end;
 
 class function TNotifyCoreFacade.New: INotifyCoreFacade;

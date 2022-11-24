@@ -9,10 +9,11 @@ uses
   Notify.Core.Contract;
 
 type
-  INotify = INotifyCore;
-  IPublisher = INotifyNotification;
-  IAction = INotifyAction;
-  TNtfyPriority = TNotifyPriority;
+  INotify = Notify.Core.Contract.INotifyCore;
+  IPublisher = Notify.Notification.Contract.INotifyNotification;
+  IAction = Notify.Action.Contract.INotifyAction;
+  TNtfyPriority = Notify.Types.TNotifyPriority;
+  TNtfyActionType = Notify.Types.TNotifyActionType;
 
 var
   New: INotifyCoreFacade;

@@ -6,7 +6,8 @@ uses
   System.SysUtils,
   Notify.Types,
   Notify.Provider.Contract,
-  Notify.Notification.Contract;
+  Notify.Notification.Contract,
+  Notify.Action.Contract;
 
 type
   INotifyCore = interface
@@ -30,6 +31,7 @@ type
     function Provider: INotifyProvider;
     function Notification: INotifyNotification;
     function Notify: INotifyCore;
+    function Action: INotifyAction;
   end;
 
 implementation

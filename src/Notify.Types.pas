@@ -7,6 +7,8 @@ type
 
   TNotifyFectchType = (DURATION, UNIX, MESSAGE_ID);
 
+  TNotifyActionType = (VIEW = 0, BROADCAST = 1, HTTP = 2);
+
   TNotifyPriority = (
     MAX = 5,
     HIGH = 4,
@@ -16,6 +18,13 @@ type
   );
 
   {$SCOPEDENUMS OFF}
+
+const
+  NotifyActionTypesArray: array [TNotifyActionType] of String = (
+    'view',
+    'broadcast',
+    'http'
+  );
 
 implementation
 

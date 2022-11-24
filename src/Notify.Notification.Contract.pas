@@ -29,6 +29,7 @@ type
     function Click(const AValue: String): INotifyNotification; overload;
     function Action: INotifyAction; overload;
     function Action(const AValue: INotifyAction): INotifyNotification; overload;
+    function ClearActions: INotifyNotification; overload;
     function AsJSONString: String;
   end;
 
