@@ -1,4 +1,4 @@
-unit Notify.Actions.DTO;
+unit Notify.Action.DTO;
 
 interface
 
@@ -16,11 +16,14 @@ type
     FLabel: String;
     [JSONName('url')]
     FUrl: String;
+    [JSONName('intent')]
+    FIntent: String;
   published
     property Action: String read FAction write FAction;
     property Clear: Boolean read FClear write FClear;
     property &Label: String read FLabel write FLabel;
     property Url: String read FUrl write FUrl;
+    property Intent: String read FIntent write FIntent;
   end;
 
 

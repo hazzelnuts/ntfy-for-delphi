@@ -6,7 +6,7 @@ uses
   Notify.JSON.Parser,
   System.Generics.Collections,
   REST.Json.Types,
-  Notify.Actions.DTO;
+  Notify.Action.DTO;
 
 type
   TNotifyNotificationDTO = class(TJsonDTO)

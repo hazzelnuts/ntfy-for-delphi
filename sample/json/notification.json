@@ -9,10 +9,13 @@
   "click": "https://homecamera.lan/xasds1h2xsSsa/",
   "actions": [
     { 
-      "action": "view",
-      "label": "Open portal",
-      "url": "https://home.nest.com/",
-      "clear": true
+      "intent": "com.example.AN_INTENT",
+      "action": "broadcast",
+      "label": "Take picture",
+      "extras": {
+          "cmd": "pic",
+          "camera": "front"
+      }
     }
   ]
 }

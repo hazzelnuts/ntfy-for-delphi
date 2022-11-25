@@ -8,21 +8,37 @@ uses
 {$M+}
 
 type
+  TExtras = class;
+
+  TExtras = class
+  private
+    [JSONName('camera')]
+    FCamera: string;
+    [JSONName('cmd')]
+    FCmd: string;
+  published
+    property Camera: string read FCamera write FCamera;
+    property Cmd: string read FCmd write FCmd;
+  end;
+  
   TActions = class
   private
     [JSONName('action')]
     FAction: string;
-    [JSONName('clear')]
-    FClear: Boolean;
+    [JSONName('extras')]
+    FExtras: TExtras;
+    [JSONName('intent')]
+    FIntent: string;
     [JSONName('label')]
     FLabel: string;
-    [JSONName('url')]
-    FUrl: string;
   published
     property Action: string read FAction write FAction;
-    property Clear: Boolean read FClear write FClear;
+    property Extras: TExtras read FExtras;
+    property Intent: string read FIntent write FIntent;
     property &Label: string read FLabel write FLabel;
-    property Url: string read FUrl write FUrl;
+  public
+    constructor Create;
+    destructor Destroy; override;
   end;
   
   TRoot = class(TJsonDTO)
@@ -68,6 +84,20 @@ type
   end;
   
 implementation
+
+{ TActions }
+
+constructor TActions.Create;
+begin
+  inherited;
+  FExtras := TExtras.Create;
+end;
+
+destructor TActions.Destroy;
+begin
+  FExtras.Free;
+  inherited;
+end;
 
 { TRoot }
 

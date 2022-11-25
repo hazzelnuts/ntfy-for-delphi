@@ -108,7 +108,7 @@
         <DCCReference Include="src\Notify.Facade.pas"/>
         <DCCReference Include="sample\Notify.Sample.pas"/>
         <DCCReference Include="src\Notify.Client.pas"/>
-        <DCCReference Include="src\Notify.Actions.DTO.pas"/>
+        <DCCReference Include="src\Notify.Action.DTO.pas"/>
         <DCCReference Include="src\Notify.Action.pas"/>
         <DCCReference Include="src\Notify.Action.Factory.pas"/>
         <BuildConfiguration Include="Release">

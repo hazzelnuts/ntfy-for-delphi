@@ -52,7 +52,7 @@ implementation
 uses
   System.SysUtils,
   Notify.SmartPointer,
-  Notify.Actions.DTO,
+  Notify.Action.DTO,
   Notify.Notification.DTO;
 
 { TNotifyNotification }
