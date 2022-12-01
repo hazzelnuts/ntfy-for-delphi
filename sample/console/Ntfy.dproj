@@ -91,26 +91,26 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="src\Notify.Core.Contract.pas"/>
-        <DCCReference Include="src\Notify.Core.pas"/>
-        <DCCReference Include="src\Notify.Core.Factory.pas"/>
-        <DCCReference Include="src\Notify.Provider.Indy.pas"/>
-        <DCCReference Include="src\Notify.Provider.Contract.pas"/>
-        <DCCReference Include="src\Notify.Provider.Factory.pas"/>
-        <DCCReference Include="src\Notify.Action.Contract.pas"/>
-        <DCCReference Include="src\Notify.Notification.Contract.pas"/>
-        <DCCReference Include="src\Notify.Notification.pas"/>
-        <DCCReference Include="src\Notify.Notification.Factory.pas"/>
-        <DCCReference Include="src\Notify.Notification.DTO.pas"/>
-        <DCCReference Include="src\Notify.JSON.Parser.pas"/>
-        <DCCReference Include="src\Notify.SmartPointer.pas"/>
-        <DCCReference Include="src\Notify.Types.pas"/>
-        <DCCReference Include="src\Notify.Facade.pas"/>
-        <DCCReference Include="sample\Notify.Sample.pas"/>
-        <DCCReference Include="src\Notify.Client.pas"/>
-        <DCCReference Include="src\Notify.Action.DTO.pas"/>
-        <DCCReference Include="src\Notify.Action.pas"/>
-        <DCCReference Include="src\Notify.Action.Factory.pas"/>
+        <DCCReference Include="..\..\src\Notify.Core.Contract.pas"/>
+        <DCCReference Include="..\..\src\Notify.Core.pas"/>
+        <DCCReference Include="..\..\src\Notify.Core.Factory.pas"/>
+        <DCCReference Include="..\..\src\Notify.Provider.Indy.pas"/>
+        <DCCReference Include="..\..\src\Notify.Provider.Contract.pas"/>
+        <DCCReference Include="..\..\src\Notify.Provider.Factory.pas"/>
+        <DCCReference Include="..\..\src\Notify.Action.Contract.pas"/>
+        <DCCReference Include="..\..\src\Notify.Notification.Contract.pas"/>
+        <DCCReference Include="..\..\src\Notify.Notification.pas"/>
+        <DCCReference Include="..\..\src\Notify.Notification.Factory.pas"/>
+        <DCCReference Include="..\..\src\Notify.Notification.DTO.pas"/>
+        <DCCReference Include="..\..\src\Notify.JSON.Parser.pas"/>
+        <DCCReference Include="..\..\src\Notify.SmartPointer.pas"/>
+        <DCCReference Include="..\..\src\Notify.Types.pas"/>
+        <DCCReference Include="..\..\src\Notify.Facade.pas"/>
+        <DCCReference Include="..\..\src\Notify.pas"/>
+        <DCCReference Include="..\..\src\Notify.Action.DTO.pas"/>
+        <DCCReference Include="..\..\src\Notify.Action.pas"/>
+        <DCCReference Include="..\..\src\Notify.Action.Factory.pas"/>
+        <DCCReference Include="src\Notify.Sample.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

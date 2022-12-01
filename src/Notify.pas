@@ -1,4 +1,4 @@
-unit Notify.Client;
+unit Notify;
 
 interface
 

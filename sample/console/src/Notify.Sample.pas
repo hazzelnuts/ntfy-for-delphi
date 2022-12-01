@@ -3,7 +3,7 @@
 interface
 
 uses
-  Notify.Client;
+  Notify;
 
 implementation
 
