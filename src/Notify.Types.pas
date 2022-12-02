@@ -2,12 +2,15 @@ unit Notify.Types;
 
 interface
 
+uses
+  Notify.JSON.Parser;
+
 type
   {$SCOPEDENUMS ON}
 
   TNotifyFectchType = (DURATION, UNIX, MESSAGE_ID);
 
-  TNotifyActionType = (VIEW = 0, BROADCAST = 1, HTTP = 2);
+  TNotifyActionType = (VIEW, BROADCAST, HTTP);
 
   TNotifyPriority = (
     MAX = 5,
@@ -18,6 +21,8 @@ type
   );
 
   {$SCOPEDENUMS OFF}
+
+  TJsonDTO = Notify.JSON.Parser.TJsonDTO;
 
 const
   NotifyActionTypesArray: array [TNotifyActionType] of String = (

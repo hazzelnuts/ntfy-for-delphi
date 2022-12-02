@@ -10,10 +10,11 @@ uses
 
 type
   INotify = Notify.Core.Contract.INotifyCore;
-  IPublisher = Notify.Notification.Contract.INotifyNotification;
-  IAction = Notify.Action.Contract.INotifyAction;
-  TNtfyPriority = Notify.Types.TNotifyPriority;
-  TNtfyActionType = Notify.Types.TNotifyActionType;
+  INotifyNotification = Notify.Notification.Contract.INotifyNotification;
+  INotifyAction = Notify.Action.Contract.INotifyAction;
+  TNotifyPriority = Notify.Types.TNotifyPriority;
+  TNotifyActionType = Notify.Types.TNotifyActionType;
+  TJsonDTO = Notify.Types.TJsonDTO;
 
 var
   New: INotifyCoreFacade;

@@ -3,7 +3,8 @@ unit Notify.Action.Contract;
 interface
 
 uses
-  Notify.Types;
+  Notify.Types,
+  System.Generics.Collections;
 
 type
   INotifyAction = interface
@@ -16,6 +17,12 @@ type
     function Url(const AValue: String): INotifyAction; overload;
     function Clear: Boolean; overload;
     function Clear(const AValue: Boolean): INotifyAction; overload;
+    function Method: String; overload;
+    function Method(const AValue: String): INotifyAction; overload;
+    function Body: String; overload;
+    function Body(const AValue: String): INotifyAction; overload;
+    function Headers: TJsonDTO; overload;
+    function Headers(const AValue: TJsonDTO): INotifyAction; overload;
   end;
 
   INotifyActionFactory = interface
