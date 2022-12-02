@@ -1,4 +1,4 @@
-program ConsolePublisher;
+program Publisher;
 
 {$APPTYPE CONSOLE}
 
