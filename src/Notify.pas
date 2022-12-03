@@ -1,4 +1,4 @@
-unit NotifyDelphi;
+unit Notify;
 
 interface
 
