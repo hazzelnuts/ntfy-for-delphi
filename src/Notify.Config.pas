@@ -6,8 +6,9 @@ type
   TNotifyConfig = class sealed
   strict private
     FBaseURL: String;
-  published
+  public
     class function NewInstance: TObject; override;
+  published
     property BaseURL: String read FBaseURL write FBaseURL;
   end;
 
