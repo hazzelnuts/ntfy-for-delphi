@@ -7,11 +7,13 @@ uses
   Notify.Types,
   Notify.Provider.Contract,
   Notify.Notification.Contract,
+  Notify.Config.Contract,
   Notify.Action.Contract;
 
 type
   INotifyCore = interface
     ['{AEDB3C31-D45F-4469-9427-9CEA5427A4E3}']
+    function Config(const AConfig: INotifyConfig): INotifyCore;
     function Publish: INotifyCore;
     function Notification(const ANotification: INotifyNotification): INotifyCore; overload;
   end;
@@ -27,6 +29,7 @@ type
     function Notification: INotifyNotification;
     function Notify: INotifyCore;
     function Action: INotifyAction;
+    function Config: INotifyConfig;
   end;
 
 implementation

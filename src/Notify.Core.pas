@@ -6,6 +6,7 @@ uses
   Notify.Types,
   Notify.Core.Contract,
   Notify.Provider.Contract,
+  Notify.Config.Contract,
   Notify.Notification.Contract;
 
 type
@@ -13,6 +14,7 @@ type
   strict private
     FProvider: INotifyProvider;
     FNotification: INotifyNotification;
+    FConfig: INotifyConfig;
   public
     constructor Create;
     class function New: INotifyCore;
@@ -20,6 +22,7 @@ type
     function Publish: INotifyCore;
     function SendFile: INotifyCore;
   private
+    function Config(const AConfig: INotifyConfig): INotifyCore;
     function Notification(const ANotification: INotifyNotification): INotifyCore; overload;
   end;
 
@@ -30,15 +33,21 @@ implementation
 
 uses
   System.SysUtils,
-  Notify.Notification.Factory,
-  Notify.Provider.Factory, System.Classes;
+  Notify.Facade,
+  System.Classes;
 
 { TNotifyCore }
 
+function TNotifyCore.Config(const AConfig: INotifyConfig): INotifyCore;
+begin
+  Result := Self;
+end;
+
 constructor TNotifyCore.Create;
 begin
-  FProvider := TNotifyProviderFactory.New.Provider;
-  FNotification := TNotifyNotificationFactory.New.Notification;
+  FProvider := TNotifyCoreFacade.New.Provider;
+  FNotification := TNotifyCoreFacade.New.Notification;
+  FConfig := TNotifyCoreFacade.New.Config;
 end;
 
 class function TNotifyCore.New: INotifyCore;
@@ -62,6 +71,8 @@ end;
 function TNotifyCore.Publish: INotifyCore;
 begin
   Result := Self;
+
+  FProvider.Config(FConfig);
 
   if FNotification.FileName <> '' then
   begin

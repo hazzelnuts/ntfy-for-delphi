@@ -111,6 +111,8 @@
         <DCCReference Include="..\..\src\Notify.Types.pas"/>
         <DCCReference Include="..\..\src\Notify.pas"/>
         <DCCReference Include="..\..\src\Notify.Config.pas"/>
+        <DCCReference Include="..\..\src\Notify.Config.Contract.pas"/>
+        <DCCReference Include="..\..\src\Notify.Config.Factory.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

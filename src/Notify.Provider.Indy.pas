@@ -5,27 +5,29 @@ interface
 uses
   System.Classes, IdBaseComponent, IdComponent, IdIOHandler,
   IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL, IdTCPConnection,
-  IdTCPClient, IdHTTP, IdStream, IdGlobal, Notify.Provider.Contract;
+  IdTCPClient, IdHTTP, IdStream, IdGlobal,
+  Notify.Provider.Contract, Notify.Config.Contract;
 
 type
   TNotityProviderIndy = class(TInterfacedObject, INotifyProvider)
   strict private
-    FBaseUrl: String;
     FIOHandlerSSL: TIdSSLIOHandlerSocketOpenSSL;
     FIdHTTP: TIdHTTP;
     FIdEventStream: TIdEventStream;
     FBodyStream: TMemoryStream;
+    FNotifyConfig: INotifyConfig;
     procedure OnWriteEvent(const ABuffer: TIdBytes; AOffset, ACount: Longint; var VResult: Longint);
   public
-    constructor Create(const PBaseURL: String);
+    constructor Create;
     destructor Destroy; override;
-    class function New(const PBaseURL: String): INotifyProvider;
+    class function New: INotifyProvider;
   private
     function AddHeader(const AName: String; AValue: String): INotifyProvider; overload;
     function AddHeader(const AName: String; AValues: array of String): INotifyProvider; overload;
     function AddBody(const AValue: String): INotifyProvider; overload;
     function AddBody(const AValue: TFileStream): INotifyProvider; overload;
     function AddURLSegment(const AValue: String): INotifyProvider; overload;
+    function Config(const AValue: INotifyConfig): INotifyProvider;
     function Get: INotifyProvider;
     function Post: INotifyProvider;
     function Put: INotifyProvider;
@@ -34,7 +36,6 @@ type
 implementation
 
 uses
-  System.NetEncoding,
   Notify.SmartPointer,
   System.SysUtils;
 
@@ -77,12 +78,17 @@ end;
 function TNotityProviderIndy.AddURLSegment(const AValue: String): INotifyProvider;
 begin
   Result := Self;
-  FIdHTTP.Request.URL := Format('%s/%s', [FBaseUrl, AValue]);
+  FNotifyConfig.BaseURL(Format('%s/%s', [FNotifyConfig.BaseURL, AValue]));
 end;
 
-constructor TNotityProviderIndy.Create(const PBaseURL: String);
+function TNotityProviderIndy.Config(const AValue: INotifyConfig): INotifyProvider;
 begin
-  FBaseUrl := PBaseURL;
+  Result := Self;
+  FNotifyConfig := AValue;
+end;
+
+constructor TNotityProviderIndy.Create;
+begin
   FIdHTTP := TIdHTTP.Create(nil);
   FIOHandlerSSL := TIdSSLIOHandlerSocketOpenSSL.Create;
   FIdEventStream := TIdEventStream.Create;
@@ -113,9 +119,9 @@ begin
   FIdHTTP.Get('');
 end;
 
-class function TNotityProviderIndy.New(const PBaseURL: String): INotifyProvider;
+class function TNotityProviderIndy.New: INotifyProvider;
 begin
-  Result := Self.Create(PBaseURL);
+  Result := Self.Create;
 end;
 
 procedure TNotityProviderIndy.OnWriteEvent(const ABuffer: TIdBytes; AOffset, ACount: Longint; var VResult: Longint);
@@ -126,13 +132,13 @@ end;
 function TNotityProviderIndy.Post: INotifyProvider;
 begin
   Result := Self;
-  FIdHTTP.Post(FBaseUrl, FBodyStream);
+  FIdHTTP.Post(FNotifyConfig.BaseURL, FBodyStream);
 end;
 
 function TNotityProviderIndy.Put: INotifyProvider;
 begin
   Result := Self;
-  FIdHTTP.Put(FIdHTTP.Request.URL, FBodyStream);
+  FIdHTTP.Put(FNotifyConfig.BaseURL, FBodyStream);
 end;
 
 end.

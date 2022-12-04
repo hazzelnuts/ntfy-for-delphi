@@ -29,9 +29,9 @@ end;
 function TNotifyProviderFactory.Provider: INotifyProvider;
 begin
   {$IFDEF INDY}
-  Result := TNotityProviderIndy.New(NotifyConfig.BaseURL);
+  Result := TNotityProviderIndy.New;
   {$ELSE }
-  Result := TNotityProviderIndy.New(NotifyConfig.BaseURL);
+  Result := TNotityProviderIndy.New;
   {$IFEND}
 end;
 

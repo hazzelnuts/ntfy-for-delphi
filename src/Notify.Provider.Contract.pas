@@ -3,6 +3,7 @@ unit Notify.Provider.Contract;
 interface
 
 uses
+  Notify.Config.Contract,
   System.Classes;
 
 type
@@ -16,6 +17,7 @@ type
     function AddBody(const AValue: String): INotifyProvider; overload;
     function AddBody(const AValue: TFileStream): INotifyProvider; overload;
     function AddURLSegment(const AValue: String): INotifyProvider; overload;
+    function Config(const AValue: INotifyConfig): INotifyProvider;
   end;
 
   INotifyProviderFactory = interface

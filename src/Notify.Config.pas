@@ -2,18 +2,24 @@ unit Notify.Config;
 
 interface
 
+uses
+  Notify.Config.Contract;
+
 type
-  TNotifyConfig = class sealed
+  TNotifyConfig = class sealed(TInterfacedObject, INotifyConfig)
   strict private
     FBaseURL: String;
   public
+    class function New: INotifyConfig;
     class function NewInstance: TObject; override;
-  published
-    property BaseURL: String read FBaseURL write FBaseURL;
+  private
+    function BaseURL: String; overload;
+    function BaseURL(const AValue: String): INotifyConfig; overload;
   end;
 
 var
-  NotifyConfig: TNotifyConfig;
+  NotifyConfigInstance: TNotifyConfig;
+  NotifyConfig: INotifyConfig;
 
 implementation
 
@@ -22,18 +28,30 @@ uses
 
 { TNotifyConfig }
 
+function TNotifyConfig.BaseURL(const AValue: String): INotifyConfig;
+begin
+  Result := Self;
+  FBaseURL  := AValue;
+end;
+
+function TNotifyConfig.BaseURL: String;
+begin
+  Result := FBaseURL;
+end;
+
+class function TNotifyConfig.New: INotifyConfig;
+begin
+  Result := Self.Create;
+end;
+
 class function TNotifyConfig.NewInstance: TObject;
 begin
   if not Assigned(NotifyConfig) then
-    NotifyConfig := TNotifyConfig(inherited NewInstance);
-  Result := NotifyConfig;
+    NotifyConfigInstance := TNotifyConfig(inherited NewInstance);
+  Result := NotifyConfigInstance;
 end;
 
 initialization
-  NotifyConfig := TNotifyConfig.Create;
-  NotifyConfig.BaseURL := 'https://ntfy.sh';
-
-finalization
-  NotifyConfig.Free;
+  NotifyConfig := TNotifyConfig.New.BaseURL('https://ntfy.sh');
 
 end.
