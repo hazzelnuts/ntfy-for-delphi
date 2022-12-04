@@ -12,16 +12,18 @@ type
   TNotifyCore = class sealed(TInterfacedObject, INotifyCore)
   strict private
     FProvider: INotifyProvider;
+    FNotification: INotifyNotification;
   public
     constructor Create;
     class function New: INotifyCore;
     class function NewInstance: TObject; override;
+    function Publish: INotifyCore;
     function Poll: INotifyCore;
-    function Delay(const AValue: String): INotifyCore;
+    function Listen: INotifyCore;
+  private
     function Since(const AValue: String; const PFeytchType: TNotifyFectchType = TNotifyFectchType.DURATION): INotifyCore; overload;
     function Since(const AValue: Integer): INotifyCore; overload;
-    function Listen: INotifyCore;
-    function Publish: INotifyCore;
+    function Icon(const AValue: String): INotifyCore; overload;
     function Notification(const ANotification: INotifyNotification): INotifyCore; overload;
   end;
 
@@ -32,6 +34,7 @@ implementation
 
 uses
   System.SysUtils,
+  Notify.Notification.Factory,
   Notify.Provider.Factory;
 
 { TNotifyCore }
@@ -39,6 +42,7 @@ uses
 constructor TNotifyCore.Create;
 begin
   FProvider := TNotifyProviderFactory.New.Provider;
+  FNotification := TNotifyNotificationFactory.New.Notification;
 end;
 
 function TNotifyCore.Listen: INotifyCore;
@@ -61,7 +65,8 @@ end;
 function TNotifyCore.Notification(const ANotification: INotifyNotification): INotifyCore;
 begin
   Result := Self;
-  FProvider.Notification(ANotification);
+  FNotification := ANotification;
+  FProvider.Notification(FNotification);
 end;
 
 function TNotifyCore.Poll: INotifyCore;
@@ -75,10 +80,10 @@ begin
   FProvider.Post;
 end;
 
-function TNotifyCore.Delay(const AValue: String): INotifyCore;
+function TNotifyCore.Icon(const AValue: String): INotifyCore;
 begin
   Result := Self;
-  FProvider.AddHeader('Delay', AValue);
+  FProvider.AddHeader('Icon', AValue);
 end;
 
 function TNotifyCore.Since(const AValue: Integer): INotifyCore;

@@ -21,9 +21,7 @@ type
     function Tags(const AValue: INotifyTags): INotifyNotification; overload;
     function Priority: TNotifyPriority; overload;
     function Priority(const AValue: TNotifyPriority): INotifyNotification; overload;
-    function Attach: String; overload;
     function Attach(const AValue: String): INotifyNotification; overload;
-    function FileName: String; overload;
     function FileName(const AValue: String): INotifyNotification; overload;
     function Click: String overload;
     function Click(const AValue: String): INotifyNotification; overload;
@@ -31,6 +29,12 @@ type
     function Action(const AValue: INotifyAction): INotifyNotification; overload;
     function ClearActions: INotifyNotification; overload;
     function AsJSONString: String;
+    function Email: String; overload;
+    function Email(const AValue: String): INotifyNotification; overload;
+    function Icon: String; overload;
+    function Icon(const AValue: String): INotifyNotification; overload;
+    function Delay: String; overload;
+    function Delay(const AValue: String): INotifyNotification; overload;
   end;
 
   INotifyNotificationFactory = interface

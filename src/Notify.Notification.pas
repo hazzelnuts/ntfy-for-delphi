@@ -5,6 +5,7 @@ interface
 uses
   Notify.Types,
   Notify.Action.Contract,
+  Notify.Provider.Contract,
   Notify.Notification.Contract,
   System.Generics.Collections;
 
@@ -16,15 +17,19 @@ type
     FTitle: String;
     FTags: INotifyTags;
     FPriority: TNotifyPriority;
-    FAttach: String;
-    FFileName: String;
     FClick: String;
     FAction: INotifyAction;
     FActions: TDictionary<String, INotifyAction>;
+    FFileName: String;
+    FAttachment: String;
+    FEmail: String;
+    FIcon: String;
+    FDelay: String;
   public
     class function New: INotifyNotification;
     constructor Create;
     destructor Destroy; override;
+  private
     function Topic: String; overload;
     function Topic(const AValue: String): INotifyNotification; overload;
     function MessageContent: String; overload;
@@ -44,6 +49,12 @@ type
     function Action: INotifyAction; overload;
     function Action(const AValue: INotifyAction): INotifyNotification; overload;
     function ClearActions: INotifyNotification; overload;
+    function Email: String; overload;
+    function Email(const AValue: String): INotifyNotification; overload;
+    function Icon: String; overload;
+    function Icon(const AValue: String): INotifyNotification; overload;
+    function Delay: String; overload;
+    function Delay(const AValue: String): INotifyNotification; overload;
     function AsJSONString: String;
   end;
 
@@ -88,6 +99,9 @@ begin
   LNotificationDTO.Value.Priority := Ord(FPriority);
   LNotificationDTO.Value.Title := FTitle;
   LNotificationDTO.Value.Tags.AddRange(FTags);
+  LNotificationDTO.Value.Filename := FFileName;
+  LNotificationDTO.Value.Attach := FAttachment;
+  LNotificationDTO.Value.Delay := FDelay;
 
   for LAction in FActions.Values do
   begin
@@ -113,13 +127,13 @@ end;
 
 function TNotifyNotification.Attach: String;
 begin
-  Result := FAttach;
+  Result := FAttachment;
 end;
 
 function TNotifyNotification.Attach(const AValue: String): INotifyNotification;
 begin
   Result := Self;
-  FAttach := AValue;
+  FAttachment := AValue;
 end;
 
 function TNotifyNotification.ClearActions: INotifyNotification;
@@ -140,15 +154,33 @@ begin
   FActions := TDictionary<String, INotifyAction>.Create();
 end;
 
+function TNotifyNotification.Delay(const AValue: String): INotifyNotification;
+begin
+  Result := Self;
+  FDelay := AValue;
+end;
+
+function TNotifyNotification.Delay: String;
+begin
+  Result := FDelay;
+end;
+
 destructor TNotifyNotification.Destroy;
 begin
   FActions.Free;
   inherited;
 end;
 
-function TNotifyNotification.Click: String;
+function TNotifyNotification.Email(const AValue: String): INotifyNotification;
 begin
-  Result := FClick;
+  //"Email" doesn't works together with "Delay"
+  Result := Self;
+  FEmail := AValue;
+end;
+
+function TNotifyNotification.Email: String;
+begin
+  Result := FEmail;
 end;
 
 function TNotifyNotification.FileName: String;
@@ -156,10 +188,28 @@ begin
   Result := FFileName;
 end;
 
+function TNotifyNotification.Click: String;
+begin
+  Result := FClick;
+end;
+
 function TNotifyNotification.FileName(const AValue: String): INotifyNotification;
+var
+  LId: String;
 begin
   Result := Self;
   FFileName := AValue;
+end;
+
+function TNotifyNotification.Icon(const AValue: String): INotifyNotification;
+begin
+  Result := Self;
+  FIcon := AValue;
+end;
+
+function TNotifyNotification.Icon: String;
+begin
+  Result := FIcon;
 end;
 
 function TNotifyNotification.MessageContent(const AValue: String): INotifyNotification;

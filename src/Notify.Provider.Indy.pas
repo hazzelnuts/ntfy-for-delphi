@@ -135,6 +135,10 @@ function TNotityProviderIndy.Notification(const AValue: INotifyNotification): IN
 begin
   Result := Self;
   FNotification := AValue;
+
+  if FNotification.Email <> '' then
+    AddHeader('X-Email', FNotification.Email);
+
 end;
 
 end.

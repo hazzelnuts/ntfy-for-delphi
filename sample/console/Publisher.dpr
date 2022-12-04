@@ -3,6 +3,7 @@ program Publisher;
 {$APPTYPE CONSOLE}
 
 uses
+  System.SysUtils,
   Notify.Action.Contract in '..\..\src\Notify.Action.Contract.pas',
   Notify.Action.DTO in '..\..\src\Notify.Action.DTO.pas',
   Notify.Action.Factory in '..\..\src\Notify.Action.Factory.pas',
@@ -23,23 +24,33 @@ uses
   Notify.Types in '..\..\src\Notify.Types.pas',
   Notify in '..\..\src\Notify.pas';
 
+var
+  LFile: String;
+
 begin
+
+  LFile := ExtractFilePath(ParamStr(0)) + 'ntfy.png';
 
   Ntfy.Notification(
     New.Notification
       .Topic('notify-delphi-integration-8jh27d')
-      .Title('Work time')
-      .MessageContent('Ending for today...')
+      .Title('Email attachments')
+      .MessageContent('Notify project also warrants you can send email attachments')
+      {
+      .Attach('https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800')
+      .Icon('https://styles.redditmedia.com/t5_32uhe/styles/communityIcon_xnt6chtnr2j21.png')
+      .Delay('10s')
+      .Email('afnsldd@gmail.com')
+      .FileName(LFile)
+      .Tags(['paperclip'])
       .Priority(TNotifyPriority.MIN)
-      .Tags(['ice_cream'])
       .Action(
         New.Action
-          .&Type(TNotifyActionType.HTTP)
-          .&Label('Open Mail')
-          .Method('GET')
-          .Url('https://viacep.com.br/ws/01001000/json/'))
+          .&Type(TNotifyActionType.VIEW)
+          .&Label('See design')
+          .Url('https://unsplash.com/photos/NRQV-hBF10M'))}
   );
 
-  Ntfy.Delay('10s').Publish;
+  Ntfy.Publish;
 
 end.

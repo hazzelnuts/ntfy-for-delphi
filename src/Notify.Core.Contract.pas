@@ -13,9 +13,9 @@ type
   INotifyCore = interface
     ['{AEDB3C31-D45F-4469-9427-9CEA5427A4E3}']
     function Poll: INotifyCore;
-    function Delay(const AValue: String): INotifyCore;
     function Since(const AValue: String; const PFeytchType: TNotifyFectchType = TNotifyFectchType.DURATION): INotifyCore; overload;
     function Since(const AValue: Integer): INotifyCore; overload;
+    function Icon(const AValue: String): INotifyCore; overload;
     function Listen: INotifyCore;
     function Publish: INotifyCore;
     function Notification(const ANotification: INotifyNotification): INotifyCore; overload;

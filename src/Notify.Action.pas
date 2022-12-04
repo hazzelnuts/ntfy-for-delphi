@@ -22,6 +22,7 @@ type
     class function New: INotifyAction;
     constructor Create;
     destructor Destroy; override;
+  private
     function &Type: TNotifyActionType; overload;
     function &Type(const AValue: TNotifyActionType): INotifyAction; overload;
     function &Label: String; overload;
