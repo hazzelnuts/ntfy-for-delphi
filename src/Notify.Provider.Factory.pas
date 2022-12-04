@@ -7,8 +7,6 @@ uses
 
 type
   TNotifyProviderFactory = class(TInterfacedObject, INotifyProviderFactory)
-  strict private
-    const BaseURL = 'https://ntfy.sh/';
   public
     class function New: INotifyProviderFactory;
     function Provider: INotifyProvider; overload;
@@ -17,6 +15,7 @@ type
 implementation
 
 uses
+  Notify.Config,
   Notify.Types,
   Notify.Provider.Indy;
 
@@ -30,9 +29,9 @@ end;
 function TNotifyProviderFactory.Provider: INotifyProvider;
 begin
   {$IFDEF INDY}
-  Result := TNotityProviderIndy.New(BaseURL);
+  Result := TNotityProviderIndy.New(NotifyConfig.BaseURL);
   {$ELSE }
-  Result := TNotityProviderIndy.New(BaseURL);
+  Result := TNotityProviderIndy.New(NotifyConfig.BaseURL);
   {$IFEND}
 end;
 

@@ -18,12 +18,8 @@ type
     class function New: INotifyCore;
     class function NewInstance: TObject; override;
     function Publish: INotifyCore;
-    function Poll: INotifyCore;
-    function Listen: INotifyCore;
+    function SendFile: INotifyCore;
   private
-    function Since(const AValue: String; const PFeytchType: TNotifyFectchType = TNotifyFectchType.DURATION): INotifyCore; overload;
-    function Since(const AValue: Integer): INotifyCore; overload;
-    function Icon(const AValue: String): INotifyCore; overload;
     function Notification(const ANotification: INotifyNotification): INotifyCore; overload;
   end;
 
@@ -35,7 +31,7 @@ implementation
 uses
   System.SysUtils,
   Notify.Notification.Factory,
-  Notify.Provider.Factory;
+  Notify.Provider.Factory, System.Classes;
 
 { TNotifyCore }
 
@@ -43,11 +39,6 @@ constructor TNotifyCore.Create;
 begin
   FProvider := TNotifyProviderFactory.New.Provider;
   FNotification := TNotifyNotificationFactory.New.Notification;
-end;
-
-function TNotifyCore.Listen: INotifyCore;
-begin
-
 end;
 
 class function TNotifyCore.New: INotifyCore;
@@ -66,35 +57,42 @@ function TNotifyCore.Notification(const ANotification: INotifyNotification): INo
 begin
   Result := Self;
   FNotification := ANotification;
-  FProvider.Notification(FNotification);
-end;
-
-function TNotifyCore.Poll: INotifyCore;
-begin
-
 end;
 
 function TNotifyCore.Publish: INotifyCore;
 begin
   Result := Self;
-  FProvider.Post;
+
+  if FNotification.FileName <> '' then
+  begin
+    SendFile;
+    Exit;
+  end;
+
+  if FNotification.Icon <> '' then
+    FProvider.AddHeader('Icon', FNotification.Icon);
+
+  FProvider
+    .AddBody(FNotification.AsJSONString)
+    .Post;
+
 end;
 
-function TNotifyCore.Icon(const AValue: String): INotifyCore;
+function TNotifyCore.SendFile: INotifyCore;
 begin
   Result := Self;
-  FProvider.AddHeader('Icon', AValue);
-end;
-
-function TNotifyCore.Since(const AValue: Integer): INotifyCore;
-begin
-
-end;
-
-function TNotifyCore.Since(const AValue: String;
-  const PFeytchType: TNotifyFectchType): INotifyCore;
-begin
-
+  FProvider
+    .AddBody(TFileStream.Create(FNotification.FilePath, fmOpenRead))
+    .AddHeader('Filename', FNotification.FileName)
+    .AddHeader('Title', FNotification.Title)
+    .AddHeader('Message', FNotification.MessageContent)
+    .AddHeader('Priority', IntToStr(Ord(FNotification.Priority)))
+    .AddHeader('Tags', FNotification.Tags)
+    .AddHeader('Icon', FNotification.Icon)
+    .AddHeader('Email', FNotification.Email)
+    .AddHeader('Delay', FNotification.Delay)
+    .AddURLSegment(FNotification.Topic)
+    .Put;
 end;
 
 end.

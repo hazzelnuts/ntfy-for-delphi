@@ -3,15 +3,19 @@ unit Notify.Provider.Contract;
 interface
 
 uses
-  Notify.Notification.Contract;
+  System.Classes;
 
 type
   INotifyProvider = interface
     ['{4A4C86DB-6176-404E-A317-BA789ED4848B}']
-    function Notification(const AValue: INotifyNotification): INotifyProvider;
     function Get: INotifyProvider;
     function Post: INotifyProvider;
-    function AddHeader(const PName: String; AValue: String): INotifyProvider;
+    function Put: INotifyProvider;
+    function AddHeader(const PName: String; AValue: String): INotifyProvider; overload;
+    function AddHeader(const AName: String; AValues: array of String): INotifyProvider; overload;
+    function AddBody(const AValue: String): INotifyProvider; overload;
+    function AddBody(const AValue: TFileStream): INotifyProvider; overload;
+    function AddURLSegment(const AValue: String): INotifyProvider; overload;
   end;
 
   INotifyProviderFactory = interface

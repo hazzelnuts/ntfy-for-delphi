@@ -21,6 +21,7 @@ type
     FAction: INotifyAction;
     FActions: TDictionary<String, INotifyAction>;
     FFileName: String;
+    FFilePath: String;
     FAttachment: String;
     FEmail: String;
     FIcon: String;
@@ -40,10 +41,10 @@ type
     function Tags(const AValue: INotifyTags): INotifyNotification; overload;
     function Priority: TNotifyPriority; overload;
     function Priority(const AValue: TNotifyPriority): INotifyNotification; overload;
-    function Attach: String; overload;
     function Attach(const AValue: String): INotifyNotification; overload;
     function FileName: String; overload;
-    function FileName(const AValue: String): INotifyNotification; overload;
+    function FilePath: String; overload;
+    function FilePath(const AValue: String): INotifyNotification; overload;
     function Click: String overload;
     function Click(const AValue: String): INotifyNotification; overload;
     function Action: INotifyAction; overload;
@@ -64,7 +65,9 @@ uses
   System.SysUtils,
   Notify.SmartPointer,
   Notify.Action.DTO,
-  Notify.Notification.DTO;
+  Notify.Notification.DTO,
+  System.Classes,
+  Notify.Config;
 
 { TNotifyNotification }
 
@@ -125,11 +128,6 @@ begin
   Result := LNotificationDTO.Value.AsJson;
 end;
 
-function TNotifyNotification.Attach: String;
-begin
-  Result := FAttachment;
-end;
-
 function TNotifyNotification.Attach(const AValue: String): INotifyNotification;
 begin
   Result := Self;
@@ -183,9 +181,9 @@ begin
   Result := FEmail;
 end;
 
-function TNotifyNotification.FileName: String;
+function TNotifyNotification.FilePath: String;
 begin
-  Result := FFileName;
+  Result := FFilePath;
 end;
 
 function TNotifyNotification.Click: String;
@@ -193,12 +191,16 @@ begin
   Result := FClick;
 end;
 
-function TNotifyNotification.FileName(const AValue: String): INotifyNotification;
-var
-  LId: String;
+function TNotifyNotification.FileName: String;
+begin
+  Result := FFileName;
+end;
+
+function TNotifyNotification.FilePath(const AValue: String): INotifyNotification;
 begin
   Result := Self;
-  FFileName := AValue;
+  FFileName := ExtractFileName(AValue);
+  FFilePath := AValue;
 end;
 
 function TNotifyNotification.Icon(const AValue: String): INotifyNotification;

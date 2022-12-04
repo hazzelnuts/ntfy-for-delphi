@@ -3,38 +3,81 @@ unit Notify.Provider.Indy;
 interface
 
 uses
-  System.SysUtils, System.Classes, IdBaseComponent, IdComponent, IdIOHandler,
+  System.Classes, IdBaseComponent, IdComponent, IdIOHandler,
   IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL, IdTCPConnection,
-  IdTCPClient, IdHTTP, IdStream, IdGlobal, Notify.Provider.Contract,
-  Notify.Notification.Contract;
+  IdTCPClient, IdHTTP, IdStream, IdGlobal, Notify.Provider.Contract;
 
 type
   TNotityProviderIndy = class(TInterfacedObject, INotifyProvider)
-  private
+  strict private
     FBaseUrl: String;
     FIOHandlerSSL: TIdSSLIOHandlerSocketOpenSSL;
     FIdHTTP: TIdHTTP;
     FIdEventStream: TIdEventStream;
-    FNotification: INotifyNotification;
+    FBodyStream: TMemoryStream;
     procedure OnWriteEvent(const ABuffer: TIdBytes; AOffset, ACount: Longint; var VResult: Longint);
   public
     constructor Create(const PBaseURL: String);
     destructor Destroy; override;
     class function New(const PBaseURL: String): INotifyProvider;
-    function Notification(const AValue: INotifyNotification): INotifyProvider;
-    function AddHeader(const PName: String; AValue: String): INotifyProvider;
+  private
+    function AddHeader(const AName: String; AValue: String): INotifyProvider; overload;
+    function AddHeader(const AName: String; AValues: array of String): INotifyProvider; overload;
+    function AddBody(const AValue: String): INotifyProvider; overload;
+    function AddBody(const AValue: TFileStream): INotifyProvider; overload;
+    function AddURLSegment(const AValue: String): INotifyProvider; overload;
     function Get: INotifyProvider;
     function Post: INotifyProvider;
+    function Put: INotifyProvider;
   end;
 
 implementation
 
+uses
+  System.NetEncoding,
+  Notify.SmartPointer,
+  System.SysUtils;
+
 { TNotityProviderIndy }
 
-function TNotityProviderIndy.AddHeader(const PName: String; AValue: String): INotifyProvider;
+function TNotityProviderIndy.AddBody(const AValue: String): INotifyProvider;
+var
+  LBodyStream: TSmartPointer<TStringStream>;
 begin
   Result := Self;
-  FIdHTTP.Request.CustomHeaders.AddValue(PName, AValue);
+  LBodyStream := TStringStream.Create(AValue);
+  FBodyStream.CopyFrom(LBodyStream.Value, LBodyStream.Value.Size);
+end;
+
+function TNotityProviderIndy.AddBody(const AValue: TFileStream): INotifyProvider;
+begin
+  Result := Self;
+  FBodyStream.CopyFrom(AValue, AValue.Size);
+end;
+
+function TNotityProviderIndy.AddHeader(const AName: String; AValues: array of String): INotifyProvider;
+var
+  LString, LValue: String;
+begin
+  Result := Self;
+  for LString in AValues do
+    if LValue = '' then
+      LValue := LString
+    else
+      LValue := Format('%s, %s', [LValue, LString]);
+  FIdHTTP.Request.CustomHeaders.AddValue(AName, LValue);
+end;
+
+function TNotityProviderIndy.AddHeader(const AName: String; AValue: String): INotifyProvider;
+begin
+  Result := Self;
+  FIdHTTP.Request.CustomHeaders.AddValue(AName, AValue);
+end;
+
+function TNotityProviderIndy.AddURLSegment(const AValue: String): INotifyProvider;
+begin
+  Result := Self;
+  FIdHTTP.Request.URL := Format('%s/%s', [FBaseUrl, AValue]);
 end;
 
 constructor TNotityProviderIndy.Create(const PBaseURL: String);
@@ -43,6 +86,7 @@ begin
   FIdHTTP := TIdHTTP.Create(nil);
   FIOHandlerSSL := TIdSSLIOHandlerSocketOpenSSL.Create;
   FIdEventStream := TIdEventStream.Create;
+  FBodyStream := TMemoryStream.Create;
 
   FIOHandlerSSL.SSLOptions.Method := sslvTLSv1_2;
   FIdHTTP.IOHandler := FIOHandlerSSL;
@@ -59,6 +103,7 @@ begin
   FIdHTTP.Free;
   FIOHandlerSSL.Free;
   FIdEventStream.Free;
+  FBodyStream.Free;
   inherited;
 end;
 
@@ -73,72 +118,21 @@ begin
   Result := Self.Create(PBaseURL);
 end;
 
-procedure TNotityProviderIndy.OnWriteEvent(const ABuffer: TIdBytes; AOffset,
-  ACount: Longint; var VResult: Longint);
+procedure TNotityProviderIndy.OnWriteEvent(const ABuffer: TIdBytes; AOffset, ACount: Longint; var VResult: Longint);
 begin
-//  Writeln(IndyTextEncoding_UTF8.GetString(ABuffer));
-//  Writeln('Response from server: ');
-//  Writeln(Format('Keep alive: %s', [FIdHTTP.Response.KeepAlive.ToString]));
-//  Writeln(Format('ResponseText: %s', [FIdHTTP.Response.ResponseText]));
-//  Writeln(Format('ResponseCode: %s', [FIdHTTP.Response.ResponseCode.ToString]));
-//  Writeln(Format('AcceptPatch: %s', [FIdHTTP.Response.AcceptPatch]));
-//  Writeln(Format('AcceptRanges: %s', [FIdHTTP.Response.AcceptRanges]));
-//  Writeln(Format('Location: %s', [FIdHTTP.Response.Location]));
-//  Writeln(Format('ProxyConnection: %s', [FIdHTTP.Response.ProxyConnection]));
-//  Writeln(Format('ProxyAuthenticate: %s', [FIdHTTP.Response.ProxyAuthenticate]));
-//  Writeln(Format('Server: %s', [FIdHTTP.Response.Server]));
-//  Writeln(Format('RawHeaders: %s', [FIdHTTP.Response.RawHeaders.Text]));
-//  Writeln(Format('CacheControl: %s', [FIdHTTP.Response.CacheControl]));
-//  Writeln(Format('CharSet: %s', [FIdHTTP.Response.CharSet]));
-//  Writeln(Format('Connection: %s', [FIdHTTP.Response.Connection]));
-//  Writeln(Format('ContentDisposition: %s', [FIdHTTP.Response.ContentDisposition]));
-//  Writeln(Format('ContentEncoding: %s', [FIdHTTP.Response.ContentEncoding]));
-//  Writeln(Format('ContentLanguage: %s', [FIdHTTP.Response.ContentLanguage]));
-//  Writeln(Format('ContentType: %s', [FIdHTTP.Response.ContentType]));
-//  Writeln(Format('ETag: %s', [FIdHTTP.Response.ETag]));
-//  Writeln(Format('Pragma: %s', [FIdHTTP.Response.Pragma]));
-//  Writeln('===================================');
+  //Will be used when subscribing....
 end;
 
 function TNotityProviderIndy.Post: INotifyProvider;
-var
-  LBody: String;
 begin
   Result := Self;
-  LBody := FNotification.AsJSONString;
-  FIdHTTP.Post(FBaseUrl, TStringStream.Create(LBody));
-
-//  Writeln('Response from server: ');
-//  Writeln(Format('Keep alive: %s', [FIdHTTP.Response.KeepAlive.ToString]));
-//  Writeln(Format('ResponseText: %s', [FIdHTTP.Response.ResponseText]));
-//  Writeln(Format('ResponseCode: %s', [FIdHTTP.Response.ResponseCode.ToString]));
-//  Writeln(Format('AcceptPatch: %s', [FIdHTTP.Response.AcceptPatch]));
-//  Writeln(Format('AcceptRanges: %s', [FIdHTTP.Response.AcceptRanges]));
-//  Writeln(Format('Location: %s', [FIdHTTP.Response.Location]));
-//  Writeln(Format('ProxyConnection: %s', [FIdHTTP.Response.ProxyConnection]));
-//  Writeln(Format('Server: %s', [FIdHTTP.Response.Server]));
-//  Writeln(Format('RawHeaders: %s', [FIdHTTP.Response.RawHeaders.Text]));
-//  Writeln(Format('CacheControl: %s', [FIdHTTP.Response.CacheControl]));
-//  Writeln(Format('CharSet: %s', [FIdHTTP.Response.CharSet]));
-//  Writeln(Format('Connection: %s', [FIdHTTP.Response.Connection]));
-//  Writeln(Format('ContentDisposition: %s', [FIdHTTP.Response.ContentDisposition]));
-//  Writeln(Format('ContentEncoding: %s', [FIdHTTP.Response.ContentEncoding]));
-//  Writeln(Format('ContentLanguage: %s', [FIdHTTP.Response.ContentLanguage]));
-//  Writeln(Format('ContentType: %s', [FIdHTTP.Response.ContentType]));
-//  Writeln(Format('ETag: %s', [FIdHTTP.Response.ETag]));
-//  Writeln(Format('Pragma: %s', [FIdHTTP.Response.Pragma]));
-//  Writeln('===================================');
-
+  FIdHTTP.Post(FBaseUrl, FBodyStream);
 end;
 
-function TNotityProviderIndy.Notification(const AValue: INotifyNotification): INotifyProvider;
+function TNotityProviderIndy.Put: INotifyProvider;
 begin
   Result := Self;
-  FNotification := AValue;
-
-  if FNotification.Email <> '' then
-    AddHeader('X-Email', FNotification.Email);
-
+  FIdHTTP.Put(FIdHTTP.Request.URL, FBodyStream);
 end;
 
 end.
