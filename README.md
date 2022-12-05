@@ -10,7 +10,7 @@ Visit [docs.ntfy.sh](https://docs.ntfy.sh/) to get started with documentation. N
 
 # ⚡️ Delphi Ntfy 
 
-Delphi Ntfy it's a friendly library to work with [ntfy.sh](https://docs.ntfy.sh/) endpoints in Delphi. It allows you to publish messages and to subscribe into topic channels to receive those same messages. 
+Delphi Ntfy it's a friendly library to work with [ntfy.sh](https://docs.ntfy.sh/) endpoints in Delphi. It allows you to publish messages and to subscribe to topic channels to receive those same messages. It's pretty similar to a websocket used to push instant notifications.
 
 # ⚙️ Installation
 
@@ -71,11 +71,11 @@ end;
 | Delphi 10.2 Tokyo    |      ❓      |  Delphi 10.3 Rio      |      ✔      |
 | Delphi 10.4 Sydney   |      ✔       | 
 
-It has not yet been tested into some Delphi versions. You can help to find out informing with a PR update to this README table file. In the PR, you should only to change the flag to a ✔ or a ❌.
+It has not yet been tested into some Delphi versions. You can help to find out informing with a PR update to this README table file. In the PR, change the flag to a ✔ or a ❌.
 
 # 🛑 Limitations
 
-Support to notifications that contains ```broadcast``` actions has not been implemented. Some advanced specific resources has not yet been implemented as well.
+Support to notifications that contains ```broadcast``` actions has not been implemented. Some advanced specific resources has likewise not been implemented as well.
 
 |    Action   |  Support |
 |-------------|:--------:|
@@ -85,5 +85,5 @@ Support to notifications that contains ```broadcast``` actions has not been impl
 
 # 🌱 Consider Contributing
 
-Delphi Ntfy it's an open source project under the MIT license.
+Delphi Ntfy it's an open source project under the MIT license. Feel free to use or contribute! 
 
