@@ -4,7 +4,7 @@
 
 <br/>
 
- Visit [ntfy.sh](https://docs.ntfy.sh/) to get started with documentation. Ntfy was made by [Philipp C. Heckel](https://github.com/binwiederhier) as an open source project. Consider [leaving a star ](https://github.com/binwiederhier/ntfy) in this awesome project as well.
+ Visit [docs.ntfy.sh](https://docs.ntfy.sh/) to get started with documentation. Ntfy was made by [Philipp C. Heckel](https://github.com/binwiederhier) as an open source project. Consider [leaving a star ](https://github.com/binwiederhier/ntfy) in this awesome project as well.
  
 <br/>
 
@@ -62,15 +62,14 @@ end;
 ```
 
 # Supported Editions
-I didn't have time to test, but it should work on every Delphi XE Editions upward. If you would like to contribute to extend this library to other frameworks such as Lazarus or for older versions of Delphi, feel free to do it! It's open source!
+I didn't have time to test, but it should work on every Delphi XE Editions upward. Plannings to support older versions will have to be implemented in another repo.
 
 |       Version        |  Supported   |       Version        |  Supported   |  
 |----------------------|:------------:|----------------------|:------------:| 
 | Delphi 5             |      ❌     |  Delphi 7             |      ❌     |
-| Delphi XE            |      ✔      |  Delphi XE            |      ✔      |
+| Delphi XE            |      ✔      |  Delphi 11 Alexandria |      ✔      |
 | Delphi 10 Seattle    |      ✔      |  Delphi 10.1 Berlin   |      ✔      |
 | Delphi 10.2 Tokyo    |      ✔      |  Delphi 10.3 Rio      |      ✔      |
-| Delphi 10.4 Sydney   |      ✔      |  Delphi 11 Alexandria |      ✔      |
-| Lazarus              |      ❌     |
+| Delphi 10.4 Sydney   |      ✔      | 
 
 
