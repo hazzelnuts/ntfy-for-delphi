@@ -4,11 +4,11 @@
 
 <br/>
 
-# Delphi Ntfy 
-
-<div algin="center">
+<div align="center">
   <img src="./img/delphi-notify.png">
 </div>
+
+# Delphi Ntfy 
 
 Delphi Ntfy it's a friendly client interface to work with [ntfy.sh](https://docs.ntfy.sh/) endpoints in Delphi.
 
