@@ -10,9 +10,9 @@
 
 # Delphi Ntfy 
 
-Delphi Ntfy it's a friendly client interface to work with [ntfy.sh](https://docs.ntfy.sh/) endpoints in Delphi. It allows you to publish messages and to subscribe into topic channles.
+Delphi Ntfy it's a friendly client interface to work with [ntfy.sh](https://docs.ntfy.sh/) endpoints in Delphi. It allows you to publish messages and to subscribe into topic channels.
 
-# Instalation
+# Installation
 
 You can add ```src``` folder to your library path or search path. Or you can simply use boss dependency manager to install:
 
@@ -22,7 +22,7 @@ You can add ```src``` folder to your library path or search path. Or you can sim
 
 # Publish a message
 
-You can create a topic to notify subcribers. As the topic's name will become a public url, remember to make it difficult to guess it.
+Create a topic to notify subcribers. As the topic's name will become a public url, remember to make it difficult to guess it.
 
 ``` pascal
 
@@ -43,4 +43,34 @@ begin
 end;
 
 ```
+
+# Subscribe to a topic
+
+You can subscribe to a topic through several ways. For instace, the [Web App](https://ntfy.sh/app), [Android](https://docs.ntfy.sh/subscribe/phone/), [CLI](https://docs.ntfy.sh/subscribe/cli/), or you can use the [VCL Sample](https://github.com/p-samuel/delphi-notify/tree/main/sample/vcl). There is a demonstration in the VCL sample project showing you how to use Delphi Ntfy integrated to your project.
+
+``` pascal
+
+uses
+  Notify;
+
+begin
+
+  Ntfy.Subscribe('your-very-secret-topic');
+
+end;
+
+```
+
+# Supported Editions
+I didn't have time to test, but it should work on every Delphi XE Editions upward. If you would like to contribute to extend this library to other frameworks such as Lazarus or for older versions of Delphi, feel free to do it! It's open source!
+
+|       Version        |  Supported   |       Version        |  Supported   |  
+|----------------------|:------------:|----------------------|:------------:| 
+| Delphi 5             |      ❌     |  Delphi 7             |      ❌     |
+| Delphi XE            |      ✔      |  Delphi XE            |      ✔      |
+| Delphi 10 Seattle    |      ✔      |  Delphi 10.1 Berlin   |      ✔      |
+| Delphi 10.2 Tokyo    |      ✔      |  Delphi 10.3 Rio      |      ✔      |
+| Delphi 10.4 Sydney   |      ✔      |  Delphi 11 Alexandria |      ✔      |
+| Lazarus              |      ❌     |
+
 
