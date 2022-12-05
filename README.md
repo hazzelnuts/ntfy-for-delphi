@@ -22,6 +22,8 @@ You can add ```src``` folder to your library path or search path. Or you can sim
 
 # Publish a message
 
+You can create a topic to notify subcribers. As the topic's name will become a public url, remember to make it difficult to guess it.
+
 ``` pascal
 
 uses
@@ -31,9 +33,9 @@ begin
 
   Ntfy.Notification(
     New.Notification
-      .Topic('notify-delphi-integration-8jh27d')
-      .Title('Disabling Firebase')
-      .MessageContent('With FCM disabled, messages will 
+      .Topic('your-very-secret-topic')
+      .Title('🐶 Parking with Tobby')
+      .MessageContent('Get Tobby today at 16:00hs ') 
   );
 
   Ntfy.Publish;
