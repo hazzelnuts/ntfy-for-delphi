@@ -43,7 +43,7 @@ Never forget to include in which topic are you posting
 ``` pascal
   Ntfy.Notification(
     New.Notification
-      .Priority(TNotifyPriority.HIGH)
+      .Tags(['partying_face', 'warning', 'rotating_light'])
   );
 ```
 
