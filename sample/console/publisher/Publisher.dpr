@@ -32,6 +32,6 @@ begin
   //UseIcons;
   //UseEmail;
 
-  Ntfy.Topic('notify-delphi-integration-8jh27d').Publish;
+  Ntfy.Topic('your-very-secret-topic').Publish;
 
 end.

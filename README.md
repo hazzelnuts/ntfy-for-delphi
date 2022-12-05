@@ -46,7 +46,7 @@ end;
 
 # 💬 Subscribe to a topic
 
-You can subscribe to a topic through several ways. For instace, the [Web App](https://ntfy.sh/app), [Android](https://docs.ntfy.sh/subscribe/phone/), [CLI](https://docs.ntfy.sh/subscribe/cli/), or you can use the [VCL Sample](https://github.com/p-samuel/delphi-notify/tree/main/sample/vcl). There is a demonstration in the VCL samples showing you how to use Delphi Ntfy into your project.
+You can subscribe to a topic through several ways. For instace, the [Web App](https://ntfy.sh/app), [Android](https://docs.ntfy.sh/subscribe/phone/), [CLI](https://docs.ntfy.sh/subscribe/cli/) or you can use the [VCL Sample](https://github.com/p-samuel/delphi-notify/tree/main/sample/vcl). There is a demonstration in the VCL samples showing you how to use Delphi Ntfy into your project.
 
 ``` pascal
 
@@ -75,7 +75,7 @@ It has not yet been tested into some Delphi versions. You can help to find out i
 
 # 🛑 Limitations
 
-Support to notifications that contains ```broadcast``` actions has not yet been implemented. Some advanced specific resources has also not yet been implemented.
+Support to notifications that contains ```broadcast``` actions has not been implemented. Some advanced specific resources has not yet been implemented as well.
 
 |    Action   |  Support |
 |-------------|:--------:|
@@ -85,5 +85,5 @@ Support to notifications that contains ```broadcast``` actions has not yet been 
 
 # 🌱 Consider Contributing
 
-Delphi Ntfy it's an open source project under the MIT license. 
+Delphi Ntfy it's an open source project under the MIT license.
 
