@@ -1,25 +1,25 @@
-unit Example.Basic;
+unit Example.Schedule.Delivery;
 
 interface
 
   ///
-  ///  Publishing a simple message
+  ///  Example scheduling delivery
   ///
 
-procedure UseSimpleMessage;
+procedure UseScheduleDelivery;
 
 implementation
 
 uses
   Notify;
 
-procedure UseSimpleMessage;
+procedure UseScheduleDelivery;
 begin
 
   Ntfy.Notification(
     New.Notification
       .Topic('your-very-secret-topic')
-      .Title('Simple message sent')
+      .Delay('10s')
   );
 
 end;

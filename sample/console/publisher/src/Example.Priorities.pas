@@ -1,25 +1,26 @@
-unit Example.Basic;
+unit Example.Priorities;
 
 interface
 
   ///
-  ///  Publishing a simple message
+  ///  Example using priorities
   ///
 
-procedure UseSimpleMessage;
+procedure UsePriorities;
 
 implementation
 
 uses
   Notify;
 
-procedure UseSimpleMessage;
+
+procedure UsePriorities;
 begin
 
   Ntfy.Notification(
     New.Notification
       .Topic('your-very-secret-topic')
-      .Title('Simple message sent')
+      .Priority(TNotifyPriority.HIGH)
   );
 
 end;

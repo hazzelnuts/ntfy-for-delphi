@@ -26,6 +26,7 @@ type
     function UserName(const AValue: String): INotifyCore;
     function Password(const AValue: String): INotifyCore;
     function BaseURL(const AValue: String): INotifyCore;
+    function Topic(const AValue: String): INotifyCore;
     function DisableFireBase(const AValue: Boolean): INotifyCore;
     function Notification(const ANotification: INotifyNotification): INotifyCore; overload;
   end;
@@ -145,6 +146,12 @@ begin
     .AddHeader('Delay', FNotification.Delay)
     .AddURLSegment(FNotification.Topic)
     .Put;
+end;
+
+function TNotifyCore.Topic(const AValue: String): INotifyCore;
+begin
+  Result := Self;
+  FNotification.Topic(AValue);
 end;
 
 function TNotifyCore.UserName(const AValue: String): INotifyCore;

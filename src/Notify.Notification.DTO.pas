@@ -31,6 +31,8 @@ type
     FTopic: string;
     [JSONName('delay')]
     FDelay: String;
+    [JSONName('email')]
+    FEmail: String;
     [GenericListReflect]
     FActions: TObjectList<TNotifyActionsDTO>;
     [JSONName('actions'), JSONMarshalled(False)]
@@ -50,6 +52,7 @@ type
     property Topic: string read FTopic write FTopic;
     property Actions: TObjectList<TNotifyActionsDTO> read GetActions;
     property Delay: String read FDelay write FDelay;
+    property Email: String read FEmail write FEmail;
   public
     destructor Destroy; override;
   end;

@@ -1,25 +1,25 @@
-unit Example.Basic;
+unit Example.Emojis;
 
 interface
 
   ///
-  ///  Publishing a simple message
+  ///  Example using emojis/tags
   ///
 
-procedure UseSimpleMessage;
+procedure UseTags;
 
 implementation
 
 uses
   Notify;
 
-procedure UseSimpleMessage;
+procedure UseTags;
 begin
 
   Ntfy.Notification(
     New.Notification
       .Topic('your-very-secret-topic')
-      .Title('Simple message sent')
+      .Tags(['partying_face', 'warning', 'rotating_light'])
   );
 
 end;

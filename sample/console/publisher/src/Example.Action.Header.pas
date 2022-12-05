@@ -1,4 +1,4 @@
-﻿unit Action.Header;
+﻿unit Example.Action.Header;
 
 interface
 
@@ -6,12 +6,16 @@ interface
   ///  Example using ation headers
   ///
 
+procedure UseActionHeader;
+
+implementation
+
 uses
-  NotifyDelphi,
+  Notify,
   REST.Json.Types;
 
 type
-  TActionHeader = class(TJsonDTO)
+  THeaders = class(TJsonDTO)
   private
     [JSONName('auth')]
     FAuth: String;
@@ -22,29 +26,26 @@ type
     property Cmd: String read FCmd write FCmd;
   end;
 
-implementation
-
+procedure UseActionHeader;
 var
-  ActionHeaders: TActionHeader;
-
-initialization
-
-  ActionHeaders := TActionHeader.Create;
+  Headers: THeaders;
+begin
+  Headers := THeaders.Create;
   try
-    ActionHeaders.Auth := 'Bearer 982j38sdfhj2181jcznxc81234b9as-i34';
-    ActionHeaders.Cmd := 'OPEN XOAUTH .\crs\main\lib';
+    Headers.Auth := 'Bearer 982j38sdfhj2181jcznxc81234b9as-i34';
+    Headers.Cmd := 'OPEN XOAUTH .\crs\main\lib';
+
     Ntfy.Notification(New.Notification
       .Action(New.Action
         .&Type(TNotifyActionType.HTTP)
         .Url('http://someurl.com')
         .Body('"message":"hello"')
-        .Headers(ActionHeaders))
+        .Headers(Headers))
     );
+
   finally
-    ActionHeaders.Free;
+    Headers.Free;
   end;
-
-finalization
-
+end;
 
 end.

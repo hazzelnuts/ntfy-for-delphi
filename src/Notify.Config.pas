@@ -51,6 +51,7 @@ end;
 constructor TNotifyConfig.Create;
 begin
   FBaseURL := 'https://ntfy.sh';
+  FCache := True;
 end;
 
 function TNotifyConfig.DisableFireBase(const AValue: Boolean): INotifyConfig;

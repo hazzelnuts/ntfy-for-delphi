@@ -105,6 +105,7 @@ begin
   LNotificationDTO.Value.Filename := FFileName;
   LNotificationDTO.Value.Attach := FAttachment;
   LNotificationDTO.Value.Delay := FDelay;
+  LNotificationDTO.Value.Email := FEmail;
 
   for LAction in FActions.Values do
   begin

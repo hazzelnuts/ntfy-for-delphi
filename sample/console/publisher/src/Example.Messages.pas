@@ -1,25 +1,25 @@
-unit Example.Basic;
+unit Example.Messages;
 
 interface
 
   ///
-  ///  Publishing a simple message
+  ///  Attaching a message body
   ///
 
-procedure UseSimpleMessage;
+procedure UseMessage;
 
 implementation
 
 uses
   Notify;
 
-procedure UseSimpleMessage;
+procedure UseMessage;
 begin
 
   Ntfy.Notification(
     New.Notification
       .Topic('your-very-secret-topic')
-      .Title('Simple message sent')
+      .MessageContent('A message body...')
   );
 
 end;
