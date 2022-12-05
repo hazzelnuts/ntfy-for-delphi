@@ -37,9 +37,9 @@ begin
   Ntfy.Notification(
     New.Notification
       .Topic('notify-delphi-integration-8jh27d')
-      .Title('A awesome delphi community forum')
-      .MessageContent('Don''t be alone! There is a vibrant community of delphi developers in Delphi Praxis website. Go check it out!')
-      .FilePath(LFile)
+      .Title('Disabling Firebase')
+      .MessageContent('With FCM disabled, messages will significantly delay to be delivered in Android App')
+//      .FilePath(LFile)
 //      .Attach('https://www.collinsdictionary.com/images/full/mountain_221506423_1000.jpg?version=4.0.288')
 //      .Icon('https://styles.redditmedia.com/t5_32uhe/styles/communityIcon_xnt6chtnr2j21.png')
 //      .Delay('10s')
@@ -53,6 +53,7 @@ begin
 //          .Url('https://en.delphipraxis.net/'))
   );
 
-  Ntfy.Publish;
+  Ntfy.DisableFireBase(True).Publish;
+
 
 end.

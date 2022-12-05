@@ -13,7 +13,11 @@ uses
 type
   INotifyCore = interface
     ['{AEDB3C31-D45F-4469-9427-9CEA5427A4E3}']
-    function Config(const AConfig: INotifyConfig): INotifyCore;
+    function Cache(const AValue: Boolean): INotifyCore;
+    function UserName(const AValue: String): INotifyCore;
+    function Password(const AValue: String): INotifyCore;
+    function BaseURL(const AValue: String): INotifyCore;
+    function DisableFireBase(const AValue: Boolean): INotifyCore;
     function Publish: INotifyCore;
     function Notification(const ANotification: INotifyNotification): INotifyCore; overload;
   end;

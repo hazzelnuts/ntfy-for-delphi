@@ -22,12 +22,12 @@ type
     destructor Destroy; override;
     class function New: INotifyProvider;
   private
+    function Config(const AValue: INotifyConfig): INotifyProvider;
     function AddHeader(const AName: String; AValue: String): INotifyProvider; overload;
     function AddHeader(const AName: String; AValues: array of String): INotifyProvider; overload;
     function AddBody(const AValue: String): INotifyProvider; overload;
     function AddBody(const AValue: TFileStream): INotifyProvider; overload;
     function AddURLSegment(const AValue: String): INotifyProvider; overload;
-    function Config(const AValue: INotifyConfig): INotifyProvider;
     function Get: INotifyProvider;
     function Post: INotifyProvider;
     function Put: INotifyProvider;
