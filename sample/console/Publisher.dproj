@@ -104,9 +104,9 @@
         <DCCReference Include="..\..\src\Notify.Notification.DTO.pas"/>
         <DCCReference Include="..\..\src\Notify.Notification.Factory.pas"/>
         <DCCReference Include="..\..\src\Notify.Notification.pas"/>
-        <DCCReference Include="..\..\src\Notify.Provider.Contract.pas"/>
-        <DCCReference Include="..\..\src\Notify.Provider.Factory.pas"/>
-        <DCCReference Include="..\..\src\Notify.Provider.Indy.pas"/>
+        <DCCReference Include="..\..\src\Notify.Api.Contract.pas"/>
+        <DCCReference Include="..\..\src\Notify.Api.Factory.pas"/>
+        <DCCReference Include="..\..\src\Notify.Api.Indy.pas"/>
         <DCCReference Include="..\..\src\Notify.SmartPointer.pas"/>
         <DCCReference Include="..\..\src\Notify.Types.pas"/>
         <DCCReference Include="..\..\src\Notify.pas"/>

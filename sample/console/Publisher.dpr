@@ -17,9 +17,9 @@ uses
   Notify.Notification.DTO in '..\..\src\Notify.Notification.DTO.pas',
   Notify.Notification.Factory in '..\..\src\Notify.Notification.Factory.pas',
   Notify.Notification in '..\..\src\Notify.Notification.pas',
-  Notify.Provider.Contract in '..\..\src\Notify.Provider.Contract.pas',
-  Notify.Provider.Factory in '..\..\src\Notify.Provider.Factory.pas',
-  Notify.Provider.Indy in '..\..\src\Notify.Provider.Indy.pas',
+  Notify.Api.Contract in '..\..\src\Notify.Api.Contract.pas',
+  Notify.Api.Factory in '..\..\src\Notify.Api.Factory.pas',
+  Notify.Api.Indy in '..\..\src\Notify.Api.Indy.pas',
   Notify.SmartPointer in '..\..\src\Notify.SmartPointer.pas',
   Notify.Types in '..\..\src\Notify.Types.pas',
   Notify in '..\..\src\Notify.pas',
@@ -53,7 +53,7 @@ begin
 //          .Url('https://en.delphipraxis.net/'))
   );
 
-  Ntfy.DisableFireBase(True).Publish;
+  Ntfy.Publish;
 
 
 end.

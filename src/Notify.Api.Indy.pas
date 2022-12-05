@@ -1,4 +1,4 @@
-unit Notify.Provider.Indy;
+unit Notify.Api.Indy;
 
 interface
 
@@ -6,10 +6,10 @@ uses
   System.Classes, IdBaseComponent, IdComponent, IdIOHandler,
   IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL, IdTCPConnection,
   IdTCPClient, IdHTTP, IdStream, IdGlobal,
-  Notify.Provider.Contract, Notify.Config.Contract;
+  Notify.Api.Contract, Notify.Config.Contract;
 
 type
-  TNotityProviderIndy = class(TInterfacedObject, INotifyProvider)
+  TNotityApiIndy = class(TInterfacedObject, INotifyApi)
   strict private
     FIOHandlerSSL: TIdSSLIOHandlerSocketOpenSSL;
     FIdHTTP: TIdHTTP;
@@ -20,17 +20,17 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    class function New: INotifyProvider;
+    class function New: INotifyApi;
   private
-    function Config(const AValue: INotifyConfig): INotifyProvider;
-    function AddHeader(const AName: String; AValue: String): INotifyProvider; overload;
-    function AddHeader(const AName: String; AValues: array of String): INotifyProvider; overload;
-    function AddBody(const AValue: String): INotifyProvider; overload;
-    function AddBody(const AValue: TFileStream): INotifyProvider; overload;
-    function AddURLSegment(const AValue: String): INotifyProvider; overload;
-    function Get: INotifyProvider;
-    function Post: INotifyProvider;
-    function Put: INotifyProvider;
+    function Config(const AValue: INotifyConfig): INotifyApi;
+    function AddHeader(const AName: String; AValue: String): INotifyApi; overload;
+    function AddHeader(const AName: String; AValues: array of String): INotifyApi; overload;
+    function AddBody(const AValue: String): INotifyApi; overload;
+    function AddBody(const AValue: TFileStream): INotifyApi; overload;
+    function AddURLSegment(const AValue: String): INotifyApi; overload;
+    function Get: INotifyApi;
+    function Post: INotifyApi;
+    function Put: INotifyApi;
   end;
 
 implementation
@@ -39,9 +39,9 @@ uses
   Notify.SmartPointer,
   System.SysUtils;
 
-{ TNotityProviderIndy }
+{ TNotityApiIndy }
 
-function TNotityProviderIndy.AddBody(const AValue: String): INotifyProvider;
+function TNotityApiIndy.AddBody(const AValue: String): INotifyApi;
 var
   LBodyStream: TSmartPointer<TStringStream>;
 begin
@@ -50,13 +50,13 @@ begin
   FBodyStream.CopyFrom(LBodyStream.Value, LBodyStream.Value.Size);
 end;
 
-function TNotityProviderIndy.AddBody(const AValue: TFileStream): INotifyProvider;
+function TNotityApiIndy.AddBody(const AValue: TFileStream): INotifyApi;
 begin
   Result := Self;
   FBodyStream.CopyFrom(AValue, AValue.Size);
 end;
 
-function TNotityProviderIndy.AddHeader(const AName: String; AValues: array of String): INotifyProvider;
+function TNotityApiIndy.AddHeader(const AName: String; AValues: array of String): INotifyApi;
 var
   LString, LValue: String;
 begin
@@ -69,25 +69,25 @@ begin
   FIdHTTP.Request.CustomHeaders.AddValue(AName, LValue);
 end;
 
-function TNotityProviderIndy.AddHeader(const AName: String; AValue: String): INotifyProvider;
+function TNotityApiIndy.AddHeader(const AName: String; AValue: String): INotifyApi;
 begin
   Result := Self;
   FIdHTTP.Request.CustomHeaders.AddValue(AName, AValue);
 end;
 
-function TNotityProviderIndy.AddURLSegment(const AValue: String): INotifyProvider;
+function TNotityApiIndy.AddURLSegment(const AValue: String): INotifyApi;
 begin
   Result := Self;
   FNotifyConfig.BaseURL(Format('%s/%s', [FNotifyConfig.BaseURL, AValue]));
 end;
 
-function TNotityProviderIndy.Config(const AValue: INotifyConfig): INotifyProvider;
+function TNotityApiIndy.Config(const AValue: INotifyConfig): INotifyApi;
 begin
   Result := Self;
   FNotifyConfig := AValue;
 end;
 
-constructor TNotityProviderIndy.Create;
+constructor TNotityApiIndy.Create;
 begin
   FIdHTTP := TIdHTTP.Create(nil);
   FIOHandlerSSL := TIdSSLIOHandlerSocketOpenSSL.Create;
@@ -103,7 +103,7 @@ begin
 
 end;
 
-destructor TNotityProviderIndy.Destroy;
+destructor TNotityApiIndy.Destroy;
 begin
   FIdHTTP.Disconnect;
   FIdHTTP.Free;
@@ -113,29 +113,29 @@ begin
   inherited;
 end;
 
-function TNotityProviderIndy.Get: INotifyProvider;
+function TNotityApiIndy.Get: INotifyApi;
 begin
   Result := Self;
   FIdHTTP.Get('');
 end;
 
-class function TNotityProviderIndy.New: INotifyProvider;
+class function TNotityApiIndy.New: INotifyApi;
 begin
   Result := Self.Create;
 end;
 
-procedure TNotityProviderIndy.OnWriteEvent(const ABuffer: TIdBytes; AOffset, ACount: Longint; var VResult: Longint);
+procedure TNotityApiIndy.OnWriteEvent(const ABuffer: TIdBytes; AOffset, ACount: Longint; var VResult: Longint);
 begin
   //Will be used when subscribing....
 end;
 
-function TNotityProviderIndy.Post: INotifyProvider;
+function TNotityApiIndy.Post: INotifyApi;
 begin
   Result := Self;
   FIdHTTP.Post(FNotifyConfig.BaseURL, FBodyStream);
 end;
 
-function TNotityProviderIndy.Put: INotifyProvider;
+function TNotityApiIndy.Put: INotifyApi;
 begin
   Result := Self;
   FIdHTTP.Put(FNotifyConfig.BaseURL, FBodyStream);

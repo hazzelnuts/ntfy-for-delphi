@@ -5,14 +5,14 @@ interface
 uses
   Notify.Types,
   Notify.Core.Contract,
-  Notify.Provider.Contract,
+  Notify.Api.Contract,
   Notify.Config.Contract,
   Notify.Notification.Contract;
 
 type
   TNotifyCore = class sealed(TInterfacedObject, INotifyCore)
   strict private
-    FProvider: INotifyProvider;
+    FApi: INotifyApi;
     FNotification: INotifyNotification;
     FConfig: INotifyConfig;
   public
@@ -57,7 +57,7 @@ end;
 
 constructor TNotifyCore.Create;
 begin
-  FProvider := TNotifyCoreFacade.New.Provider;
+  FApi := TNotifyCoreFacade.New.Api;
   FNotification := TNotifyCoreFacade.New.Notification;
   FConfig := TNotifyCoreFacade.New.Config;
 end;
@@ -99,20 +99,20 @@ var
 begin
   Result := Self;
 
-  FProvider.Config(FConfig);
+  FApi.Config(FConfig);
 
   if (FConfig.Cache = False) then
-    FProvider.AddHeader('Cache', 'no');
+    FApi.AddHeader('Cache', 'no');
 
   if (FConfig.DisableFireBase) then
-    FProvider.AddHeader('Firebase', 'no');
+    FApi.AddHeader('Firebase', 'no');
 
   if (FConfig.Password <> '') and (FConfig.UserName <> '') then
   begin
     LUserNamePassword := Format('%s:%s', [FConfig.UserName, FConfig.Password]);
     LUserNamePassword := TNetEncoding.Base64.Encode(LUserNamePassword);
     LBasicAuth := Format('Basic %s', [LUserNamePassword]);
-    FProvider.AddHeader('Authorization', LBasicAuth);
+    FApi.AddHeader('Authorization', LBasicAuth);
   end;
 
   if FNotification.FileName <> '' then
@@ -122,9 +122,9 @@ begin
   end;
 
   if FNotification.Icon <> '' then
-    FProvider.AddHeader('Icon', FNotification.Icon);
+    FApi.AddHeader('Icon', FNotification.Icon);
 
-  FProvider
+  FApi
     .AddBody(FNotification.AsJSONString)
     .Post;
 
@@ -133,7 +133,7 @@ end;
 function TNotifyCore.SendFile: INotifyCore;
 begin
   Result := Self;
-  FProvider
+  FApi
     .AddBody(TFileStream.Create(FNotification.FilePath, fmOpenRead))
     .AddHeader('Filename', FNotification.FileName)
     .AddHeader('Title', FNotification.Title)

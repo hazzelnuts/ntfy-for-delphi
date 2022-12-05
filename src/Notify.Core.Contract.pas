@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils,
   Notify.Types,
-  Notify.Provider.Contract,
+  Notify.Api.Contract,
   Notify.Notification.Contract,
   Notify.Config.Contract,
   Notify.Action.Contract;
@@ -29,7 +29,7 @@ type
 
   INotifyCoreFacade = interface
     ['{47D19A0C-9C4C-4389-B2CD-CE4515BB4F35}']
-    function Provider: INotifyProvider;
+    function Api: INotifyApi;
     function Notification: INotifyNotification;
     function Notify: INotifyCore;
     function Action: INotifyAction;

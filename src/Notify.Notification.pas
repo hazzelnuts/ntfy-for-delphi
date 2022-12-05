@@ -5,7 +5,7 @@ interface
 uses
   Notify.Types,
   Notify.Action.Contract,
-  Notify.Provider.Contract,
+  Notify.Api.Contract,
   Notify.Notification.Contract,
   System.Generics.Collections;
 
