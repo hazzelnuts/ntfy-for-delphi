@@ -67,9 +67,21 @@ I didn't have time to test, but it should work on every Delphi XE Editions upwar
 |       Version        |  Supported   |       Version        |  Supported   |  
 |----------------------|:------------:|----------------------|:------------:| 
 | Delphi 5             |      ❌     |  Delphi 7             |      ❌     |
-| Delphi XE            |      ✔      |  Delphi 11 Alexandria |      ✔      |
-| Delphi 10 Seattle    |      ✔      |  Delphi 10.1 Berlin   |      ✔      |
-| Delphi 10.2 Tokyo    |      ✔      |  Delphi 10.3 Rio      |      ✔      |
+| Delphi XE            |      ❓      |  Delphi 11 Alexandria |      ❓      |
+| Delphi 10 Seattle    |      ❓      |  Delphi 10.1 Berlin   |      ❓      |
+| Delphi 10.2 Tokyo    |      ❓      |  Delphi 10.3 Rio      |      ✔      |
 | Delphi 10.4 Sydney   |      ✔      | 
+
+As you can see, I have not tested into some Delphi versions. You can help me to find out and inform by creating an PR to let me know. In the PR, you should only to change this README table informing a ✔ or a ❌ to let others to know whether the version is supported or not.
+
+# Limitations
+
+Support to notifications that contains ```broadcast``` actions has not yet been implemented. Some advanced specific resources has also not yet been implemented.
+
+|    Action   |  Support |
+|-------------|:--------:|
+| view        | ✔        |
+| broadcast   | ❌       |
+| http        | ✔        |
 
 
