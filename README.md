@@ -75,7 +75,7 @@ It has not yet been tested into some Delphi versions. You can help to find out i
 
 # 🛑 Limitations
 
-Support to notifications that contains ```broadcast``` actions has not been implemented. Some advanced specific resources has likewise not been implemented as well.
+Support to notifications that contains ```broadcast``` actions has not been implemented. Likewise, some advanced specific resources has not yet been implemented as well.
 
 |    Action   |  Support |
 |-------------|:--------:|
