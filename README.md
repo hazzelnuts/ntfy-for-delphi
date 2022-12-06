@@ -10,7 +10,7 @@ Visit [docs.ntfy.sh](https://docs.ntfy.sh/) to get started with documentation. N
 
 # ⚡️ Delphi Ntfy 
 
-Delphi Ntfy it's a friendly library to work with [ntfy.sh](https://docs.ntfy.sh/) endpoints in Delphi. It allows you to publish messages and to subscribe to topic channels to receive those same messages. It's pretty similar to a websocket used to push instant notifications.
+Delphi Ntfy it's a friendly library to work with [ntfy.sh](https://docs.ntfy.sh/) endpoints in Delphi. It allows you to publish messages and subscribe to topic channels to receive those same messages. It's pretty similar to a websocket used to push instant notifications.
 
 # ⚙️ Installation
 
