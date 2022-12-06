@@ -14,7 +14,7 @@ Delphi Ntfy it's a friendly library to work with [ntfy.sh](https://docs.ntfy.sh/
 
 # ⚙️ Installation
 
-You can add ```src``` folder to your library path or search path. Or you can simply use boss dependency manager to install:
+You can add ```src``` folder to your library path or search path. Or you can simply use boss dependency manager to install
 
 ``` cmd
   boss install github.com/p-samuel/delphi-notify
