@@ -12,11 +12,13 @@ type
     function Get: INotifyApi;
     function Post: INotifyApi;
     function Put: INotifyApi;
+    function ClearHeaders: INotifyApi;
     function AddHeader(const PName: String; AValue: String): INotifyApi; overload;
     function AddHeader(const AName: String; AValues: array of String): INotifyApi; overload;
     function AddBody(const AValue: String): INotifyApi; overload;
     function AddBody(const AValue: TFileStream): INotifyApi; overload;
-    function AddURLSegment(const AValue: String): INotifyApi; overload;
+    function AddEndPoint(const AValue: String): INotifyApi; overload;
+    function ClearBody: INotifyApi;
     function Config(const AValue: INotifyConfig): INotifyApi;
   end;
 

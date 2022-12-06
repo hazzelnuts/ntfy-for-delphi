@@ -40,6 +40,7 @@ uses
   System.NetEncoding,
   System.SysUtils,
   Notify.Facade,
+  Notify.SmartPointer,
   System.Classes;
 
 { TNotifyCore }
@@ -100,7 +101,7 @@ var
 begin
   Result := Self;
 
-  FApi.Config(FConfig);
+  FApi.Config(FConfig).ClearHeaders.ClearBody;
 
   if (FConfig.Cache = False) then
     FApi.AddHeader('Cache', 'no');
@@ -132,10 +133,15 @@ begin
 end;
 
 function TNotifyCore.SendFile: INotifyCore;
+var
+  LFileStream: TSmartPointer<TFileStream>;
 begin
   Result := Self;
+
+  LFileStream := TFileStream.Create(FNotification.FilePath, fmOpenRead);
+
   FApi
-    .AddBody(TFileStream.Create(FNotification.FilePath, fmOpenRead))
+    .AddBody(LFileStream.Value)
     .AddHeader('Filename', FNotification.FileName)
     .AddHeader('Title', FNotification.Title)
     .AddHeader('Message', FNotification.MessageContent)
@@ -144,8 +150,10 @@ begin
     .AddHeader('Icon', FNotification.Icon)
     .AddHeader('Email', FNotification.Email)
     .AddHeader('Delay', FNotification.Delay)
-    .AddURLSegment(FNotification.Topic)
+    .AddHeader('Topic', FNotification.Topic)
+    .AddEndPoint(FNotification.Topic)
     .Put;
+
 end;
 
 function TNotifyCore.Topic(const AValue: String): INotifyCore;

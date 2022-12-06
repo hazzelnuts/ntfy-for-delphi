@@ -16,6 +16,7 @@ type
     FIdEventStream: TIdEventStream;
     FBodyStream: TMemoryStream;
     FNotifyConfig: INotifyConfig;
+    FEndPoint: String;
     procedure OnWriteEvent(const ABuffer: TIdBytes; AOffset, ACount: Longint; var VResult: Longint);
   public
     constructor Create;
@@ -23,11 +24,13 @@ type
     class function New: INotifyApi;
   private
     function Config(const AValue: INotifyConfig): INotifyApi;
+    function ClearHeaders: INotifyApi;
+    function ClearBody: INotifyApi;
     function AddHeader(const AName: String; AValue: String): INotifyApi; overload;
     function AddHeader(const AName: String; AValues: array of String): INotifyApi; overload;
     function AddBody(const AValue: String): INotifyApi; overload;
     function AddBody(const AValue: TFileStream): INotifyApi; overload;
-    function AddURLSegment(const AValue: String): INotifyApi; overload;
+    function AddEndPoint(const AValue: String): INotifyApi; overload;
     function Get: INotifyApi;
     function Post: INotifyApi;
     function Put: INotifyApi;
@@ -56,6 +59,12 @@ begin
   FBodyStream.CopyFrom(AValue, AValue.Size);
 end;
 
+function TNotityApiIndy.AddEndPoint(const AValue: String): INotifyApi;
+begin
+  Result := Self;
+  FEndPoint := AValue;
+end;
+
 function TNotityApiIndy.AddHeader(const AName: String; AValues: array of String): INotifyApi;
 var
   LString, LValue: String;
@@ -75,10 +84,16 @@ begin
   FIdHTTP.Request.CustomHeaders.AddValue(AName, AValue);
 end;
 
-function TNotityApiIndy.AddURLSegment(const AValue: String): INotifyApi;
+function TNotityApiIndy.ClearBody: INotifyApi;
 begin
   Result := Self;
-  FNotifyConfig.BaseURL(Format('%s/%s', [FNotifyConfig.BaseURL, AValue]));
+  FBodyStream.Clear;
+end;
+
+function TNotityApiIndy.ClearHeaders: INotifyApi;
+begin
+  Result := Self;
+  FIdHTTP.Request.CustomHeaders.Clear;
 end;
 
 function TNotityApiIndy.Config(const AValue: INotifyConfig): INotifyApi;
@@ -136,9 +151,12 @@ begin
 end;
 
 function TNotityApiIndy.Put: INotifyApi;
+var
+  LUrl: String;
 begin
   Result := Self;
-  FIdHTTP.Put(FNotifyConfig.BaseURL, FBodyStream);
+  LUrl := Format('%s/%s', [FNotifyConfig.BaseURL, FEndPoint]);
+  FIdHTTP.Put(LUrl, FBodyStream);
 end;
 
 end.
