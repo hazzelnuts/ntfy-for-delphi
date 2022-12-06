@@ -3,7 +3,7 @@
 </div>
 
 ## ⚠ Observations
-Never forget to include in which topic are you posting
+Never forget to include in which topic are you posting. You must also have SSL libraries in order to this project to work correctly.
 
 ``` pascal
   Ntfy.Notification(
