@@ -33,13 +33,6 @@ object ViewMain: TViewMain
     Padding.Right = 3
     Padding.Bottom = 3
     TabOrder = 0
-    object lblTopic: TLabel
-      Left = 17
-      Top = 22
-      Width = 25
-      Height = 13
-      Caption = 'Topic'
-    end
     object lbPriority: TLabel
       Left = 17
       Top = 154
@@ -54,27 +47,12 @@ object ViewMain: TViewMain
       Height = 13
       Caption = 'Tags'
     end
-    object lbeMessage: TLabeledEdit
+    object lblTopic: TLabel
       Left = 17
-      Top = 128
-      Width = 278
-      Height = 21
-      EditLabel.Width = 42
-      EditLabel.Height = 13
-      EditLabel.Caption = 'Message'
-      TabOrder = 0
-      Text = 'Cannot forget the gift!'
-    end
-    object lbeTitle: TLabeledEdit
-      Left = 17
-      Top = 83
-      Width = 169
-      Height = 21
-      EditLabel.Width = 20
-      EditLabel.Height = 13
-      EditLabel.Caption = 'Title'
-      TabOrder = 1
-      Text = #55357#56518' My wife'#39's gift'
+      Top = 22
+      Width = 25
+      Height = 13
+      Caption = 'Topic'
     end
     object CbPriority: TComboBox
       Left = 17
@@ -83,7 +61,7 @@ object ViewMain: TViewMain
       Height = 21
       Style = csDropDownList
       ItemIndex = 0
-      TabOrder = 2
+      TabOrder = 3
       Text = 'Min'
       Items.Strings = (
         'Min'
@@ -105,7 +83,7 @@ object ViewMain: TViewMain
         'laughing'
         'slightly_smiling_face')
       ParentColor = True
-      TabOrder = 3
+      TabOrder = 9
     end
     object lbeFileAttachment: TLabeledEdit
       Left = 17
@@ -115,7 +93,7 @@ object ViewMain: TViewMain
       EditLabel.Width = 16
       EditLabel.Height = 13
       EditLabel.Caption = 'File'
-      TabOrder = 4
+      TabOrder = 6
       TextHint = 'Attach file...'
     end
     object btnFileAttachment: TButton
@@ -124,7 +102,7 @@ object ViewMain: TViewMain
       Width = 26
       Height = 25
       Caption = '...'
-      TabOrder = 5
+      TabOrder = 7
       OnClick = btnFileAttachmentClick
     end
     object lbeURLAttachment: TLabeledEdit
@@ -135,7 +113,7 @@ object ViewMain: TViewMain
       EditLabel.Width = 78
       EditLabel.Height = 13
       EditLabel.Caption = 'URL Attachment'
-      TabOrder = 6
+      TabOrder = 8
       TextHint = 'Url to an attachment...'
     end
     object lbeIconAttachment: TLabeledEdit
@@ -146,19 +124,8 @@ object ViewMain: TViewMain
       EditLabel.Width = 80
       EditLabel.Height = 13
       EditLabel.Caption = 'Icon Attachment'
-      TabOrder = 7
+      TabOrder = 5
       TextHint = 'Attach icon url...'
-    end
-    object CbTopic: TComboBox
-      Left = 17
-      Top = 41
-      Width = 278
-      Height = 21
-      ItemIndex = 0
-      TabOrder = 8
-      Text = 'notify-delphi-integration-8jh27d'
-      Items.Strings = (
-        'notify-delphi-integration-8jh27d')
     end
     object lbeEmail: TLabeledEdit
       Left = 127
@@ -168,13 +135,46 @@ object ViewMain: TViewMain
       EditLabel.Width = 24
       EditLabel.Height = 13
       EditLabel.Caption = 'Email'
-      TabOrder = 9
+      TabOrder = 4
       TextHint = 'someone@mail.com'
+    end
+    object lbeTitle: TLabeledEdit
+      Left = 17
+      Top = 83
+      Width = 169
+      Height = 21
+      EditLabel.Width = 20
+      EditLabel.Height = 13
+      EditLabel.Caption = 'Title'
+      TabOrder = 1
+      Text = #55357#56518' My wife'#39's gift'
+    end
+    object CbTopic: TComboBox
+      Left = 17
+      Top = 41
+      Width = 278
+      Height = 21
+      ItemIndex = 0
+      TabOrder = 0
+      Text = 'notify-delphi-integration-8jh27d'
+      Items.Strings = (
+        'notify-delphi-integration-8jh27d')
+    end
+    object lbeMessage: TLabeledEdit
+      Left = 17
+      Top = 128
+      Width = 278
+      Height = 21
+      EditLabel.Width = 42
+      EditLabel.Height = 13
+      EditLabel.Caption = 'Message'
+      TabOrder = 2
+      Text = 'Cannot forget the gift!'
     end
   end
   object gbActions: TGroupBox
     Left = 308
-    Top = 46
+    Top = 34
     Width = 291
     Height = 300
     Caption = 'Actions'
@@ -220,7 +220,7 @@ object ViewMain: TViewMain
       Width = 55
       Height = 17
       Caption = 'Clear'
-      TabOrder = 1
+      TabOrder = 2
     end
     object CbActionMethod: TComboBox
       Left = 124
@@ -229,7 +229,7 @@ object ViewMain: TViewMain
       Height = 21
       Style = csDropDownList
       ItemIndex = 1
-      TabOrder = 2
+      TabOrder = 1
       Text = 'POST'
       Items.Strings = (
         'GET'
@@ -253,7 +253,7 @@ object ViewMain: TViewMain
       Align = alBottom
       BorderStyle = bsNone
       DataSource = DsTableAction
-      TabOrder = 4
+      TabOrder = 7
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -11
@@ -288,7 +288,7 @@ object ViewMain: TViewMain
       Width = 75
       Height = 25
       Caption = 'Add'
-      TabOrder = 5
+      TabOrder = 4
     end
     object btnDeleteAction: TButton
       Left = 95
@@ -296,7 +296,7 @@ object ViewMain: TViewMain
       Width = 75
       Height = 25
       Caption = 'Delete'
-      TabOrder = 6
+      TabOrder = 5
     end
     object btnRemoveAction: TButton
       Left = 176
@@ -304,7 +304,7 @@ object ViewMain: TViewMain
       Width = 75
       Height = 25
       Caption = 'Remove'
-      TabOrder = 7
+      TabOrder = 6
     end
   end
   object btnPublish: TButton

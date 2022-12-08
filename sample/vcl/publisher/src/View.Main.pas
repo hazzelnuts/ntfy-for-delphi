@@ -13,9 +13,6 @@ uses
 type
   TViewMain = class(TForm)
     gpInfo: TGroupBox;
-    lblTopic: TLabel;
-    lbeMessage: TLabeledEdit;
-    lbeTitle: TLabeledEdit;
     gbActions: TGroupBox;
     CbPriority: TComboBox;
     lbPriority: TLabel;
@@ -34,7 +31,6 @@ type
     MemActionBody: TMemo;
     lblActionBody: TLabel;
     btnPublish: TButton;
-    CbTopic: TComboBox;
     DBGrid1: TDBGrid;
     btnAddAction: TButton;
     btnDeleteAction: TButton;
@@ -46,18 +42,26 @@ type
     TableActionsCLEAR: TBooleanField;
     TableActionsBODY: TMemoField;
     lbeEmail: TLabeledEdit;
+    lblTopic: TLabel;
+    lbeTitle: TLabeledEdit;
+    CbTopic: TComboBox;
+    lbeMessage: TLabeledEdit;
     procedure FormCreate(Sender: TObject);
     procedure btnFileAttachmentClick(Sender: TObject);
     published
       procedure btnPublishClick(Sender: TObject);
     private
       FNotification: INotifyNotification;
+      procedure SendNotification;
   end;
 
 var
   ViewMain: TViewMain;
 
 implementation
+
+uses
+  System.Threading;
 
 {$R *.dfm}
 
@@ -72,9 +76,28 @@ end;
 
 procedure TViewMain.btnPublishClick(Sender: TObject);
 var
+  LTask: ITask;
+begin
+  LTask := TTask.Create(procedure begin
+    btnPublish.Enabled := False;
+    SendNotification;
+    TThread.Queue(nil, procedure begin
+      btnPublish.Enabled := True;
+    end)
+  end);
+
+  LTask.Start;
+end;
+
+procedure TViewMain.FormCreate(Sender: TObject);
+begin
+  FNotification := New.Notification;
+end;
+
+procedure TViewMain.SendNotification;
+var
   LTags: TArray<string>;
 begin
-
   FNotification.Topic(CbTopic.Text);
   FNotification.Title(lbeTitle.Text);
   FNotification.MessageContent(lbeMessage.Text);
@@ -83,14 +106,7 @@ begin
   FNotification.FilePath(lbeFileAttachment.Text);
   FNotification.Attach(lbeURLAttachment.Text);
   FNotification.Email(lbeEmail.Text);
-
   Ntfy.Notification(FNotification);
   Ntfy.Publish;
 end;
-
-procedure TViewMain.FormCreate(Sender: TObject);
-begin
-  FNotification := New.Notification;
-end;
-
 end.
