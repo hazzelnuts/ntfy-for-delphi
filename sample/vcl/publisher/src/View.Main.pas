@@ -1,4 +1,4 @@
-unit View.Main;
+﻿unit View.Main;
 
 interface
 
@@ -46,8 +46,17 @@ type
     lbeTitle: TLabeledEdit;
     CbTopic: TComboBox;
     lbeMessage: TLabeledEdit;
+    lbeActionLabel: TLabeledEdit;
+    lbeActionURL: TLabeledEdit;
+    TableActionsLABEL: TStringField;
+    TableActionsURL: TStringField;
+    Image1: TImage;
     procedure FormCreate(Sender: TObject);
     procedure btnFileAttachmentClick(Sender: TObject);
+    procedure CbActionTypeChange(Sender: TObject);
+    procedure btnRemoveActionClick(Sender: TObject);
+    procedure btnAddActionClick(Sender: TObject);
+    procedure btnDeleteActionClick(Sender: TObject);
     published
       procedure btnPublishClick(Sender: TObject);
     private
@@ -65,6 +74,30 @@ uses
 
 {$R *.dfm}
 
+procedure TViewMain.btnAddActionClick(Sender: TObject);
+begin
+
+  if TableActions.RecordCount >= 3 then
+    Exit;
+
+  TableActions.Open;
+
+  TableActions.AppendRecord([
+    Ord(TNotifyActionType(CbActionType.ItemIndex)),
+    CbActionMethod.Text,
+    CkActionClear.Checked,
+    MemActionBody.Lines,
+    lbeActionLabel.Text,
+    lbeActionURL.Text
+  ])
+end;
+
+procedure TViewMain.btnDeleteActionClick(Sender: TObject);
+begin
+  if not TableActions.IsEmpty then
+    TableActions.Delete;
+end;
+
 procedure TViewMain.btnFileAttachmentClick(Sender: TObject);
 begin
   FileDialog.InitialDir := ExtractFileDir(Application.ExeName);
@@ -78,15 +111,41 @@ procedure TViewMain.btnPublishClick(Sender: TObject);
 var
   LTask: ITask;
 begin
+
+  if lbeTitle.Text = '' then
+    Exit;
+
   LTask := TTask.Create(procedure begin
-    btnPublish.Enabled := False;
-    SendNotification;
-    TThread.Queue(nil, procedure begin
-      btnPublish.Enabled := True;
-    end)
+    try
+      btnPublish.Enabled := False;
+      btnPublish.Caption := '⌛ Notify';
+      SendNotification;
+    finally
+      TThread.Queue(nil, procedure begin
+        btnPublish.Caption := '✔ Notify';
+        btnPublish.Enabled := True;
+      end)
+    end;
   end);
 
   LTask.Start;
+end;
+
+procedure TViewMain.btnRemoveActionClick(Sender: TObject);
+begin
+  TableActions.EmptyDataSet;
+end;
+
+procedure TViewMain.CbActionTypeChange(Sender: TObject);
+begin
+
+  if CbActionType.Text = 'view' then
+    CbActionMethod.ItemIndex := 1;
+
+  CbActionMethod.Enabled := (CbActionType.Text <> 'view');
+  MemActionBody.Enabled := (CbActionType.Text <> 'view');
+  lblActionBody.Enabled := (CbActionType.Text <> 'view');
+
 end;
 
 procedure TViewMain.FormCreate(Sender: TObject);
@@ -107,6 +166,24 @@ begin
   FNotification.Attach(lbeURLAttachment.Text);
   FNotification.Email(lbeEmail.Text);
   Ntfy.Notification(FNotification);
+
+  if not TableActions.IsEmpty then
+  begin
+    TableActions.First;
+    while not TableActions.Eof do
+    begin
+      FNotification.Action(New.Action
+        .&Label(TableActionsLABEL.AsString)
+        .&Url(TableActionsURL.AsString)
+        .Method(TableActionsMETHOD.AsString)
+        .Clear(TableActionsCLEAR.AsBoolean)
+        .&Type(TNotifyActionType(Ord(TableActionsTYPE.AsInteger)))
+        .Body(TableActionsBODY.GetAsString)
+      );
+      TableActions.Next;
+    end;
+  end;
+
   Ntfy.Publish;
 end;
 end.

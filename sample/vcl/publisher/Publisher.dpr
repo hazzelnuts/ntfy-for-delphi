@@ -24,13 +24,16 @@ uses
   Notify.Notification in '..\..\..\src\Notify.Notification.pas',
   Notify in '..\..\..\src\Notify.pas',
   Notify.SmartPointer in '..\..\..\src\Notify.SmartPointer.pas',
-  Notify.Types in '..\..\..\src\Notify.Types.pas';
+  Notify.Types in '..\..\..\src\Notify.Types.pas',
+  Vcl.Themes,
+  Vcl.Styles;
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
+  TStyleManager.TrySetStyle('Glossy');
   Application.CreateForm(TViewMain, ViewMain);
   Application.Run;
 end.
