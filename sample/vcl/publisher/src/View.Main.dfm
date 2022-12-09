@@ -61,6 +61,7 @@ object ViewMain: TViewMain
       Top = 266
       Width = 349
       Height = 110
+      ParentShowHint = False
       Picture.Data = {
         0954506E67496D61676589504E470D0A1A0A0000000D49484452000001F40000
         00B70806000000E46DACFC00000184694343504943432070726F66696C650000
@@ -1094,6 +1095,7 @@ object ViewMain: TViewMain
         516A00157445511445A90154D015455114A506504157144551941A40055D5114
         45516A80FF07403740B4A55DE3B00000000049454E44AE426082}
       Proportional = True
+      ShowHint = False
     end
     object CbPriority: TComboBox
       Left = 12
@@ -1111,7 +1113,7 @@ object ViewMain: TViewMain
         'High'
         'Maximum')
     end
-    object ckTags: TCheckListBox
+    object CkTags: TCheckListBox
       Left = 296
       Top = 273
       Width = 152
@@ -1408,8 +1410,8 @@ object ViewMain: TViewMain
     OnClick = btnPublishClick
   end
   object FileDialog: TOpenDialog
-    Left = 834
-    Top = 63
+    Left = 226
+    Top = 287
   end
   object TableActions: TFDMemTable
     FetchOptions.AssignedValues = [evMode]
@@ -1419,8 +1421,8 @@ object ViewMain: TViewMain
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 824
-    Top = 16
+    Left = 376
+    Top = 200
     object TableActionsTYPE: TIntegerField
       FieldName = 'TYPE'
     end
@@ -1446,7 +1448,7 @@ object ViewMain: TViewMain
   end
   object DsTableAction: TDataSource
     DataSet = TableActions
-    Left = 784
-    Top = 24
+    Left = 328
+    Top = 200
   end
 end

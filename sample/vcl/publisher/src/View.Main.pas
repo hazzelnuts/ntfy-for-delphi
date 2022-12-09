@@ -16,7 +16,7 @@ type
     gbActions: TGroupBox;
     CbPriority: TComboBox;
     lbPriority: TLabel;
-    ckTags: TCheckListBox;
+    CkTags: TCheckListBox;
     Label1: TLabel;
     lbeFileAttachment: TLabeledEdit;
     btnFileAttachment: TButton;
@@ -165,7 +165,7 @@ begin
   FNotification.FilePath(lbeFileAttachment.Text);
   FNotification.Attach(lbeURLAttachment.Text);
   FNotification.Email(lbeEmail.Text);
-  Ntfy.Notification(FNotification);
+  FNotification.Tags(CkTags.Items.ToStringArray);
 
   if not TableActions.IsEmpty then
   begin
@@ -184,6 +184,8 @@ begin
     end;
   end;
 
-  Ntfy.Publish;
+  Ntfy.Topic(CbTopic.Text);
+  Ntfy.Notification(FNotification).Publish;
+
 end;
 end.

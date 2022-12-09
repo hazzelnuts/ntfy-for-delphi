@@ -7,7 +7,7 @@ uses
   Notify.Action.Contract;
 
 type
-  INotifyTags = array of String;
+  INotifyTags = TArray<String>;
 
   INotifyNotification = interface
     ['{BE2E83B7-C39E-4985-93F9-4468976B6AC5}']
