@@ -31,6 +31,7 @@ type
     function AddBody(const AValue: String): INotifyApi; overload;
     function AddBody(const AValue: TFileStream): INotifyApi; overload;
     function AddEndPoint(const AValue: String): INotifyApi; overload;
+    function Disconnect: INotifyApi;
     function Get: INotifyApi;
     function Post: INotifyApi;
     function Put: INotifyApi;
@@ -111,16 +112,14 @@ begin
 
   FIOHandlerSSL.SSLOptions.Method := sslvTLSv1_2;
   FIdHTTP.IOHandler := FIOHandlerSSL;
-  FIdHTTP.Request.Accept := 'text/event-stream';
-  FIdHTTP.Request.CacheControl := 'no-store';
-  FIdHTTP.HTTPOptions := [hoNoReadMultipartMIME, hoNoReadChunked];
+  //FIdHTTP.Request.Accept := 'text/event-stream';
+  //FIdHTTP.Request.CacheControl := 'no-store';
+  //FIdHTTP.HTTPOptions := [hoNoReadMultipartMIME, hoNoReadChunked];
   FIdEventStream.OnWrite := OnWriteEvent;
-
 end;
 
 destructor TNotityApiIndy.Destroy;
 begin
-  FIdHTTP.Disconnect;
   FIdHTTP.Free;
   FIOHandlerSSL.Free;
   FIdEventStream.Free;
@@ -128,10 +127,18 @@ begin
   inherited;
 end;
 
-function TNotityApiIndy.Get: INotifyApi;
+function TNotityApiIndy.Disconnect: INotifyApi;
 begin
   Result := Self;
-  FIdHTTP.Get('');
+end;
+
+function TNotityApiIndy.Get: INotifyApi;
+var
+  LUrl: String;
+begin
+  Result := Self;
+  LUrl := Format('%s/%s', [FNotifyConfig.BaseURL, FEndPoint]);
+  FIdHTTP.Get(LUrl, FIdEventStream);
 end;
 
 class function TNotityApiIndy.New: INotifyApi;
@@ -140,8 +147,21 @@ begin
 end;
 
 procedure TNotityApiIndy.OnWriteEvent(const ABuffer: TIdBytes; AOffset, ACount: Longint; var VResult: Longint);
+var
+  LStrings: TStringList;
+const
+  LFilePath = 'C:\src\Delphi\delphi-notify\sample\console\subscriber\bin\log.txt';
 begin
-  //Will be used when subscribing....
+  LStrings := TStringList.Create;
+  try
+    if FileExists(LFilePath) then
+      LStrings.LoadFromFile(LFilePath);
+    LStrings.Add(DateTimeToStr(Now));
+    LStrings.Add(IndyTextEncoding_UTF8.GetString(ABuffer));
+    LStrings.SaveToFile(LFilePath);
+  finally
+    LStrings.Free;
+  end;
 end;
 
 function TNotityApiIndy.Post: INotifyApi;

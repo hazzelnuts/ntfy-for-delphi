@@ -7,7 +7,8 @@ uses
   Notify.Core.Contract,
   Notify.Api.Contract,
   Notify.Config.Contract,
-  Notify.Notification.Contract;
+  Notify.Notification.Contract,
+  Notify.Subscription.Thread;
 
 type
   TNotifyCore = class sealed(TInterfacedObject, INotifyCore)
@@ -15,12 +16,16 @@ type
     FApi: INotifyApi;
     FNotification: INotifyNotification;
     FConfig: INotifyConfig;
+    FSubcriptionThread: TNotifySubcriptionThread;
   public
     constructor Create;
     class function New: INotifyCore;
     class function NewInstance: TObject; override;
     function Publish: INotifyCore;
+    function Subscribe: INotifyCore;
+    function Unsubscribe: INotifyCore;
   private
+    procedure OpenConnection;
     function SendFile: INotifyCore;
     function Cache(const AValue: Boolean): INotifyCore;
     function UserName(const AValue: String): INotifyCore;
@@ -86,6 +91,14 @@ function TNotifyCore.Notification(const ANotification: INotifyNotification): INo
 begin
   Result := Self;
   FNotification := ANotification;
+end;
+
+procedure TNotifyCore.OpenConnection;
+begin
+  FApi
+    .Config(FConfig)
+    .AddEndPoint(FNotification.Topic + '/json')
+    .Get;
 end;
 
 function TNotifyCore.Password(const AValue: String): INotifyCore;
@@ -156,10 +169,32 @@ begin
 
 end;
 
+function TNotifyCore.Subscribe: INotifyCore;
+begin
+  Result := Self;
+
+  if Assigned(FSubcriptionThread) then
+    Exit;
+
+  FSubcriptionThread := TNotifySubcriptionThread.Create(OpenConnection);
+  FSubcriptionThread.Start;
+end;
+
 function TNotifyCore.Topic(const AValue: String): INotifyCore;
 begin
   Result := Self;
   FNotification.Topic(AValue);
+end;
+
+function TNotifyCore.Unsubscribe: INotifyCore;
+begin
+  Result := Self;
+
+  if Assigned(FSubcriptionThread) then
+  begin
+    FSubcriptionThread.Destroy;
+  end;
+
 end;
 
 function TNotifyCore.UserName(const AValue: String): INotifyCore;

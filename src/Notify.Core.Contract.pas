@@ -20,6 +20,8 @@ type
     function Topic(const AValue: String): INotifyCore;
     function DisableFireBase(const AValue: Boolean): INotifyCore;
     function Publish: INotifyCore;
+    function Subscribe: INotifyCore;
+    function Unsubscribe: INotifyCore;
     function Notification(const ANotification: INotifyNotification): INotifyCore; overload;
   end;
 

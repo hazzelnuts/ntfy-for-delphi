@@ -20,6 +20,7 @@ type
     function AddEndPoint(const AValue: String): INotifyApi; overload;
     function ClearBody: INotifyApi;
     function Config(const AValue: INotifyConfig): INotifyApi;
+    function Disconnect: INotifyApi;
   end;
 
   INotifyApiFactory = interface

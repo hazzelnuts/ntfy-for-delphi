@@ -33,7 +33,7 @@ object ViewMain: TViewMain
     Padding.Right = 3
     Padding.Bottom = 3
     TabOrder = 0
-    ExplicitLeft = 5
+    ExplicitLeft = -5
     ExplicitTop = -5
     object lbPriority: TLabel
       Left = 12
@@ -1116,8 +1116,8 @@ object ViewMain: TViewMain
     object CkTags: TCheckListBox
       Left = 296
       Top = 273
-      Width = 152
-      Height = 88
+      Width = 129
+      Height = 77
       BorderStyle = bsNone
       ItemHeight = 13
       Items.Strings = (
