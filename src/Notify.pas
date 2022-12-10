@@ -14,6 +14,7 @@ type
   INotifyAction = Notify.Action.Contract.INotifyAction;
   TNotifyPriority = Notify.Types.TNotifyPriority;
   TNotifyActionType = Notify.Types.TNotifyActionType;
+  TNotifySubscriptionType = Notify.Types.TNotifySubscriptionType;
   TJsonDTO = Notify.Types.TJsonDTO;
 
 var

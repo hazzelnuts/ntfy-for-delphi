@@ -8,9 +8,9 @@ uses
 type
   {$SCOPEDENUMS ON}
 
-  TNotifyFectchType = (DURATION, UNIX, MESSAGE_ID);
-
   TNotifyActionType = (VIEW, BROADCAST, HTTP);
+
+  TNotifySubscriptionType = (JSON, SSE, RAW, WEB_SOCKET);
 
   TNotifyPriority = (
     MAX = 5,

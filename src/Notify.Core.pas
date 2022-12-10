@@ -26,15 +26,20 @@ type
     function Subscribe: INotifyCore;
     function Unsubscribe: INotifyCore;
   private
-    procedure OpenConnection;
+    procedure DoSubscribe;
+    procedure SubscribeAsWebSocket;
+    procedure SubscribeAsJSONString;
+    procedure SubscribeAsSSEStream;
+    procedure SubscribeAsRawStream;
     function SendFile: INotifyCore;
+    function Topic(const AValue: String): INotifyCore;
+    function SubscriptionType(const AValue: TNotifySubscriptionType): INotifyCore;
     function SaveLog(const AValue: Boolean): INotifyCore;
     function LogPath(const AValue: String): INotifyCore;
     function Cache(const AValue: Boolean): INotifyCore;
     function UserName(const AValue: String): INotifyCore;
     function Password(const AValue: String): INotifyCore;
     function BaseURL(const AValue: String): INotifyCore;
-    function Topic(const AValue: String): INotifyCore;
     function DisableFireBase(const AValue: Boolean): INotifyCore;
     function Notification(const ANotification: INotifyNotification): INotifyCore; overload;
   end;
@@ -76,6 +81,10 @@ destructor TNotifyCore.Destroy;
 begin
   if Assigned(FSubcriptionThread) and (not FSubcriptionThread.Finished) then
     FSubcriptionThread.Terminate;
+
+  if FConfig.SubscriptionType in [TNotifySubscriptionType.WEB_SOCKET] then
+    FApi.DisconnectWebSocket;
+
   inherited;
 end;
 
@@ -83,6 +92,18 @@ function TNotifyCore.DisableFireBase(const AValue: Boolean): INotifyCore;
 begin
   Result := Self;
   FConfig.DisableFireBase(AValue);
+end;
+
+procedure TNotifyCore.DoSubscribe;
+begin
+  if (FConfig.SubscriptionType = TNotifySubscriptionType.JSON) then
+    SubscribeAsJSONString
+  else if (FConfig.SubscriptionType = TNotifySubscriptionType.SSE) then
+    SubscribeAsSSEStream
+  else if (FConfig.SubscriptionType = TNotifySubscriptionType.RAW) then
+    SubscribeAsRawStream
+  else
+    SubscribeAsWebSocket;
 end;
 
 function TNotifyCore.LogPath(const AValue: String): INotifyCore;
@@ -109,12 +130,42 @@ begin
   FNotification := ANotification;
 end;
 
-procedure TNotifyCore.OpenConnection;
+procedure TNotifyCore.SubscribeAsJSONString;
 begin
   FApi
     .Config(FConfig)
     .AddEndPoint(FNotification.Topic + '/json')
     .Get;
+end;
+
+procedure TNotifyCore.SubscribeAsRawStream;
+begin
+  FApi
+    .Config(FConfig)
+    .AddEndPoint(FNotification.Topic + '/raw')
+    .Get;
+end;
+
+procedure TNotifyCore.SubscribeAsSSEStream;
+begin
+  FApi
+    .Config(FConfig)
+    .AddEndPoint(FNotification.Topic + '/sse')
+    .ConnectWebSocket;
+end;
+
+procedure TNotifyCore.SubscribeAsWebSocket;
+begin
+  FApi
+    .Config(FConfig)
+    .AddEndPoint(FNotification.Topic + '/ws')
+    .ConnectWebSocket;
+end;
+
+function TNotifyCore.SubscriptionType(const AValue: TNotifySubscriptionType): INotifyCore;
+begin
+  Result := Self;
+  FConfig.SubscriptionType(AValue);
 end;
 
 function TNotifyCore.Password(const AValue: String): INotifyCore;
@@ -196,14 +247,14 @@ begin
   Result := Self;
 
   {$IFDEF CONSOLE}
-    OpenConnection;
+    DoSubscribe;
     Exit;
   {$ENDIF}
 
   if Assigned(FSubcriptionThread) then
     Exit;
 
-  FSubcriptionThread := TNotifySubcriptionThread.Create(OpenConnection);
+  FSubcriptionThread := TNotifySubcriptionThread.Create(DoSubscribe);
   FSubcriptionThread.FreeOnTerminate := True;
   FSubcriptionThread.Start;
 

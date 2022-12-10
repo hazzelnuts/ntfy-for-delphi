@@ -28,20 +28,18 @@ uses
   Notify.Types in '..\..\..\src\Notify.Types.pas',
   Notify in '..\..\..\src\Notify.pas',
   Notify.Subscription.Thread in '..\..\..\src\Notify.Subscription.Thread.pas',
-  Notify.Logs in '..\..\..\src\Notify.Logs.pas';
+  Notify.Logs in '..\..\..\src\Notify.Logs.pas',
+  Notify.SimpleWebsocket.Indy in '..\..\..\src\Notify.SimpleWebsocket.Indy.pas';
 
 begin
 
-  Ntfy.Notification(
-    New.Notification
-      .Title('Test log')
-      .MessageContent('Test message')
-  );
+//  Ntfy.Notification(
+//    New.Notification
+//      .Title('Test log')
+//      .MessageContent('Test message')
+//  );
 
-  Ntfy.SaveLog(True).Topic('notify-delphi-integration-8jh27d');
-
-  //Ntfy.Publish;
-
-  Ntfy.Subscribe;
+  Ntfy.SubscriptionType(TNotifySubscriptionType.WEB_SOCKET);
+  Ntfy.Topic('notify-delphi-integration-8jh27d').Subscribe;
 
 end.

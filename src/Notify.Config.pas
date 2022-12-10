@@ -3,6 +3,7 @@ unit Notify.Config;
 interface
 
 uses
+  Notify.Types,
   Notify.Config.Contract;
 
 type
@@ -15,6 +16,7 @@ type
     FDisableFirebaseFCM: Boolean;
     FSaveLog: Boolean;
     FLogPath: String;
+    FSubscriptionType: TNotifySubscriptionType;
   public
     class function New: INotifyConfig;
   private
@@ -33,6 +35,8 @@ type
     function SaveLog(const AValue: Boolean): INotifyConfig; overload;
     function LogPath: String; overload;
     function LogPath(const AValue: String): INotifyConfig; overload;
+    function SubscriptionType: TNotifySubscriptionType; overload;
+    function SubscriptionType(const AValue: TNotifySubscriptionType): INotifyConfig; overload;
   end;
 
 implementation
@@ -59,6 +63,7 @@ begin
   FBaseURL := 'https://ntfy.sh';
   FCache := True;
   FLogPath := ExtractFilePath(ParamStr(0));
+  FSubscriptionType := TNotifySubscriptionType.JSON;
 end;
 
 function TNotifyConfig.DisableFireBase(const AValue: Boolean): INotifyConfig;
@@ -113,6 +118,20 @@ function TNotifyConfig.SaveLog(const AValue: Boolean): INotifyConfig;
 begin
   Result := Self;
   FSaveLog := AValue;
+end;
+
+function TNotifyConfig.SubscriptionType(const AValue: TNotifySubscriptionType): INotifyConfig;
+begin
+  Result := Self;
+  FSubscriptionType := AValue;
+
+  if AValue in [TNotifySubscriptionType.WEB_SOCKET] then
+    FBaseURL := StringReplace(FBaseURL, 'https', 'wss', [rfReplaceAll]);
+end;
+
+function TNotifyConfig.SubscriptionType: TNotifySubscriptionType;
+begin
+  Result := FSubscriptionType;
 end;
 
 function TNotifyConfig.SaveLog: Boolean;

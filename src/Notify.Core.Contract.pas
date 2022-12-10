@@ -19,6 +19,7 @@ type
     function SaveLog(const AValue: Boolean): INotifyCore;
     function LogPath(const AValue: String): INotifyCore;
     function BaseURL(const AValue: String): INotifyCore;
+    function SubscriptionType(const AValue: TNotifySubscriptionType): INotifyCore;
     function Topic(const AValue: String): INotifyCore;
     function DisableFireBase(const AValue: Boolean): INotifyCore;
     function Publish: INotifyCore;
