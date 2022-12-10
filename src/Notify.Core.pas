@@ -19,6 +19,7 @@ type
     FSubcriptionThread: TNotifySubcriptionThread;
   public
     constructor Create;
+    destructor Destroy; override;
     class function New: INotifyCore;
     class function NewInstance: TObject; override;
     function Publish: INotifyCore;
@@ -27,6 +28,8 @@ type
   private
     procedure OpenConnection;
     function SendFile: INotifyCore;
+    function SaveLog(const AValue: Boolean): INotifyCore;
+    function LogPath(const AValue: String): INotifyCore;
     function Cache(const AValue: Boolean): INotifyCore;
     function UserName(const AValue: String): INotifyCore;
     function Password(const AValue: String): INotifyCore;
@@ -69,10 +72,23 @@ begin
   FConfig := TNotifyCoreFacade.New.Config;
 end;
 
+destructor TNotifyCore.Destroy;
+begin
+  if Assigned(FSubcriptionThread) and (not FSubcriptionThread.Finished) then
+    FSubcriptionThread.Terminate;
+  inherited;
+end;
+
 function TNotifyCore.DisableFireBase(const AValue: Boolean): INotifyCore;
 begin
   Result := Self;
   FConfig.DisableFireBase(AValue);
+end;
+
+function TNotifyCore.LogPath(const AValue: String): INotifyCore;
+begin
+  Result := Self;
+  FConfig.LogPath(AValue);
 end;
 
 class function TNotifyCore.New: INotifyCore;
@@ -145,6 +161,12 @@ begin
 
 end;
 
+function TNotifyCore.SaveLog(const AValue: Boolean): INotifyCore;
+begin
+  Result := Self;
+  FConfig.SaveLog(AValue);
+end;
+
 function TNotifyCore.SendFile: INotifyCore;
 var
   LFileStream: TSmartPointer<TFileStream>;
@@ -173,11 +195,18 @@ function TNotifyCore.Subscribe: INotifyCore;
 begin
   Result := Self;
 
+  {$IFDEF CONSOLE}
+    OpenConnection;
+    Exit;
+  {$ENDIF}
+
   if Assigned(FSubcriptionThread) then
     Exit;
 
   FSubcriptionThread := TNotifySubcriptionThread.Create(OpenConnection);
+  FSubcriptionThread.FreeOnTerminate := True;
   FSubcriptionThread.Start;
+
 end;
 
 function TNotifyCore.Topic(const AValue: String): INotifyCore;

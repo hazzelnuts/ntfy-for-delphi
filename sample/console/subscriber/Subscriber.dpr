@@ -27,14 +27,21 @@ uses
   Notify.SmartPointer in '..\..\..\src\Notify.SmartPointer.pas',
   Notify.Types in '..\..\..\src\Notify.Types.pas',
   Notify in '..\..\..\src\Notify.pas',
-  Notify.Subscription.Thread in '..\..\..\src\Notify.Subscription.Thread.pas';
+  Notify.Subscription.Thread in '..\..\..\src\Notify.Subscription.Thread.pas',
+  Notify.Logs in '..\..\..\src\Notify.Logs.pas';
 
 begin
 
-  Ntfy.Topic('notify-delphi-integration-8jh27d').Subscribe;
+  Ntfy.Notification(
+    New.Notification
+      .Title('Test log')
+      .MessageContent('Test message')
+  );
 
-  Readln;
+  Ntfy.SaveLog(True).Topic('notify-delphi-integration-8jh27d');
 
-  Ntfy.Unsubscribe;
+  //Ntfy.Publish;
+
+  Ntfy.Subscribe;
 
 end.

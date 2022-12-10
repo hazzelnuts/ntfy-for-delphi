@@ -13,6 +13,8 @@ type
     FPassword: String;
     FCache: Boolean;
     FDisableFirebaseFCM: Boolean;
+    FSaveLog: Boolean;
+    FLogPath: String;
   public
     class function New: INotifyConfig;
   private
@@ -27,6 +29,10 @@ type
     function Cache(const AValue: Boolean): INotifyConfig; overload;
     function DisableFireBase: Boolean; overload;
     function DisableFireBase(const AValue: Boolean): INotifyConfig; overload;
+    function SaveLog: Boolean; overload;
+    function SaveLog(const AValue: Boolean): INotifyConfig; overload;
+    function LogPath: String; overload;
+    function LogPath(const AValue: String): INotifyConfig; overload;
   end;
 
 implementation
@@ -52,12 +58,24 @@ constructor TNotifyConfig.Create;
 begin
   FBaseURL := 'https://ntfy.sh';
   FCache := True;
+  FLogPath := ExtractFilePath(ParamStr(0));
 end;
 
 function TNotifyConfig.DisableFireBase(const AValue: Boolean): INotifyConfig;
 begin
   Result := Self;
   FDisableFirebaseFCM := AValue;
+end;
+
+function TNotifyConfig.LogPath(const AValue: String): INotifyConfig;
+begin
+  Result := Self;
+  FLogPath := AValue;
+end;
+
+function TNotifyConfig.LogPath: String;
+begin
+  Result := FLogPath;
 end;
 
 function TNotifyConfig.DisableFireBase: Boolean;
@@ -89,6 +107,17 @@ function TNotifyConfig.Password(const AValue: String): INotifyConfig;
 begin
   Result := Self;
   FPassword := AValue;
+end;
+
+function TNotifyConfig.SaveLog(const AValue: Boolean): INotifyConfig;
+begin
+  Result := Self;
+  FSaveLog := AValue;
+end;
+
+function TNotifyConfig.SaveLog: Boolean;
+begin
+  Result := FSaveLog;
 end;
 
 function TNotifyConfig.UserName: String;

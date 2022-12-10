@@ -14,7 +14,6 @@ type
     procedure Execute; override;
   public
     constructor Create(const ACallBack: TThreadMethod);
-    destructor Destroy;
   end;
 
 implementation
@@ -25,12 +24,6 @@ constructor TNotifySubcriptionThread.Create(const ACallBack: TThreadMethod);
 begin
   inherited Create(True);
   FCallBack := ACallBack;
-end;
-
-destructor TNotifySubcriptionThread.Destroy;
-begin
-  Writeln('Destroying');
-  inherited;
 end;
 
 procedure TNotifySubcriptionThread.Execute;

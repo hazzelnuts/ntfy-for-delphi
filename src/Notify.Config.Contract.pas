@@ -15,6 +15,10 @@ type
     function Cache(const AValue: Boolean): INotifyConfig; overload;
     function DisableFireBase: Boolean; overload;
     function DisableFireBase(const AValue: Boolean): INotifyConfig; overload;
+    function SaveLog: Boolean; overload;
+    function SaveLog(const AValue: Boolean): INotifyConfig; overload;
+    function LogPath: String; overload;
+    function LogPath(const AValue: String): INotifyConfig; overload;
   end;
 
   INotifyConfigFactory = interface

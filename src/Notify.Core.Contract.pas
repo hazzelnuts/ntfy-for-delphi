@@ -16,6 +16,8 @@ type
     function Cache(const AValue: Boolean): INotifyCore;
     function UserName(const AValue: String): INotifyCore;
     function Password(const AValue: String): INotifyCore;
+    function SaveLog(const AValue: Boolean): INotifyCore;
+    function LogPath(const AValue: String): INotifyCore;
     function BaseURL(const AValue: String): INotifyCore;
     function Topic(const AValue: String): INotifyCore;
     function DisableFireBase(const AValue: Boolean): INotifyCore;

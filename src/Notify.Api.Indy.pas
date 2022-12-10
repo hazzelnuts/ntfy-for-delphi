@@ -41,7 +41,8 @@ implementation
 
 uses
   Notify.SmartPointer,
-  System.SysUtils;
+  System.SysUtils,
+  Notify.Logs;
 
 { TNotityApiIndy }
 
@@ -112,9 +113,9 @@ begin
 
   FIOHandlerSSL.SSLOptions.Method := sslvTLSv1_2;
   FIdHTTP.IOHandler := FIOHandlerSSL;
-  //FIdHTTP.Request.Accept := 'text/event-stream';
-  //FIdHTTP.Request.CacheControl := 'no-store';
-  //FIdHTTP.HTTPOptions := [hoNoReadMultipartMIME, hoNoReadChunked];
+  FIdHTTP.Request.Accept := 'text/event-stream';
+  FIdHTTP.Request.CacheControl := 'no-store';
+  FIdHTTP.HTTPOptions := [hoNoReadMultipartMIME];
   FIdEventStream.OnWrite := OnWriteEvent;
 end;
 
@@ -139,6 +140,10 @@ begin
   Result := Self;
   LUrl := Format('%s/%s', [FNotifyConfig.BaseURL, FEndPoint]);
   FIdHTTP.Get(LUrl, FIdEventStream);
+
+  if FNotifyConfig.SaveLog then
+    TNotifyLogs.Log(FNotifyConfig.LogPath, FIdHTTP.ResponseText);
+
 end;
 
 class function TNotityApiIndy.New: INotifyApi;
@@ -148,26 +153,28 @@ end;
 
 procedure TNotityApiIndy.OnWriteEvent(const ABuffer: TIdBytes; AOffset, ACount: Longint; var VResult: Longint);
 var
-  LStrings: TStringList;
-const
-  LFilePath = 'C:\src\Delphi\delphi-notify\sample\console\subscriber\bin\log.txt';
+  LEventString: String;
 begin
-  LStrings := TStringList.Create;
-  try
-    if FileExists(LFilePath) then
-      LStrings.LoadFromFile(LFilePath);
-    LStrings.Add(DateTimeToStr(Now));
-    LStrings.Add(IndyTextEncoding_UTF8.GetString(ABuffer));
-    LStrings.SaveToFile(LFilePath);
-  finally
-    LStrings.Free;
-  end;
+
+  LEventString := IndyTextEncoding_UTF8.GetString(ABuffer);
+
+  {$IFDEF CONSOLE}
+    Writeln(LEventString);
+  {$ENDIF}
+
+  if FNotifyConfig.SaveLog then
+    TNotifyLogs.Log(FNotifyConfig.LogPath, LEventString);
+
 end;
 
 function TNotityApiIndy.Post: INotifyApi;
 begin
   Result := Self;
   FIdHTTP.Post(FNotifyConfig.BaseURL, FBodyStream);
+
+  if FNotifyConfig.SaveLog then
+    TNotifyLogs.Log(FNotifyConfig.LogPath, FIdHTTP.ResponseText);
+
 end;
 
 function TNotityApiIndy.Put: INotifyApi;
@@ -177,6 +184,10 @@ begin
   Result := Self;
   LUrl := Format('%s/%s', [FNotifyConfig.BaseURL, FEndPoint]);
   FIdHTTP.Put(LUrl, FBodyStream);
+
+  if FNotifyConfig.SaveLog then
+    TNotifyLogs.Log(FNotifyConfig.LogPath, FIdHTTP.ResponseText);
+
 end;
 
 end.
