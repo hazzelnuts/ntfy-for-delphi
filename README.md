@@ -40,7 +40,7 @@ end;
 
 # 💬 Subscribe to a topic
 
-You can subscribe to a topic through several ways. For instance, the [Web App](https://ntfy.sh/app), [Android](https://docs.ntfy.sh/subscribe/phone/), [CLI](https://docs.ntfy.sh/subscribe/cli/) or you can use this library as follows. 
+You can subscribe to a topic through several ways. For instance, the [Web App](https://ntfy.sh/app), [Android](https://docs.ntfy.sh/subscribe/phone/), [CLI](https://docs.ntfy.sh/subscribe/cli/) or you can use this library as follows: 
 
 ``` pascal
 
@@ -87,7 +87,7 @@ Support to notifications that contains ```broadcast``` actions has not been impl
 
 # 🔗 Dependencies
 
-Delphi Ntfy uses some libraries in the messages subscription mechanism. (No need to install). All credits for the owners is adviced.
+Delphi Ntfy uses a few libraries in the messages subscription mechanism. There is no need to install. The respective owner's credits is adviced.
 
 * [NxHorizon](https://github.com/dalijap/nx-horizon) by Dalija Prasnikar. 
 * [Indy10](https://github.com/IndySockets/Indy) by IndySockets.
