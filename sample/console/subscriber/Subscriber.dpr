@@ -29,7 +29,10 @@ uses
   Notify in '..\..\..\src\Notify.pas',
   Notify.Subscription.Thread in '..\..\..\src\Notify.Subscription.Thread.pas',
   Notify.Logs in '..\..\..\src\Notify.Logs.pas',
-  Notify.SimpleWebsocket.Indy in '..\..\..\src\Notify.SimpleWebsocket.Indy.pas';
+  Notify.SimpleWebsocket.Indy in '..\..\..\src\Notify.SimpleWebsocket.Indy.pas',
+  NX.Horizon in '..\..\..\src\NX.Horizon.pas',
+  Notify.Subscription.DTO in '..\..\..\src\Notify.Subscription.DTO.pas',
+  Notify.Subscription.Event in '..\..\..\src\Notify.Subscription.Event.pas';
 
 begin
 
@@ -39,7 +42,6 @@ begin
 //      .MessageContent('Test message')
 //  );
 
-  Ntfy.SubscriptionType(TNotifySubscriptionType.WEB_SOCKET);
   Ntfy.Topic('notify-delphi-integration-8jh27d').Subscribe;
 
 end.

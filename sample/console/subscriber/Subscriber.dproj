@@ -117,6 +117,9 @@
         <DCCReference Include="..\..\..\src\Notify.Subscription.Thread.pas"/>
         <DCCReference Include="..\..\..\src\Notify.Logs.pas"/>
         <DCCReference Include="..\..\..\src\Notify.SimpleWebsocket.Indy.pas"/>
+        <DCCReference Include="..\..\..\src\NX.Horizon.pas"/>
+        <DCCReference Include="..\..\..\src\Notify.Subscription.DTO.pas"/>
+        <DCCReference Include="..\..\..\src\Notify.Subscription.Event.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

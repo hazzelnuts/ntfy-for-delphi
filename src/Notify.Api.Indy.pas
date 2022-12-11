@@ -6,7 +6,11 @@ uses
   System.Classes, IdBaseComponent, IdComponent, IdIOHandler,
   IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL, IdTCPConnection,
   IdTCPClient, IdHTTP, IdStream, IdGlobal,
-  Notify.Api.Contract, Notify.Config.Contract, Notify.SimpleWebsocket.Indy;
+  Notify.Api.Contract,
+  Notify.Config.Contract,
+  Notify.SimpleWebsocket.Indy,
+  NX.Horizon,
+  Notify.Subscription.Event;
 
 type
   TNotityApiIndy = class(TInterfacedObject, INotifyApi)
@@ -114,7 +118,7 @@ begin
   Result := Self;
   LUrl := Format('%s/%s', [FNotifyConfig.BaseURL, FEndPoint]);
   if not FIdWebSocket.Connected then
-    FIdWebSocket.Connect('wss://demo.piesocket.com/v3/channel_123?api_key=VCXCEuvhGcBDP7XhiJJUDvR1e1D3eiVjgZ9VRiaV&notify_self');
+    FIdWebSocket.Connect('wss://echo.websocket.org');
 end;
 
 constructor TNotityApiIndy.Create;
@@ -173,9 +177,7 @@ end;
 
 procedure TNotityApiIndy.OnWebSocketEvent(Sender: TObject; const Text: string);
 begin
-  {$IFDEF CONSOLE}
-    Writeln(Text);
-  {$ENDIF}
+  NxHorizon.Instance.Post<TNotifySubscriptionEvent>(Text);
 end;
 
 procedure TNotityApiIndy.OnWriteEvent(const ABuffer: TIdBytes; AOffset, ACount: Longint; var VResult: Longint);
@@ -185,9 +187,7 @@ begin
 
   LEventString := IndyTextEncoding_UTF8.GetString(ABuffer);
 
-  {$IFDEF CONSOLE}
-    Writeln(LEventString);
-  {$ENDIF}
+  NxHorizon.Instance.Post<TNotifySubscriptionEvent>(LEventString);
 
   if FNotifyConfig.SaveLog then
     TNotifyLogs.Log(FNotifyConfig.LogPath, LEventString);
