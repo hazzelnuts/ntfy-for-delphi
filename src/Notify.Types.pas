@@ -20,6 +20,13 @@ type
     MIN = 1
   );
 
+  TNotifyMessageEvent = (
+    OPEN,
+    KEEPALIVE,
+    MSG,
+    POLL_REQUEST
+  );
+
   {$SCOPEDENUMS OFF}
 
   TJsonDTO = Notify.JSON.Parser.TJsonDTO;
@@ -29,6 +36,13 @@ const
     'view',
     'broadcast',
     'http'
+  );
+
+  NotifyMessageEventArray: array[TNotifyMessageEvent] of String = (
+    'open',
+    'keepalive',
+    'message',
+    'poll_request'
   );
 
 implementation

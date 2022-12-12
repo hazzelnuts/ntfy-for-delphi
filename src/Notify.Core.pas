@@ -10,6 +10,7 @@ uses
   Notify.Notification.Contract,
   Notify.Subscription.Thread,
   Notify.Subscription.Event,
+  Notify.Event.Contract,
   NX.Horizon;
 
 type
@@ -20,6 +21,7 @@ type
     FConfig: INotifyConfig;
     FSubscriptionThread: TNotifySubcriptionThread;
     FMesssagesSubscription: INxEventSubscription;
+    FMessage: INotifyMessage;
   public
     constructor Create;
     destructor Destroy; override;
@@ -58,7 +60,9 @@ uses
   System.SysUtils,
   Notify.Facade,
   Notify.SmartPointer,
+  Notify.Event.DTO,
   System.Classes;
+
 
 { TNotifyCore }
 
@@ -79,6 +83,7 @@ begin
   FApi := TNotifyCoreFacade.New.Api;
   FNotification := TNotifyCoreFacade.New.Notification;
   FConfig := TNotifyCoreFacade.New.Config;
+  FMessage := TNotifyCoreFacade.New.NotifyMessage;
 end;
 
 destructor TNotifyCore.Destroy;
@@ -186,11 +191,6 @@ begin
   FConfig.SubscriptionType(AValue);
 end;
 
-procedure TNotifyCore.SubscritionEvent(const AEvent: TNotifySubscriptionEvent);
-begin
-  Writeln(AEvent);
-end;
-
 function TNotifyCore.Password(const AValue: String): INotifyCore;
 begin
   Result := Self;
@@ -271,6 +271,7 @@ begin
   FMesssagesSubscription := NxHorizon.Instance.Subscribe<TNotifySubscriptionEvent>(Async, SubscritionEvent);
 
   {$IFDEF CONSOLE}
+    Writeln('Subscribing to topic: ' + FNotification.Topic);
     DoSubscribe;
     Exit;
   {$ENDIF}
@@ -312,6 +313,55 @@ function TNotifyCore.UserName(const AValue: String): INotifyCore;
 begin
   Result := Self;
   FConfig.UserName(AValue);
+end;
+
+
+procedure TNotifyCore.SubscritionEvent(const AEvent: TNotifySubscriptionEvent);
+var
+  LEvent: TSmartPointer<TNotifyEventDTO>;
+  LTag: String;
+begin
+
+  LEvent.Value.AsJson := AEvent;
+
+  {$IFDEF CONSOLE}
+  if (LEvent.Value.Event = NotifyMessageEventArray[TNotifyMessageEvent.OPEN]) then
+  begin
+    Writeln('Connection opened. Listening to incoming messages...');
+    Writeln('Press Ctrl + C to kill the process.');
+  end;
+  {$ENDIF}
+
+  if (LEvent.Value.Id <> '') and(LEvent.Value.Event = NotifyMessageEventArray[TNotifyMessageEvent.MSG]) then
+  begin
+    FMessage
+      .Id(LEvent.Value.Id)
+      .Time(LEvent.Value.Time)
+      .Event(LEvent.Value.Event)
+      .Topic(LEvent.Value.Topic)
+      .Click(LEvent.Value.Click)
+      .MessageContent(LEvent.Value.Message)
+      .Title(LEvent.Value.Title)
+      .Tags(LEvent.Value.Tags.ToArray)
+      .Priority(LEvent.Value.Priority)
+      .Click(LEvent.Value.Click);
+
+    {$IFDEF CONSOLE}
+    Writeln(Format('Id: %s', [FMessage.Id]));
+    Writeln(Format('Time: %d', [FMessage.Time]));
+    Writeln(Format('Event: %s', [FMessage.Event]));
+    Writeln(Format('Topic: %s', [FMessage.Topic]));
+    Writeln(Format('Message: %s', [FMessage.MessageContent]));
+    Writeln(Format('Title: %s', [FMessage.Title]));
+    Writeln(Format('Priority: %d', [FMessage.Priority]));
+    Writeln(Format('Click: %s', [FMessage.Click]));
+    for LTag in FMessage.Tags do
+      Writeln(Format('Tag: %s', [LTag]));
+    {$ENDIF}
+
+  end;
+
+
 end;
 
 end.

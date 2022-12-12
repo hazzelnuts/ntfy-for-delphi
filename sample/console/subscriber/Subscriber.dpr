@@ -31,8 +31,11 @@ uses
   Notify.Logs in '..\..\..\src\Notify.Logs.pas',
   Notify.SimpleWebsocket.Indy in '..\..\..\src\Notify.SimpleWebsocket.Indy.pas',
   NX.Horizon in '..\..\..\src\NX.Horizon.pas',
-  Notify.Subscription.DTO in '..\..\..\src\Notify.Subscription.DTO.pas',
-  Notify.Subscription.Event in '..\..\..\src\Notify.Subscription.Event.pas';
+  Notify.Event.DTO in '..\..\..\src\Notify.Event.DTO.pas',
+  Notify.Subscription.Event in '..\..\..\src\Notify.Subscription.Event.pas',
+  Notify.Event.Contract in '..\..\..\src\Notify.Event.Contract.pas',
+  Notify.Event in '..\..\..\src\Notify.Event.pas',
+  Notify.Event.Factory in '..\..\..\src\Notify.Event.Factory.pas';
 
 begin
 

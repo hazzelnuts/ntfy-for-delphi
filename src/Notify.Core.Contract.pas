@@ -8,7 +8,8 @@ uses
   Notify.Api.Contract,
   Notify.Notification.Contract,
   Notify.Config.Contract,
-  Notify.Action.Contract;
+  Notify.Action.Contract,
+  Notify.Event.Contract;
 
 type
   INotifyCore = interface
@@ -40,6 +41,7 @@ type
     function Notify: INotifyCore;
     function Action: INotifyAction;
     function Config: INotifyConfig;
+    function NotifyMessage: INotifyMessage;
   end;
 
 implementation
