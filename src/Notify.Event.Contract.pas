@@ -2,6 +2,9 @@ unit Notify.Event.Contract;
 
 interface
 
+uses
+  Notify.Action.Contract;
+
 type
   INotifyMessage = interface
     ['{0342B585-BB88-4A63-9C41-8848B90B6042}']
@@ -23,6 +26,8 @@ type
     function MessageContent(const AValue: String): INotifyMessage; overload;
     function Priority: Integer; overload;
     function Priority(const AValue: Integer): INotifyMessage; overload;
+    function Action: INotifyAction; overload;
+    function Action(const AValue: INotifyAction): INotifyMessage; overload;
   end;
 
   INotifyMessageFactory = interface

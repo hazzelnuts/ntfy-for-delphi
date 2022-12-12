@@ -61,7 +61,8 @@ uses
   Notify.Facade,
   Notify.SmartPointer,
   Notify.Event.DTO,
-  System.Classes;
+  Notify.Action.DTO,
+  System.Classes, System.TypInfo;
 
 
 { TNotifyCore }
@@ -320,6 +321,7 @@ procedure TNotifyCore.SubscritionEvent(const AEvent: TNotifySubscriptionEvent);
 var
   LEvent: TSmartPointer<TNotifyEventDTO>;
   LTag: String;
+  LActionDTO: TNotifyActionDTO;
 begin
 
   LEvent.Value.AsJson := AEvent;
@@ -332,7 +334,7 @@ begin
   end;
   {$ENDIF}
 
-  if (LEvent.Value.Id <> '') and(LEvent.Value.Event = NotifyMessageEventArray[TNotifyMessageEvent.MSG]) then
+  if (LEvent.Value.Id <> '') and (LEvent.Value.Event = NotifyMessageEventArray[TNotifyMessageEvent.MSG]) then
   begin
     FMessage
       .Id(LEvent.Value.Id)
@@ -345,6 +347,18 @@ begin
       .Tags(LEvent.Value.Tags.ToArray)
       .Priority(LEvent.Value.Priority)
       .Click(LEvent.Value.Click);
+
+    for LActionDTO in LEvent.Value.Actions do
+      FMessage.Action(
+        TNotifyCoreFacade.New.Action
+          .&Type(TNotifyActionType(GetEnumValue(TypeInfo(TNotifyActionType), LActionDTO.Action)))
+          .&Label(LActionDTO.&Label)
+          .Url(LActionDTO.Url)
+          .Clear(LActionDTO.Clear)
+          .Method(LActionDTO.Method)
+          .Body(LActionDTO.Body)
+      );
+
 
     {$IFDEF CONSOLE}
     Writeln(Format('Id: %s', [FMessage.Id]));

@@ -4,7 +4,9 @@ interface
 
 uses
   Notify.Event.Contract,
-  Notify.Types;
+  Notify.Action.Contract,
+  Notify.Types,
+  System.Generics.Collections;
 
 type
   TNotifyMessage = class(TInterfacedObject, INotifyMessage)
@@ -18,8 +20,12 @@ type
     FTitle: String;
     FMessage: String;
     FPriority: Integer;
+    FAction: INotifyAction;
+    FActions: TDictionary<String, INotifyAction>;
   public
     class function New: INotifyMessage;
+    constructor Create;
+    destructor Destroy; override;
     function Id: String; overload;
     function Id(const AValue: String): INotifyMessage; overload;
     function Time: Integer; overload;
@@ -38,16 +44,48 @@ type
     function MessageContent(const AValue: String): INotifyMessage; overload;
     function Priority: Integer; overload;
     function Priority(const AValue: Integer): INotifyMessage; overload;
+    function Action: INotifyAction; overload;
+    function Action(const AValue: INotifyAction): INotifyMessage; overload;
   end;
 
 implementation
 
 { TNotifySubscription }
 
+function TNotifyMessage.Action(const AValue: INotifyAction): INotifyMessage;
+begin
+  Result := Self;
+  FAction := AValue;
+
+  if FActions.ContainsKey(AValue.&Label) then
+    FActions.Remove(AValue.&Label);
+
+  if FActions.Count >= 3 then
+    Exit;
+
+  FActions.Add(AValue.&Label, AValue);
+end;
+
+function TNotifyMessage.Action: INotifyAction;
+begin
+  Result := FAction;
+end;
+
 function TNotifyMessage.Click(const AValue: String): INotifyMessage;
 begin
   Result := Self;
   FClick := AValue;
+end;
+
+constructor TNotifyMessage.Create;
+begin
+  FActions := TDictionary<String, INotifyAction>.Create();
+end;
+
+destructor TNotifyMessage.Destroy;
+begin
+  FActions.Free;
+  inherited;
 end;
 
 function TNotifyMessage.Click: String;

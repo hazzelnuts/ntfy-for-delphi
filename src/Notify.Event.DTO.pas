@@ -5,6 +5,7 @@ interface
 uses
   Rest.Json.Types,
   Notify.JSON.Parser,
+  Notify.Action.DTO,
   System.Generics.Collections;
 
 type
@@ -30,7 +31,12 @@ type
     FTagsArray: TArray<string>;
     [JSONMarshalled(False)]
     FTags: TList<string>;
+    [GenericListReflect]
+    FActions: TObjectList<TNotifyActionDTO>;
+    [JSONName('actions'), JSONMarshalled(False)]
+    FActionsArray: TArray<TNotifyActionDTO>;
     function GetTags: TList<string>;
+    function GetActions: TObjectList<TNotifyActionDTO>;
   protected
     function GetAsJson: string; override;
   published
@@ -43,6 +49,7 @@ type
     property Title: String read FTitle write FTitle;
     property Message: String read FMessage write FMessage;
     property Tags: TList<string> read GetTags;
+    property Actions: TObjectList<TNotifyActionDTO> read GetActions;
   public
     destructor Destroy; override;
   end;
@@ -55,12 +62,19 @@ implementation
 destructor TNotifyEventDTO.Destroy;
 begin
   GetTags.Free;
+  GetActions.Free;
   inherited;
+end;
+
+function TNotifyEventDTO.GetActions: TObjectList<TNotifyActionDTO>;
+begin
+  Result := ObjectList<TNotifyActionDTO>(FActions, FActionsArray);
 end;
 
 function TNotifyEventDTO.GetAsJson: string;
 begin
   RefreshArray<string>(FTags, FTagsArray);
+  RefreshArray<TNotifyActionDTO>(FActions, FActionsArray);
   Result := inherited;
 end;
 

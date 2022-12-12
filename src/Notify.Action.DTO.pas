@@ -7,7 +7,7 @@ uses
 
 type
 
-  TNotifyActionsDTO = class(TJsonDTO)
+  TNotifyActionDTO = class(TJsonDTO)
   private
     [JSONName('action')]
     FAction: String;
