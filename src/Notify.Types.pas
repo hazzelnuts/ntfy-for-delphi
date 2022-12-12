@@ -8,9 +8,9 @@ uses
 type
   {$SCOPEDENUMS ON}
 
-  TNotifyFectchType = (DURATION, UNIX, MESSAGE_ID);
-
   TNotifyActionType = (VIEW, BROADCAST, HTTP);
+
+  TNotifySubscriptionType = (JSON, SSE, RAW, WEB_SOCKET);
 
   TNotifyPriority = (
     MAX = 5,
@@ -18,6 +18,13 @@ type
     DEFAULT = 3,
     LOW = 2,
     MIN = 1
+  );
+
+  TNotifyMessageEvent = (
+    OPEN,
+    KEEPALIVE,
+    MSG,
+    POLL_REQUEST
   );
 
   {$SCOPEDENUMS OFF}
@@ -29,6 +36,13 @@ const
     'view',
     'broadcast',
     'http'
+  );
+
+  NotifyMessageEventArray: array[TNotifyMessageEvent] of String = (
+    'open',
+    'keepalive',
+    'message',
+    'poll_request'
   );
 
 implementation

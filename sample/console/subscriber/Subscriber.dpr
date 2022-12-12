@@ -1,8 +1,10 @@
-program Publisher;
+program Subscriber;
+
+{$APPTYPE CONSOLE}
+
+{$R *.res}
 
 uses
-  Vcl.Forms,
-  View.Main in 'src\View.Main.pas' {ViewMain},
   Notify.Action.Contract in '..\..\..\src\Notify.Action.Contract.pas',
   Notify.Action.DTO in '..\..\..\src\Notify.Action.DTO.pas',
   Notify.Action.Factory in '..\..\..\src\Notify.Action.Factory.pas',
@@ -22,18 +24,27 @@ uses
   Notify.Notification.DTO in '..\..\..\src\Notify.Notification.DTO.pas',
   Notify.Notification.Factory in '..\..\..\src\Notify.Notification.Factory.pas',
   Notify.Notification in '..\..\..\src\Notify.Notification.pas',
-  Notify in '..\..\..\src\Notify.pas',
   Notify.SmartPointer in '..\..\..\src\Notify.SmartPointer.pas',
   Notify.Types in '..\..\..\src\Notify.Types.pas',
-  Vcl.Themes,
-  Vcl.Styles;
-
-{$R *.res}
+  Notify in '..\..\..\src\Notify.pas',
+  Notify.Subscription.Thread in '..\..\..\src\Notify.Subscription.Thread.pas',
+  Notify.Logs in '..\..\..\src\Notify.Logs.pas',
+  Notify.SimpleWebsocket.Indy in '..\..\..\src\Notify.SimpleWebsocket.Indy.pas',
+  NX.Horizon in '..\..\..\src\NX.Horizon.pas',
+  Notify.Event.DTO in '..\..\..\src\Notify.Event.DTO.pas',
+  Notify.Subscription.Event in '..\..\..\src\Notify.Subscription.Event.pas',
+  Notify.Event.Contract in '..\..\..\src\Notify.Event.Contract.pas',
+  Notify.Event in '..\..\..\src\Notify.Event.pas',
+  Notify.Event.Factory in '..\..\..\src\Notify.Event.Factory.pas';
 
 begin
-  Application.Initialize;
-  Application.MainFormOnTaskbar := True;
-  TStyleManager.TrySetStyle('Glossy');
-  Application.CreateForm(TViewMain, ViewMain);
-  Application.Run;
+
+//  Ntfy.Notification(
+//    New.Notification
+//      .Title('Test log')
+//      .MessageContent('Test message')
+//  );
+
+  Ntfy.Topic('notify-delphi-integration-8jh27d').Subscribe;
+
 end.

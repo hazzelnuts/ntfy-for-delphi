@@ -7,7 +7,8 @@ uses
   Notify.Api.Contract,
   Notify.Notification.Contract,
   Notify.Action.Contract,
-  Notify.Config.Contract;
+  Notify.Config.Contract,
+  Notify.Event.Contract;
 
 type
   TNotifyCoreFacade = class sealed(TInterfacedObject, INotifyCoreFacade)
@@ -17,6 +18,7 @@ type
     FNotifyCoreFactory: INotifyCoreFactory;
     FNotifyActionFactory: INotifyActionFactory;
     FNotifyConfigFactory: INotifyConfigFactory;
+    FNotifyMessageFactory: INotifyMessageFactory;
   public
     constructor Create;
     class function New: INotifyCoreFacade;
@@ -25,6 +27,7 @@ type
     function Notify: INotifyCore;
     function Action: INotifyAction;
     function Config: INotifyConfig;
+    function NotifyMessage: INotifyMessage;
   end;
 
 implementation
@@ -34,13 +37,19 @@ uses
   Notify.Notification.Factory,
   Notify.Core.Factory,
   Notify.Action.Factory,
-  Notify.Config.Factory;
+  Notify.Config.Factory,
+  Notify.Event.Factory;
 
 { TNotifyCoreFacade }
 
 function TNotifyCoreFacade.Notify: INotifyCore;
 begin
   Result := FNotifyCoreFactory.Core;
+end;
+
+function TNotifyCoreFacade.NotifyMessage: INotifyMessage;
+begin
+  Result := FNotifyMessageFactory.NotifyMessage;
 end;
 
 function TNotifyCoreFacade.Action: INotifyAction;
@@ -60,6 +69,7 @@ begin
   FNotifyCoreFactory := TNotifyCoreFactory.New;
   FNotifyActionFactory := TNotifyActionFactory.New;
   FNotifyConfigFactory := TNotifyConfigFactory.New;
+  FNotifyMessageFactory := TNotifyMessageFactory.New;
 end;
 
 class function TNotifyCoreFacade.New: INotifyCoreFacade;

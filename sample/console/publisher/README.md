@@ -1,9 +1,9 @@
 <div align="center">
-  <img src="./img/delphi-notify.png">
+  <img src="../../../img/delphi-notify.png">
 </div>
 
 ## ⚠ Observations
-Never forget to include in which topic are you posting. You must also have SSL libraries in order to this project to work correctly.
+Never forget to include which topic are you publishing. You must also have SSL libraries in order to run this project.
 
 ``` pascal
   Ntfy.Notification(
@@ -14,7 +14,7 @@ Never forget to include in which topic are you posting. You must also have SSL l
 
 <div align="center">
 
-# Console Publishing Samples 🍗
+# Console Samples (Publishing) 🧪
 
 </div>
 
@@ -108,12 +108,20 @@ Never forget to include in which topic are you posting. You must also have SSL l
   );
 ```
 
-## Other configs for self-hosting
+## Basic Logs
+
+``` pascal
+  Ntfy.SaveLog(True).LogPath('..\logs_folder');
+```
+
+
+## Other ntfy API configs
 
 ``` pascal
   // Username and password for protected topics
-  // Careful! Username and password are not 
-  // encrypted, only encoded! Use HTTPS
+  // Becareful! Username and password are not 
+  // encrypted, only encoded! Use HTTPS. You can
+  // use this option when you are self-hosting
   Ntfy.UserName('username').Password('password');
 
   // Disabling Firebase will significantly increase 
@@ -121,7 +129,8 @@ Never forget to include in which topic are you posting. You must also have SSL l
   // in Android
   Ntfy.DisableFireBase(True);
 
-  // Disabling cache will cause messages not to 
-  // be delivered to whom is not subscribed
+  // Disabling cache will cause messages no longer  
+  // to be delivered for whom is unsubscribed
   Ntfy.Cache(False);
+
 ```

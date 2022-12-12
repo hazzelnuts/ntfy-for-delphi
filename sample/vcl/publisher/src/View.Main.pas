@@ -1,4 +1,4 @@
-unit View.Main;
+﻿unit View.Main;
 
 interface
 
@@ -13,13 +13,10 @@ uses
 type
   TViewMain = class(TForm)
     gpInfo: TGroupBox;
-    lblTopic: TLabel;
-    lbeMessage: TLabeledEdit;
-    lbeTitle: TLabeledEdit;
     gbActions: TGroupBox;
     CbPriority: TComboBox;
     lbPriority: TLabel;
-    ckTags: TCheckListBox;
+    CkTags: TCheckListBox;
     Label1: TLabel;
     lbeFileAttachment: TLabeledEdit;
     btnFileAttachment: TButton;
@@ -34,7 +31,6 @@ type
     MemActionBody: TMemo;
     lblActionBody: TLabel;
     btnPublish: TButton;
-    CbTopic: TComboBox;
     DBGrid1: TDBGrid;
     btnAddAction: TButton;
     btnDeleteAction: TButton;
@@ -46,12 +42,26 @@ type
     TableActionsCLEAR: TBooleanField;
     TableActionsBODY: TMemoField;
     lbeEmail: TLabeledEdit;
+    lblTopic: TLabel;
+    lbeTitle: TLabeledEdit;
+    CbTopic: TComboBox;
+    lbeMessage: TLabeledEdit;
+    lbeActionLabel: TLabeledEdit;
+    lbeActionURL: TLabeledEdit;
+    TableActionsLABEL: TStringField;
+    TableActionsURL: TStringField;
+    Image1: TImage;
     procedure FormCreate(Sender: TObject);
     procedure btnFileAttachmentClick(Sender: TObject);
+    procedure CbActionTypeChange(Sender: TObject);
+    procedure btnRemoveActionClick(Sender: TObject);
+    procedure btnAddActionClick(Sender: TObject);
+    procedure btnDeleteActionClick(Sender: TObject);
     published
       procedure btnPublishClick(Sender: TObject);
     private
       FNotification: INotifyNotification;
+      procedure SendNotification;
   end;
 
 var
@@ -59,7 +69,34 @@ var
 
 implementation
 
+uses
+  System.Threading;
+
 {$R *.dfm}
+
+procedure TViewMain.btnAddActionClick(Sender: TObject);
+begin
+
+  if TableActions.RecordCount >= 3 then
+    Exit;
+
+  TableActions.Open;
+
+  TableActions.AppendRecord([
+    Ord(TNotifyActionType(CbActionType.ItemIndex)),
+    CbActionMethod.Text,
+    CkActionClear.Checked,
+    MemActionBody.Lines,
+    lbeActionLabel.Text,
+    lbeActionURL.Text
+  ])
+end;
+
+procedure TViewMain.btnDeleteActionClick(Sender: TObject);
+begin
+  if not TableActions.IsEmpty then
+    TableActions.Delete;
+end;
 
 procedure TViewMain.btnFileAttachmentClick(Sender: TObject);
 begin
@@ -72,9 +109,54 @@ end;
 
 procedure TViewMain.btnPublishClick(Sender: TObject);
 var
-  LTags: TArray<string>;
+  LTask: ITask;
 begin
 
+  if lbeTitle.Text = '' then
+    Exit;
+
+  LTask := TTask.Create(procedure begin
+    try
+      btnPublish.Enabled := False;
+      btnPublish.Caption := '⌛ Notify';
+      SendNotification;
+    finally
+      TThread.Queue(nil, procedure begin
+        btnPublish.Caption := '✔ Notify';
+        btnPublish.Enabled := True;
+      end)
+    end;
+  end);
+
+  LTask.Start;
+end;
+
+procedure TViewMain.btnRemoveActionClick(Sender: TObject);
+begin
+  TableActions.EmptyDataSet;
+end;
+
+procedure TViewMain.CbActionTypeChange(Sender: TObject);
+begin
+
+  if CbActionType.Text = 'view' then
+    CbActionMethod.ItemIndex := 1;
+
+  CbActionMethod.Enabled := (CbActionType.Text <> 'view');
+  MemActionBody.Enabled := (CbActionType.Text <> 'view');
+  lblActionBody.Enabled := (CbActionType.Text <> 'view');
+
+end;
+
+procedure TViewMain.FormCreate(Sender: TObject);
+begin
+  FNotification := New.Notification;
+end;
+
+procedure TViewMain.SendNotification;
+var
+  LTags: TArray<string>;
+begin
   FNotification.Topic(CbTopic.Text);
   FNotification.Title(lbeTitle.Text);
   FNotification.MessageContent(lbeMessage.Text);
@@ -83,14 +165,27 @@ begin
   FNotification.FilePath(lbeFileAttachment.Text);
   FNotification.Attach(lbeURLAttachment.Text);
   FNotification.Email(lbeEmail.Text);
+  FNotification.Tags(CkTags.Items.ToStringArray);
 
-  Ntfy.Notification(FNotification);
-  Ntfy.Publish;
+  if not TableActions.IsEmpty then
+  begin
+    TableActions.First;
+    while not TableActions.Eof do
+    begin
+      FNotification.Action(New.Action
+        .&Label(TableActionsLABEL.AsString)
+        .&Url(TableActionsURL.AsString)
+        .Method(TableActionsMETHOD.AsString)
+        .Clear(TableActionsCLEAR.AsBoolean)
+        .&Type(TNotifyActionType(Ord(TableActionsTYPE.AsInteger)))
+        .Body(TableActionsBODY.GetAsString)
+      );
+      TableActions.Next;
+    end;
+  end;
+
+  Ntfy.Topic(CbTopic.Text);
+  Ntfy.Notification(FNotification).Publish;
+
 end;
-
-procedure TViewMain.FormCreate(Sender: TObject);
-begin
-  FNotification := New.Notification;
-end;
-
 end.

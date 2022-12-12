@@ -8,7 +8,8 @@ uses
   Notify.Api.Contract,
   Notify.Notification.Contract,
   Notify.Config.Contract,
-  Notify.Action.Contract;
+  Notify.Action.Contract,
+  Notify.Event.Contract;
 
 type
   INotifyCore = interface
@@ -16,10 +17,15 @@ type
     function Cache(const AValue: Boolean): INotifyCore;
     function UserName(const AValue: String): INotifyCore;
     function Password(const AValue: String): INotifyCore;
+    function SaveLog(const AValue: Boolean): INotifyCore;
+    function LogPath(const AValue: String): INotifyCore;
     function BaseURL(const AValue: String): INotifyCore;
+    function SubscriptionType(const AValue: TNotifySubscriptionType): INotifyCore;
     function Topic(const AValue: String): INotifyCore;
     function DisableFireBase(const AValue: Boolean): INotifyCore;
     function Publish: INotifyCore;
+    function Subscribe: INotifyCore;
+    function Unsubscribe: INotifyCore;
     function Notification(const ANotification: INotifyNotification): INotifyCore; overload;
   end;
 
@@ -35,6 +41,7 @@ type
     function Notify: INotifyCore;
     function Action: INotifyAction;
     function Config: INotifyConfig;
+    function NotifyMessage: INotifyMessage;
   end;
 
 implementation

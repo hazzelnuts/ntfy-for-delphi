@@ -6,7 +6,11 @@ uses
   System.Classes, IdBaseComponent, IdComponent, IdIOHandler,
   IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL, IdTCPConnection,
   IdTCPClient, IdHTTP, IdStream, IdGlobal,
-  Notify.Api.Contract, Notify.Config.Contract;
+  Notify.Api.Contract,
+  Notify.Config.Contract,
+  Notify.SimpleWebsocket.Indy,
+  NX.Horizon,
+  Notify.Subscription.Event;
 
 type
   TNotityApiIndy = class(TInterfacedObject, INotifyApi)
@@ -14,10 +18,12 @@ type
     FIOHandlerSSL: TIdSSLIOHandlerSocketOpenSSL;
     FIdHTTP: TIdHTTP;
     FIdEventStream: TIdEventStream;
+    FIdWebSocket: TIdSimpleWebSocketClient;
     FBodyStream: TMemoryStream;
     FNotifyConfig: INotifyConfig;
     FEndPoint: String;
     procedure OnWriteEvent(const ABuffer: TIdBytes; AOffset, ACount: Longint; var VResult: Longint);
+    procedure OnWebSocketEvent(Sender: TObject; const Text: string);
   public
     constructor Create;
     destructor Destroy; override;
@@ -34,13 +40,16 @@ type
     function Get: INotifyApi;
     function Post: INotifyApi;
     function Put: INotifyApi;
+    function ConnectWebSocket: INotifyApi;
+    function DisconnectWebSocket: INotifyApi;
   end;
 
 implementation
 
 uses
   Notify.SmartPointer,
-  System.SysUtils;
+  System.SysUtils,
+  Notify.Logs;
 
 { TNotityApiIndy }
 
@@ -102,36 +111,63 @@ begin
   FNotifyConfig := AValue;
 end;
 
+function TNotityApiIndy.ConnectWebSocket: INotifyApi;
+var
+  LUrl: String;
+begin
+  Result := Self;
+  LUrl := Format('%s/%s', [FNotifyConfig.BaseURL, FEndPoint]);
+  if not FIdWebSocket.Connected then
+    FIdWebSocket.Connect('wss://echo.websocket.org');
+end;
+
 constructor TNotityApiIndy.Create;
 begin
   FIdHTTP := TIdHTTP.Create(nil);
   FIOHandlerSSL := TIdSSLIOHandlerSocketOpenSSL.Create;
   FIdEventStream := TIdEventStream.Create;
   FBodyStream := TMemoryStream.Create;
+  FIdWebSocket := TIdSimpleWebSocketClient.Create(nil);
+  FIdWebSocket.AutoCreateHandler := True;
 
   FIOHandlerSSL.SSLOptions.Method := sslvTLSv1_2;
   FIdHTTP.IOHandler := FIOHandlerSSL;
   FIdHTTP.Request.Accept := 'text/event-stream';
   FIdHTTP.Request.CacheControl := 'no-store';
-  FIdHTTP.HTTPOptions := [hoNoReadMultipartMIME, hoNoReadChunked];
-  FIdEventStream.OnWrite := OnWriteEvent;
+  FIdHTTP.HTTPOptions := [hoNoReadMultipartMIME];
 
+  FIdWebSocket.onDataEvent := OnWebSocketEvent;
+  FIdEventStream.OnWrite := OnWriteEvent;
 end;
 
 destructor TNotityApiIndy.Destroy;
 begin
-  FIdHTTP.Disconnect;
   FIdHTTP.Free;
+  FIdWebSocket.Free;
   FIOHandlerSSL.Free;
   FIdEventStream.Free;
   FBodyStream.Free;
   inherited;
 end;
 
-function TNotityApiIndy.Get: INotifyApi;
+function TNotityApiIndy.DisconnectWebSocket: INotifyApi;
 begin
   Result := Self;
-  FIdHTTP.Get('');
+  if FIdWebSocket.Connected then
+    FIdWebSocket.Disconnect;
+end;
+
+function TNotityApiIndy.Get: INotifyApi;
+var
+  LUrl: String;
+begin
+  Result := Self;
+  LUrl := Format('%s/%s', [FNotifyConfig.BaseURL, FEndPoint]);
+  FIdHTTP.Get(LUrl, FIdEventStream);
+
+  if FNotifyConfig.SaveLog then
+    TNotifyLogs.Log(FNotifyConfig.LogPath, FIdHTTP.ResponseText);
+
 end;
 
 class function TNotityApiIndy.New: INotifyApi;
@@ -139,15 +175,33 @@ begin
   Result := Self.Create;
 end;
 
-procedure TNotityApiIndy.OnWriteEvent(const ABuffer: TIdBytes; AOffset, ACount: Longint; var VResult: Longint);
+procedure TNotityApiIndy.OnWebSocketEvent(Sender: TObject; const Text: string);
 begin
-  //Will be used when subscribing....
+  NxHorizon.Instance.Post<TNotifySubscriptionEvent>(Text);
+end;
+
+procedure TNotityApiIndy.OnWriteEvent(const ABuffer: TIdBytes; AOffset, ACount: Longint; var VResult: Longint);
+var
+  LEventString: String;
+begin
+
+  LEventString := IndyTextEncoding_UTF8.GetString(ABuffer);
+
+  NxHorizon.Instance.Post<TNotifySubscriptionEvent>(LEventString);
+
+  if FNotifyConfig.SaveLog then
+    TNotifyLogs.Log(FNotifyConfig.LogPath, LEventString);
+
 end;
 
 function TNotityApiIndy.Post: INotifyApi;
 begin
   Result := Self;
   FIdHTTP.Post(FNotifyConfig.BaseURL, FBodyStream);
+
+  if FNotifyConfig.SaveLog then
+    TNotifyLogs.Log(FNotifyConfig.LogPath, FIdHTTP.ResponseText);
+
 end;
 
 function TNotityApiIndy.Put: INotifyApi;
@@ -157,6 +211,10 @@ begin
   Result := Self;
   LUrl := Format('%s/%s', [FNotifyConfig.BaseURL, FEndPoint]);
   FIdHTTP.Put(LUrl, FBodyStream);
+
+  if FNotifyConfig.SaveLog then
+    TNotifyLogs.Log(FNotifyConfig.LogPath, FIdHTTP.ResponseText);
+
 end;
 
 end.
