@@ -123,6 +123,10 @@
         <DCCReference Include="..\..\..\src\Notify.Event.Contract.pas"/>
         <DCCReference Include="..\..\..\src\Notify.Event.pas"/>
         <DCCReference Include="..\..\..\src\Notify.Event.Factory.pas"/>
+        <DCCReference Include="..\..\..\src\Notify.Attachment.DTO.pas"/>
+        <DCCReference Include="..\..\..\src\Notify.Attachment.Contract.pas"/>
+        <DCCReference Include="..\..\..\src\Notify.Attachment.pas"/>
+        <DCCReference Include="..\..\..\src\Notify.Attachment.Factory.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

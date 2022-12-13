@@ -6,10 +6,10 @@ uses
   Notify.Event.Contract;
 
 type
-  TNotifyMessageFactory = class(TInterfacedObject, INotifyMessageFactory)
+  TNotifyMessageFactory = class(TInterfacedObject, INotifyEventFactory)
   public
-    class function New: INotifyMessageFactory;
-    function NotifyMessage: INotifyMessage;
+    class function New: INotifyEventFactory;
+    function Event: INotifyEvent;
   end;
 
 implementation
@@ -20,12 +20,12 @@ uses
 
 { TNotifyMessageFactory }
 
-class function TNotifyMessageFactory.New: INotifyMessageFactory;
+class function TNotifyMessageFactory.New: INotifyEventFactory;
 begin
   Result := Self.Create;
 end;
 
-function TNotifyMessageFactory.NotifyMessage: INotifyMessage;
+function TNotifyMessageFactory.Event: INotifyEvent;
 begin
   Result := TNotifyMessage.New;
 end;

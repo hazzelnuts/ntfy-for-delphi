@@ -35,7 +35,11 @@ uses
   Notify.Subscription.Event in '..\..\..\src\Notify.Subscription.Event.pas',
   Notify.Event.Contract in '..\..\..\src\Notify.Event.Contract.pas',
   Notify.Event in '..\..\..\src\Notify.Event.pas',
-  Notify.Event.Factory in '..\..\..\src\Notify.Event.Factory.pas';
+  Notify.Event.Factory in '..\..\..\src\Notify.Event.Factory.pas',
+  Notify.Attachment.DTO in '..\..\..\src\Notify.Attachment.DTO.pas',
+  Notify.Attachment.Contract in '..\..\..\src\Notify.Attachment.Contract.pas',
+  Notify.Attachment in '..\..\..\src\Notify.Attachment.pas',
+  Notify.Attachment.Factory in '..\..\..\src\Notify.Attachment.Factory.pas';
 
 begin
 
@@ -45,6 +49,15 @@ begin
 //      .MessageContent('Test message')
 //  );
 
-  Ntfy.Topic('notify-delphi-integration-8jh27d').Subscribe;
+//  Ntfy
+//    .SaveLog(True)
+//    .Topic('notify-delphi-integration-8jh27d')
+//    .Subscribe;
+
+  Ntfy.Subscribe('notify-delphi-integration-8jh27d',
+    procedure (Event: INotifyEvent)
+    begin
+      Writeln('Event callback is now working!' + Event.MessageContent);
+    end);
 
 end.

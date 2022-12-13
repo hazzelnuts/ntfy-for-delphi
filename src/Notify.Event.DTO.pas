@@ -6,6 +6,7 @@ uses
   Rest.Json.Types,
   Notify.JSON.Parser,
   Notify.Action.DTO,
+  Notify.Attachment.DTO,
   System.Generics.Collections;
 
 type
@@ -35,6 +36,8 @@ type
     FActions: TObjectList<TNotifyActionDTO>;
     [JSONName('actions'), JSONMarshalled(False)]
     FActionsArray: TArray<TNotifyActionDTO>;
+    [JSONName('attachment')]
+    FAttachment: TNotifyAttachmentDTO;
     function GetTags: TList<string>;
     function GetActions: TObjectList<TNotifyActionDTO>;
   protected
@@ -50,7 +53,9 @@ type
     property Message: String read FMessage write FMessage;
     property Tags: TList<string> read GetTags;
     property Actions: TObjectList<TNotifyActionDTO> read GetActions;
+    property Attachment: TNotifyAttachmentDTO read FAttachment write FAttachment;
   public
+    constructor Create; override;
     destructor Destroy; override;
   end;
 
@@ -58,6 +63,11 @@ type
 implementation
 
 { TNotifyEventDTO }
+
+constructor TNotifyEventDTO.Create;
+begin
+  inherited;
+end;
 
 destructor TNotifyEventDTO.Destroy;
 begin

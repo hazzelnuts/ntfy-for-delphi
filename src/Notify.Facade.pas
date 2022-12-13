@@ -8,7 +8,8 @@ uses
   Notify.Notification.Contract,
   Notify.Action.Contract,
   Notify.Config.Contract,
-  Notify.Event.Contract;
+  Notify.Event.Contract,
+  Notify.Attachment.Contract;
 
 type
   TNotifyCoreFacade = class sealed(TInterfacedObject, INotifyCoreFacade)
@@ -18,7 +19,8 @@ type
     FNotifyCoreFactory: INotifyCoreFactory;
     FNotifyActionFactory: INotifyActionFactory;
     FNotifyConfigFactory: INotifyConfigFactory;
-    FNotifyMessageFactory: INotifyMessageFactory;
+    FNotifyMessageFactory: INotifyEventFactory;
+    FNotifyAttachmentFactory: INotifyAttachmentFactory;
   public
     constructor Create;
     class function New: INotifyCoreFacade;
@@ -27,7 +29,8 @@ type
     function Notify: INotifyCore;
     function Action: INotifyAction;
     function Config: INotifyConfig;
-    function NotifyMessage: INotifyMessage;
+    function Event: INotifyEvent;
+    function Attachment: INotifyAttachment;
   end;
 
 implementation
@@ -38,6 +41,7 @@ uses
   Notify.Core.Factory,
   Notify.Action.Factory,
   Notify.Config.Factory,
+  Notify.Attachment.Factory,
   Notify.Event.Factory;
 
 { TNotifyCoreFacade }
@@ -47,9 +51,9 @@ begin
   Result := FNotifyCoreFactory.Core;
 end;
 
-function TNotifyCoreFacade.NotifyMessage: INotifyMessage;
+function TNotifyCoreFacade.Event: INotifyEvent;
 begin
-  Result := FNotifyMessageFactory.NotifyMessage;
+  Result := FNotifyMessageFactory.Event;
 end;
 
 function TNotifyCoreFacade.Action: INotifyAction;
@@ -70,6 +74,7 @@ begin
   FNotifyActionFactory := TNotifyActionFactory.New;
   FNotifyConfigFactory := TNotifyConfigFactory.New;
   FNotifyMessageFactory := TNotifyMessageFactory.New;
+  FNotifyAttachmentFactory := TNotifyAttachmentFactory.New;
 end;
 
 class function TNotifyCoreFacade.New: INotifyCoreFacade;
@@ -80,6 +85,11 @@ end;
 function TNotifyCoreFacade.Api: INotifyApi;
 begin
   Result := FNotifyApiFactory.Api;
+end;
+
+function TNotifyCoreFacade.Attachment: INotifyAttachment;
+begin
+  Result := FNotifyAttachmentFactory.Attachment;
 end;
 
 function TNotifyCoreFacade.Notification: INotifyNotification;

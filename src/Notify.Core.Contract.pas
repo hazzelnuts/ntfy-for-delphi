@@ -9,7 +9,8 @@ uses
   Notify.Notification.Contract,
   Notify.Config.Contract,
   Notify.Action.Contract,
-  Notify.Event.Contract;
+  Notify.Event.Contract,
+  Notify.Attachment.Contract;
 
 type
   INotifyCore = interface
@@ -24,9 +25,10 @@ type
     function Topic(const AValue: String): INotifyCore;
     function DisableFireBase(const AValue: Boolean): INotifyCore;
     function Publish: INotifyCore;
-    function Subscribe: INotifyCore;
+    function Subscribe: INotifyCore; overload;
     function Unsubscribe: INotifyCore;
     function Notification(const ANotification: INotifyNotification): INotifyCore; overload;
+    procedure Subscribe(const ATopic: String; const ACallBack: TProc<INotifyEvent>); overload;
   end;
 
   INotifyCoreFactory = interface
@@ -41,7 +43,8 @@ type
     function Notify: INotifyCore;
     function Action: INotifyAction;
     function Config: INotifyConfig;
-    function NotifyMessage: INotifyMessage;
+    function Event: INotifyEvent;
+    function Attachment: INotifyAttachment;
   end;
 
 implementation

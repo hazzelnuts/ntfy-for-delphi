@@ -5,11 +5,12 @@ interface
 uses
   Notify.Event.Contract,
   Notify.Action.Contract,
+  Notify.Attachment.Contract,
   Notify.Types,
   System.Generics.Collections;
 
 type
-  TNotifyMessage = class(TInterfacedObject, INotifyMessage)
+  TNotifyMessage = class(TInterfacedObject, INotifyEvent)
   private
     FId: String;
     FTime: Integer;
@@ -21,38 +22,42 @@ type
     FMessage: String;
     FPriority: Integer;
     FAction: INotifyAction;
-    FActions: TDictionary<String, INotifyAction>;
+    FActions: INotifyEventActions;
+    FAttachment: INotifyAttachment;
   public
-    class function New: INotifyMessage;
+    class function New: INotifyEvent;
     constructor Create;
     destructor Destroy; override;
     function Id: String; overload;
-    function Id(const AValue: String): INotifyMessage; overload;
+    function Id(const AValue: String): INotifyEvent; overload;
     function Time: Integer; overload;
-    function Time(const AValue: Integer): INotifyMessage; overload;
+    function Time(const AValue: Integer): INotifyEvent; overload;
     function Event: String; overload;
-    function Event(const AValue: String): INotifyMessage; overload;
+    function Event(const AValue: String): INotifyEvent; overload;
     function Topic: String; overload;
-    function Topic(const AValue: String): INotifyMessage; overload;
+    function Topic(const AValue: String): INotifyEvent; overload;
     function Tags: TArray<String>; overload;
-    function Tags(const AValue: TArray<String>): INotifyMessage; overload;
+    function Tags(const AValue: TArray<String>): INotifyEvent; overload;
     function Click: String; overload;
-    function Click(const AValue: String): INotifyMessage; overload;
+    function Click(const AValue: String): INotifyEvent; overload;
     function Title: String; overload;
-    function Title(const AValue: String): INotifyMessage; overload;
+    function Title(const AValue: String): INotifyEvent; overload;
     function MessageContent: String; overload;
-    function MessageContent(const AValue: String): INotifyMessage; overload;
+    function MessageContent(const AValue: String): INotifyEvent; overload;
     function Priority: Integer; overload;
-    function Priority(const AValue: Integer): INotifyMessage; overload;
+    function Priority(const AValue: Integer): INotifyEvent; overload;
     function Action: INotifyAction; overload;
-    function Action(const AValue: INotifyAction): INotifyMessage; overload;
+    function Action(const AValue: INotifyAction): INotifyEvent; overload;
+    function Actions: INotifyEventActions;
+    function Attachment: INotifyAttachment; overload;
+    function Attachment(const AValue: INotifyAttachment): INotifyEvent; overload;
   end;
 
 implementation
 
 { TNotifySubscription }
 
-function TNotifyMessage.Action(const AValue: INotifyAction): INotifyMessage;
+function TNotifyMessage.Action(const AValue: INotifyAction): INotifyEvent;
 begin
   Result := Self;
   FAction := AValue;
@@ -66,12 +71,28 @@ begin
   FActions.Add(AValue.&Label, AValue);
 end;
 
+function TNotifyMessage.Actions: INotifyEventActions;
+begin
+  Result := FActions;
+end;
+
+function TNotifyMessage.Attachment(const AValue: INotifyAttachment): INotifyEvent;
+begin
+  Result := Self;
+  FAttachment := AValue;
+end;
+
+function TNotifyMessage.Attachment: INotifyAttachment;
+begin
+  Result := FAttachment;
+end;
+
 function TNotifyMessage.Action: INotifyAction;
 begin
   Result := FAction;
 end;
 
-function TNotifyMessage.Click(const AValue: String): INotifyMessage;
+function TNotifyMessage.Click(const AValue: String): INotifyEvent;
 begin
   Result := Self;
   FClick := AValue;
@@ -98,13 +119,13 @@ begin
   Result := FEvent;
 end;
 
-function TNotifyMessage.Event(const AValue: String): INotifyMessage;
+function TNotifyMessage.Event(const AValue: String): INotifyEvent;
 begin
   Result := Self;
   FEvent := AValue;
 end;
 
-function TNotifyMessage.Id(const AValue: String): INotifyMessage;
+function TNotifyMessage.Id(const AValue: String): INotifyEvent;
 begin
   Result := Self;
   FId := AValue;
@@ -120,18 +141,18 @@ begin
   Result := FMessage;
 end;
 
-function TNotifyMessage.MessageContent(const AValue: String): INotifyMessage;
+function TNotifyMessage.MessageContent(const AValue: String): INotifyEvent;
 begin
   Result := Self;
   FMessage := AValue;
 end;
 
-class function TNotifyMessage.New: INotifyMessage;
+class function TNotifyMessage.New: INotifyEvent;
 begin
   Result := Self.Create;
 end;
 
-function TNotifyMessage.Priority(const AValue: Integer): INotifyMessage;
+function TNotifyMessage.Priority(const AValue: Integer): INotifyEvent;
 begin
   Result := Self;
   FPriority := AValue;
@@ -142,7 +163,7 @@ begin
   Result := FPriority;
 end;
 
-function TNotifyMessage.Tags(const AValue: TArray<String>): INotifyMessage;
+function TNotifyMessage.Tags(const AValue: TArray<String>): INotifyEvent;
 begin
   Result := Self;
   FTags := AValue;
@@ -158,13 +179,13 @@ begin
   Result := FTime;
 end;
 
-function TNotifyMessage.Time(const AValue: Integer): INotifyMessage;
+function TNotifyMessage.Time(const AValue: Integer): INotifyEvent;
 begin
   Result := Self;
   FTime := AValue;
 end;
 
-function TNotifyMessage.Title(const AValue: String): INotifyMessage;
+function TNotifyMessage.Title(const AValue: String): INotifyEvent;
 begin
   Result := Self;
   FTitle := AValue;
@@ -175,7 +196,7 @@ begin
   Result := FTitle;
 end;
 
-function TNotifyMessage.Topic(const AValue: String): INotifyMessage;
+function TNotifyMessage.Topic(const AValue: String): INotifyEvent;
 begin
   Result := Self;
   FTopic := AValue;
