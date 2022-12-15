@@ -8,7 +8,7 @@ uses
   System.Notification, Data.DB, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.Grids,
-  Vcl.DBGrids;
+  Vcl.DBGrids, Vcl.Imaging.pngimage, Vcl.ExtCtrls;
 
 type
   TViewMain = class(TForm)
@@ -20,6 +20,9 @@ type
     TableNotificationTITLE: TStringField;
     TableNotificationMSG: TStringField;
     DsTable: TDataSource;
+    CbTopic: TComboBox;
+    lblTopic: TLabel;
+    Image1: TImage;
     procedure BtnSubscribeClick(Sender: TObject);
     procedure BtnUnsubscribeClick(Sender: TObject);
     private
@@ -34,11 +37,13 @@ implementation
 
 {$R *.dfm}
 
+uses Example.Push.Notifications;
+
 procedure TViewMain.BtnSubscribeClick(Sender: TObject);
 begin
   BtnSubscribe.Enabled := not BtnSubscribe.Enabled;
   BtnUnsubscribe.Enabled := not BtnUnsubscribe.Enabled;
-  Ntfy.Subscribe('notify-delphi-integration-8jh27d', YourCallBackProcedure);
+  Ntfy.Subscribe(CbTopic.Text, YourCallBackProcedure);
 end;
 
 procedure TViewMain.BtnUnsubscribeClick(Sender: TObject);
@@ -55,7 +60,8 @@ begin
     AEvent.Id,
     AEvent.Title,
     AEvent.MessageContent
-  ])
+  ]);
+  PushWindowsNotification(AEvent);
 end;
 
 end.
