@@ -156,6 +156,7 @@ end;
 procedure TViewMain.SendNotification;
 var
   LTags: TArray<string>;
+  LTag: String;
 begin
   FNotification.Topic(CbTopic.Text);
   FNotification.Title(lbeTitle.Text);
@@ -165,7 +166,7 @@ begin
   FNotification.FilePath(lbeFileAttachment.Text);
   FNotification.Attach(lbeURLAttachment.Text);
   FNotification.Email(lbeEmail.Text);
-  FNotification.Tags(CkTags.Items.ToStringArray);
+  //FNotification.Tags(CkTags.Items.ToStringArray);
 
   if not TableActions.IsEmpty then
   begin

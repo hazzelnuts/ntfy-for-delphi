@@ -1,4 +1,4 @@
-unit Notify.Core;
+﻿unit Notify.Core;
 
 interface
 
@@ -8,10 +8,10 @@ uses
   Notify.Api.Contract,
   Notify.Config.Contract,
   Notify.Notification.Contract,
-  Notify.Subscription.Thread,
   Notify.Subscription.Event,
   Notify.Event.Contract,
-  NX.Horizon;
+  NX.Horizon,
+  System.SysUtils;
 
 type
   TNotifyCore = class sealed(TInterfacedObject, INotifyCore)
@@ -19,16 +19,17 @@ type
     FApi: INotifyApi;
     FNotification: INotifyNotification;
     FConfig: INotifyConfig;
-    FSubscriptionThread: TNotifySubcriptionThread;
     FMesssagesSubscription: INxEventSubscription;
-    FMessage: INotifyMessage;
+    FEventMessage: INotifyEvent;
+    FCallBack: TProc<INotifyEvent>;
   public
     constructor Create;
     destructor Destroy; override;
     class function New: INotifyCore;
     class function NewInstance: TObject; override;
     function Publish: INotifyCore;
-    function Subscribe: INotifyCore;
+    function Subscribe: INotifyCore; overload;
+    procedure Subscribe(const ATopic: String; const ACallBack: TNotifyEventProc); overload;
     function Unsubscribe: INotifyCore;
   private
     procedure DoSubscribe;
@@ -36,7 +37,9 @@ type
     procedure SubscribeAsJSONString;
     procedure SubscribeAsSSEStream;
     procedure SubscribeAsRawStream;
-    procedure SubscritionEvent(const AEvent: TNotifySubscriptionEvent);
+    procedure SubscriptionEvent(const AEvent: TNotifySubscriptionEvent);
+    procedure UnsubscribeEventBus;
+    procedure ConsoleLogEvent;
     function SendFile: INotifyCore;
     function Topic(const AValue: String): INotifyCore;
     function SubscriptionType(const AValue: TNotifySubscriptionType): INotifyCore;
@@ -57,11 +60,14 @@ implementation
 
 uses
   System.NetEncoding,
-  System.SysUtils,
   Notify.Facade,
   Notify.SmartPointer,
   Notify.Event.DTO,
-  System.Classes;
+  Notify.Action.DTO,
+  Notify.Attachment.DTO,
+  System.Classes,
+  System.TypInfo,
+  Notify.Action.Contract, Notify.Attachment.Contract;
 
 
 { TNotifyCore }
@@ -83,28 +89,12 @@ begin
   FApi := TNotifyCoreFacade.New.Api;
   FNotification := TNotifyCoreFacade.New.Notification;
   FConfig := TNotifyCoreFacade.New.Config;
-  FMessage := TNotifyCoreFacade.New.NotifyMessage;
+  FEventMessage := TNotifyCoreFacade.New.Event;
 end;
 
 destructor TNotifyCore.Destroy;
 begin
-
-  {$IF DEFINED(WIN64) OR DEFINED(WIN32)}
-    if Assigned(FSubscriptionThread) and (not FSubscriptionThread.Finished) then
-      FSubscriptionThread.Terminate;
-  {$IFEND}
-
-
-  if Assigned(FMesssagesSubscription) then
-  begin
-    FMesssagesSubscription.WaitFor;
-    NxHorizon.Instance.Unsubscribe(FMesssagesSubscription);
-  end;
-
-  // Not yet suppported
-  //if FConfig.SubscriptionType in [TNotifySubscriptionType.WEB_SOCKET] then
-  //  FApi.DisconnectWebSocket;
-
+  UnsubscribeEventBus;
   inherited;
 end;
 
@@ -124,6 +114,62 @@ begin
     SubscribeAsRawStream
   else
     SubscribeAsWebSocket;
+end;
+
+procedure TNotifyCore.ConsoleLogEvent;
+var
+  LTag: String;
+  LAction: INotifyAction;
+  LAttachment: INotifyAttachment;
+begin
+
+  if not FConfig.SaveLog then
+    Exit;
+
+  {$IFDEF CONSOLE}
+  Writeln(Format('===========[ NEW MESSAGE %s ]==========', [DateTimeToStr(Now)]));
+  Writeln(Format('Id: %s', [FEventMessage.Id]));
+  Writeln(Format('Time: %d', [FEventMessage.Time]));
+  Writeln(Format('Event: %s', [FEventMessage.Event]));
+  Writeln(Format('Topic: %s', [FEventMessage.Topic]));
+  Writeln(Format('Message: %s', [FEventMessage.MessageContent]));
+  Writeln(Format('Title: %s', [FEventMessage.Title]));
+  Writeln(Format('Priority: %d', [FEventMessage.Priority]));
+  Writeln(Format('Click: %s', [FEventMessage.Click]));
+
+  for LTag in FEventMessage.Tags do
+    Writeln(Format('Tag: %s', [LTag]));
+
+  for LAction in FEventMessage.Actions.Values do
+  begin
+
+    Writeln(Format('Action Type: %s', [GetEnumName(TypeInfo(TNotifyActionType), Integer(LAction.&Type))]));
+    Writeln(Format('Action Label: %s', [LAction.&Label])); // comment this line to edit this function
+    Writeln(Format('Action Url: %s', [LAction.Url]));
+    Writeln(Format('Action Clear: %s', [LAction.Clear.ToString]));
+    Writeln(Format('Action Method: %s', [LAction.Method]));
+    Writeln(Format('Action Body: %s', [LAction.Body]));
+
+    if Assigned(LAction.Headers) then
+    begin
+      Writeln(Format('Action Headers: %s', [LAction.Headers.AsJson]));
+    end;
+
+  end;
+  {$ENDIF}
+
+  if not Assigned(FEventMessage.Attachment) then
+    Exit;
+
+  {$IFDEF CONSOLE}
+  LAttachment := FEventMessage.Attachment;
+  Writeln(Format('Attachment Name: %s', [LAttachment.Name]));
+  Writeln(Format('Attachment Url: %s', [LAttachment.Url]));
+  Writeln(Format('Attachment MimeType: %s', [LAttachment.MimeType]));
+  Writeln(Format('Attachment Size: %s', [LAttachment.Size.ToString]));
+  Writeln(Format('Attachment Expires: %s', [LAttachment.Expires.ToString]));
+  {$ENDIF}
+
 end;
 
 function TNotifyCore.LogPath(const AValue: String): INotifyCore;
@@ -148,6 +194,13 @@ function TNotifyCore.Notification(const ANotification: INotifyNotification): INo
 begin
   Result := Self;
   FNotification := ANotification;
+end;
+
+procedure TNotifyCore.Subscribe(const ATopic: String; const ACallBack: TNotifyEventProc);
+begin
+  FNotification.Topic(ATopic);
+  FCallBack := ACallBack;
+  Subscribe;
 end;
 
 procedure TNotifyCore.SubscribeAsJSONString;
@@ -268,23 +321,14 @@ end;
 function TNotifyCore.Subscribe: INotifyCore;
 begin
   Result := Self;
-  FMesssagesSubscription := NxHorizon.Instance.Subscribe<TNotifySubscriptionEvent>(Async, SubscritionEvent);
+
+  FMesssagesSubscription := NxHorizon.Instance.Subscribe<TNotifySubscriptionEvent>(MainSync, SubscriptionEvent);
 
   {$IFDEF CONSOLE}
     Writeln('Subscribing to topic: ' + FNotification.Topic);
-    DoSubscribe;
-    Exit;
   {$ENDIF}
 
-  {$IF DEFINED(WIN64) or DEFINED(WIN32)}
-    if Assigned(FSubscriptionThread) then
-      Exit;
-
-    FSubscriptionThread := TNotifySubcriptionThread.Create(DoSubscribe);
-    FSubscriptionThread.FreeOnTerminate := True;
-    FSubscriptionThread.Start;
-    Exit;
-  {$IFEND}
+  DoSubscribe;
 
 end;
 
@@ -302,11 +346,19 @@ begin
     raise Exception.Create('Unsubscribe for console application is not supported. Kill the process.');
   {$ENDIF}
 
-  {$IF DEFINED(WIN64) OR DEFINED(WIN32)}
-    if Assigned(FSubscriptionThread) and (not FSubscriptionThread.Finished) then
-      FSubscriptionThread.Terminate;
-  {$IFEND}
+  UnsubscribeEventBus;
+  FApi.AbortStream;
 
+end;
+
+procedure TNotifyCore.UnsubscribeEventBus;
+begin
+  if Assigned(FMesssagesSubscription) then
+    if not FMesssagesSubscription.IsCanceled then
+    begin
+      FMesssagesSubscription.WaitFor;
+      NxHorizon.Instance.Unsubscribe(FMesssagesSubscription);
+    end;
 end;
 
 function TNotifyCore.UserName(const AValue: String): INotifyCore;
@@ -315,52 +367,68 @@ begin
   FConfig.UserName(AValue);
 end;
 
-
-procedure TNotifyCore.SubscritionEvent(const AEvent: TNotifySubscriptionEvent);
+procedure TNotifyCore.SubscriptionEvent(const AEvent: TNotifySubscriptionEvent);
 var
-  LEvent: TSmartPointer<TNotifyEventDTO>;
-  LTag: String;
+  LEventDTO: TSmartPointer<TNotifyEventDTO>;
+  LActionDTO: TNotifyActionDTO;
+  LEventAttachmentDTO: TNotifyAttachmentDTO;
 begin
 
-  LEvent.Value.AsJson := AEvent;
+  LEventDTO.Value.AsJson := AEvent;
 
-  {$IFDEF CONSOLE}
-  if (LEvent.Value.Event = NotifyMessageEventArray[TNotifyMessageEvent.OPEN]) then
+  if (LEventDTO.Value.Event = NotifyMessageEventArray[TNotifyMessageEvent.OPEN]) then
   begin
+    {$IF DEFINED(CONSOLE)}
     Writeln('Connection opened. Listening to incoming messages...');
     Writeln('Press Ctrl + C to kill the process.');
+    {$IFEND}
   end;
-  {$ENDIF}
 
-  if (LEvent.Value.Id <> '') and(LEvent.Value.Event = NotifyMessageEventArray[TNotifyMessageEvent.MSG]) then
+
+  if (LEventDTO.Value.Id <> '') and (LEventDTO.Value.Event = NotifyMessageEventArray[TNotifyMessageEvent.MSG]) then
   begin
-    FMessage
-      .Id(LEvent.Value.Id)
-      .Time(LEvent.Value.Time)
-      .Event(LEvent.Value.Event)
-      .Topic(LEvent.Value.Topic)
-      .Click(LEvent.Value.Click)
-      .MessageContent(LEvent.Value.Message)
-      .Title(LEvent.Value.Title)
-      .Tags(LEvent.Value.Tags.ToArray)
-      .Priority(LEvent.Value.Priority)
-      .Click(LEvent.Value.Click);
+    FEventMessage
+      .Id(LEventDTO.Value.Id)
+      .Time(LEventDTO.Value.Time)
+      .Event(LEventDTO.Value.Event)
+      .Topic(LEventDTO.Value.Topic)
+      .Click(LEventDTO.Value.Click)
+      .MessageContent(LEventDTO.Value.Message)
+      .Title(LEventDTO.Value.Title)
+      .Tags(LEventDTO.Value.Tags.ToArray)
+      .Priority(LEventDTO.Value.Priority)
+      .Click(LEventDTO.Value.Click);
 
-    {$IFDEF CONSOLE}
-    Writeln(Format('Id: %s', [FMessage.Id]));
-    Writeln(Format('Time: %d', [FMessage.Time]));
-    Writeln(Format('Event: %s', [FMessage.Event]));
-    Writeln(Format('Topic: %s', [FMessage.Topic]));
-    Writeln(Format('Message: %s', [FMessage.MessageContent]));
-    Writeln(Format('Title: %s', [FMessage.Title]));
-    Writeln(Format('Priority: %d', [FMessage.Priority]));
-    Writeln(Format('Click: %s', [FMessage.Click]));
-    for LTag in FMessage.Tags do
-      Writeln(Format('Tag: %s', [LTag]));
-    {$ENDIF}
+    for LActionDTO in LEventDTO.Value.Actions do
+      FEventMessage.Action(
+        TNotifyCoreFacade.New.Action
+          .&Type(TNotifyActionType(GetEnumValue(TypeInfo(TNotifyActionType), LActionDTO.Action)))
+          .&Label(LActionDTO.&Label)
+          .Url(LActionDTO.Url)
+          .Clear(LActionDTO.Clear)
+          .Method(LActionDTO.Method)
+          .Body(LActionDTO.Body)
+      );
+
+    if Assigned(LEventDTO.Value.Attachment) then
+    begin
+      LEventAttachmentDTO := LEventDTO.Value.Attachment;
+      FEventMessage.Attachment(
+        TNotifyCoreFacade.New.Attachment
+          .Name(LEventAttachmentDTO.Name)
+          .Url(LEventAttachmentDTO.Url)
+          .MimeType(LEventAttachmentDTO.MimeType)
+          .Size(LEventAttachmentDTO.Size)
+          .Expires(LEventAttachmentDTO.Expires)
+      );
+    end;
+
+    if Assigned(FCallBack) then
+       FCallBack(FEventMessage);
+
+    ConsoleLogEvent;
 
   end;
-
 
 end;
 

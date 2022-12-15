@@ -33,13 +33,11 @@ object ViewMain: TViewMain
     Padding.Right = 3
     Padding.Bottom = 3
     TabOrder = 0
-    ExplicitLeft = -5
-    ExplicitTop = -5
     object lbPriority: TLabel
       Left = 12
       Top = 195
       Width = 34
-      Height = 11
+      Height = 13
       Caption = 'Priority'
     end
     object Label1: TLabel

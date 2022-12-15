@@ -34,11 +34,11 @@ type
     [JSONName('email')]
     FEmail: String;
     [GenericListReflect]
-    FActions: TObjectList<TNotifyActionsDTO>;
+    FActions: TObjectList<TNotifyActionDTO>;
     [JSONName('actions'), JSONMarshalled(False)]
-    FActionsArray: TArray<TNotifyActionsDTO>;
+    FActionsArray: TArray<TNotifyActionDTO>;
     function GetTags: TList<string>;
-    function GetActions: TObjectList<TNotifyActionsDto>;
+    function GetActions: TObjectList<TNotifyActionDTO>;
   protected
     function GetAsJson: string; override;
   published
@@ -50,7 +50,7 @@ type
     property Tags: TList<string> read GetTags;
     property Title: string read FTitle write FTitle;
     property Topic: string read FTopic write FTopic;
-    property Actions: TObjectList<TNotifyActionsDTO> read GetActions;
+    property Actions: TObjectList<TNotifyActionDTO> read GetActions;
     property Delay: String read FDelay write FDelay;
     property Email: String read FEmail write FEmail;
   public
@@ -73,15 +73,15 @@ begin
   Result := List<string>(FTags, FTagsArray);
 end;
 
-function TNotifyNotificationDTO.GetActions: TObjectList<TNotifyActionsDto>;
+function TNotifyNotificationDTO.GetActions: TObjectList<TNotifyActionDTO>;
 begin
-  Result := ObjectList<TNotifyActionsDTO>(FActions, FActionsArray);
+  Result := ObjectList<TNotifyActionDTO>(FActions, FActionsArray);
 end;
 
 function TNotifyNotificationDTO.GetAsJson: string;
 begin
   RefreshArray<string>(FTags, FTagsArray);
-  RefreshArray<TNotifyActionsDTO>(FActions, FActionsArray);
+  RefreshArray<TNotifyActionDTO>(FActions, FActionsArray);
   Result := inherited;
 end;
 

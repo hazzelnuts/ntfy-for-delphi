@@ -10,20 +10,33 @@ uses
   Notify.Config.Contract,
   Notify.SimpleWebsocket.Indy,
   NX.Horizon,
-  Notify.Subscription.Event;
+  Notify.Subscription.Event,
+  System.Threading;
 
 type
+
+  TSSEThread = class(TThread)
+  private
+    FUrl: String;
+    FIdHttp: TIdHTTP;
+    FIdEventStream: TMemoryStream;
+    const FCloseConnectionMessage = '/\/\';
+    procedure DoOnWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
+  public
+    constructor Create(AUrl: String; var AIdHttp: TIdHTTP);
+    procedure Execute; override;
+    destructor Destroy; override;
+    procedure AbortStream;
+  end;
+
   TNotityApiIndy = class(TInterfacedObject, INotifyApi)
   strict private
     FIOHandlerSSL: TIdSSLIOHandlerSocketOpenSSL;
     FIdHTTP: TIdHTTP;
-    FIdEventStream: TIdEventStream;
-    FIdWebSocket: TIdSimpleWebSocketClient;
     FBodyStream: TMemoryStream;
     FNotifyConfig: INotifyConfig;
     FEndPoint: String;
-    procedure OnWriteEvent(const ABuffer: TIdBytes; AOffset, ACount: Longint; var VResult: Longint);
-    procedure OnWebSocketEvent(Sender: TObject; const Text: string);
+    FConnectionThread: TSSEThread;
   public
     constructor Create;
     destructor Destroy; override;
@@ -40,8 +53,8 @@ type
     function Get: INotifyApi;
     function Post: INotifyApi;
     function Put: INotifyApi;
-    function ConnectWebSocket: INotifyApi;
-    function DisconnectWebSocket: INotifyApi;
+    function AbortStream: INotifyApi;
+    procedure Destroythread;
   end;
 
 implementation
@@ -49,7 +62,7 @@ implementation
 uses
   Notify.SmartPointer,
   System.SysUtils,
-  Notify.Logs;
+  Notify.Logs, Winapi.Windows;
 
 { TNotityApiIndy }
 
@@ -60,6 +73,11 @@ begin
   Result := Self;
   LBodyStream := TStringStream.Create(AValue);
   FBodyStream.CopyFrom(LBodyStream.Value, LBodyStream.Value.Size);
+end;
+
+function TNotityApiIndy.AbortStream: INotifyApi;
+begin
+  Destroythread;
 end;
 
 function TNotityApiIndy.AddBody(const AValue: TFileStream): INotifyApi;
@@ -111,50 +129,41 @@ begin
   FNotifyConfig := AValue;
 end;
 
-function TNotityApiIndy.ConnectWebSocket: INotifyApi;
-var
-  LUrl: String;
-begin
-  Result := Self;
-  LUrl := Format('%s/%s', [FNotifyConfig.BaseURL, FEndPoint]);
-  if not FIdWebSocket.Connected then
-    FIdWebSocket.Connect('wss://echo.websocket.org');
-end;
-
 constructor TNotityApiIndy.Create;
 begin
   FIdHTTP := TIdHTTP.Create(nil);
   FIOHandlerSSL := TIdSSLIOHandlerSocketOpenSSL.Create;
-  FIdEventStream := TIdEventStream.Create;
   FBodyStream := TMemoryStream.Create;
-  FIdWebSocket := TIdSimpleWebSocketClient.Create(nil);
-  FIdWebSocket.AutoCreateHandler := True;
-
   FIOHandlerSSL.SSLOptions.Method := sslvTLSv1_2;
   FIdHTTP.IOHandler := FIOHandlerSSL;
-  FIdHTTP.Request.Accept := 'text/event-stream';
-  FIdHTTP.Request.CacheControl := 'no-store';
   FIdHTTP.HTTPOptions := [hoNoReadMultipartMIME];
-
-  FIdWebSocket.onDataEvent := OnWebSocketEvent;
-  FIdEventStream.OnWrite := OnWriteEvent;
 end;
 
 destructor TNotityApiIndy.Destroy;
 begin
-  FIdHTTP.Free;
-  FIdWebSocket.Free;
-  FIOHandlerSSL.Free;
-  FIdEventStream.Free;
-  FBodyStream.Free;
+  try
+    Destroythread;
+  finally
+    FIdHTTP.Free;
+    FIOHandlerSSL.Free;
+    FBodyStream.Free;
+  end;
   inherited;
 end;
 
-function TNotityApiIndy.DisconnectWebSocket: INotifyApi;
+procedure TNotityApiIndy.Destroythread;
 begin
-  Result := Self;
-  if FIdWebSocket.Connected then
-    FIdWebSocket.Disconnect;
+  if Assigned(FConnectionThread) then
+  begin
+    try
+      FConnectionThread.AbortStream;
+      FConnectionThread.Terminate;
+      FConnectionThread.WaitFor;
+    finally
+      FConnectionThread.Free;
+      FConnectionThread := nil;
+    end;
+  end;
 end;
 
 function TNotityApiIndy.Get: INotifyApi;
@@ -163,10 +172,14 @@ var
 begin
   Result := Self;
   LUrl := Format('%s/%s', [FNotifyConfig.BaseURL, FEndPoint]);
-  FIdHTTP.Get(LUrl, FIdEventStream);
 
-  if FNotifyConfig.SaveLog then
-    TNotifyLogs.Log(FNotifyConfig.LogPath, FIdHTTP.ResponseText);
+  try
+    if Assigned(FConnectionThread) then
+      Destroythread;
+  finally
+    FConnectionThread := TSSEThread.Create(LUrl, FIdHTTP);
+    FConnectionThread.Start;
+  end;
 
 end;
 
@@ -175,33 +188,12 @@ begin
   Result := Self.Create;
 end;
 
-procedure TNotityApiIndy.OnWebSocketEvent(Sender: TObject; const Text: string);
-begin
-  NxHorizon.Instance.Post<TNotifySubscriptionEvent>(Text);
-end;
-
-procedure TNotityApiIndy.OnWriteEvent(const ABuffer: TIdBytes; AOffset, ACount: Longint; var VResult: Longint);
-var
-  LEventString: String;
-begin
-
-  LEventString := IndyTextEncoding_UTF8.GetString(ABuffer);
-
-  NxHorizon.Instance.Post<TNotifySubscriptionEvent>(LEventString);
-
-  if FNotifyConfig.SaveLog then
-    TNotifyLogs.Log(FNotifyConfig.LogPath, LEventString);
-
-end;
-
 function TNotityApiIndy.Post: INotifyApi;
 begin
   Result := Self;
   FIdHTTP.Post(FNotifyConfig.BaseURL, FBodyStream);
-
   if FNotifyConfig.SaveLog then
     TNotifyLogs.Log(FNotifyConfig.LogPath, FIdHTTP.ResponseText);
-
 end;
 
 function TNotityApiIndy.Put: INotifyApi;
@@ -211,10 +203,85 @@ begin
   Result := Self;
   LUrl := Format('%s/%s', [FNotifyConfig.BaseURL, FEndPoint]);
   FIdHTTP.Put(LUrl, FBodyStream);
-
   if FNotifyConfig.SaveLog then
     TNotifyLogs.Log(FNotifyConfig.LogPath, FIdHTTP.ResponseText);
+end;
 
+{ TSSEThread }
+
+procedure TSSEThread.AbortStream;
+var
+  Cmd: String;
+begin
+  try
+    Cmd := FCloseConnectionMessage;
+    FIdEventStream.WriteData(ToBytes(Cmd), Length(Cmd));
+    FIdEventStream.Position := 0;
+    DoOnWork(Self, wmRead, 1000);
+  except on E: Exception do
+    begin
+      Exit;
+    end;
+  end;
+end;
+
+constructor TSSEThread.Create(AUrl: String; var AIdHttp: TIdHTTP);
+begin
+  inherited Create(True);
+  FreeOnTerminate := False;
+  FUrl := AUrl;
+  FIdHttp := AIdHttp;
+end;
+
+destructor TSSEThread.Destroy;
+begin
+
+  inherited;
+end;
+
+procedure TSSEThread.DoOnWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
+var
+  LEventString: String;
+begin
+
+  if Terminated then
+    Exit;
+
+  FIdEventStream.Position := 0;
+  SetString(LEventString, PAnsiChar(FIdEventStream.Memory), FIdEventStream.Size);
+
+  if LEventString = '' then
+    Exit;
+
+  if LEventString = FCloseConnectionMessage then
+    FIdHttp.Socket.Close;
+
+  NxHorizon.Instance.Post<TNotifySubscriptionEvent>(LEventString);
+end;
+
+procedure TSSEThread.Execute;
+begin
+  inherited;
+  try
+    FIdEventStream := TMemoryStream.Create;
+    FIdHttp.OnWork := DoOnWork;
+    FIdHttp.Request.CacheControl := 'no-cache';
+    FIdHttp.Request.Accept := 'text/event-stream';
+    FIdHttp.Response.KeepAlive := True;
+    while not Terminated do
+    begin
+      try
+        FIdHttp.Get(FUrl, FIdEventStream);
+      except on E: Exception do
+        begin
+          Exit;
+        end;
+      end;
+    end;
+
+  finally
+    FIdEventStream.Free;
+  end;
 end;
 
 end.

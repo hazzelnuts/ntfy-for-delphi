@@ -94,7 +94,7 @@ end;
 function TNotifyNotification.AsJSONString: String;
 var
   LNotificationDTO: TSmartPointer<TNotifyNotificationDTO>;
-  LActionDTO: TNotifyActionsDTO;
+  LActionDTO: TNotifyActionDTO;
   LAction: INotifyAction;
 begin
   LNotificationDTO.Value.Topic := FTopic;
@@ -109,7 +109,7 @@ begin
 
   for LAction in FActions.Values do
   begin
-    LActionDTO := TNotifyActionsDTO.Create;
+    LActionDTO := TNotifyActionDTO.Create;
     LActionDTO.Action := NotifyActionTypesArray[LAction.&Type];
     LActionDTO.&Label := LAction.&Label;
     LActionDTO.Clear := LAction.Clear;
