@@ -6,12 +6,15 @@ uses
   Notify.Types,
   Notify.Action.Contract,
   Notify.Notification.Contract,
+  Notify.Event.Contract,
   Notify.Core.Contract;
 
 type
   INotify = Notify.Core.Contract.INotifyCore;
   INotifyNotification = Notify.Notification.Contract.INotifyNotification;
   INotifyAction = Notify.Action.Contract.INotifyAction;
+  INotifyEvent = Notify.Event.Contract.INotifyEvent;
+  TNotifyEventProc = Notify.Event.Contract.TNotifyEventProc;
   TNotifyPriority = Notify.Types.TNotifyPriority;
   TNotifyActionType = Notify.Types.TNotifyActionType;
   TNotifySubscriptionType = Notify.Types.TNotifySubscriptionType;

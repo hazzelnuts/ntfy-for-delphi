@@ -3,6 +3,7 @@ unit Notify.Event.Contract;
 interface
 
 uses
+  System.SysUtils,
   Notify.Action.Contract,
   Notify.Attachment.Contract,
   System.Generics.Collections;
@@ -37,6 +38,8 @@ type
     function Attachment: INotifyAttachment; overload;
     function Attachment(const AValue: INotifyAttachment): INotifyEvent; overload;
   end;
+
+  TNotifyEventProc = TProc<INotifyEvent>;
 
   INotifyEventFactory = interface
     ['{8DE90B5D-61A1-4369-B6C7-054F96454546}']

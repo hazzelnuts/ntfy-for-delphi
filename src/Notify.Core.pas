@@ -8,7 +8,6 @@ uses
   Notify.Api.Contract,
   Notify.Config.Contract,
   Notify.Notification.Contract,
-  Notify.Subscription.Thread,
   Notify.Subscription.Event,
   Notify.Event.Contract,
   NX.Horizon,
@@ -20,7 +19,6 @@ type
     FApi: INotifyApi;
     FNotification: INotifyNotification;
     FConfig: INotifyConfig;
-    FSubscriptionThread: TNotifySubcriptionThread;
     FMesssagesSubscription: INxEventSubscription;
     FEventMessage: INotifyEvent;
     FCallBack: TProc<INotifyEvent>;
@@ -31,7 +29,7 @@ type
     class function NewInstance: TObject; override;
     function Publish: INotifyCore;
     function Subscribe: INotifyCore; overload;
-    procedure Subscribe(const ATopic: String; const ACallBack: TProc<INotifyEvent>); overload;
+    procedure Subscribe(const ATopic: String; const ACallBack: TNotifyEventProc); overload;
     function Unsubscribe: INotifyCore;
   private
     procedure DoSubscribe;
@@ -40,6 +38,7 @@ type
     procedure SubscribeAsSSEStream;
     procedure SubscribeAsRawStream;
     procedure SubscriptionEvent(const AEvent: TNotifySubscriptionEvent);
+    procedure UnsubscribeEventBus;
     procedure ConsoleLogEvent;
     function SendFile: INotifyCore;
     function Topic(const AValue: String): INotifyCore;
@@ -95,22 +94,7 @@ end;
 
 destructor TNotifyCore.Destroy;
 begin
-
-  {$IF DEFINED(WIN64) OR DEFINED(WIN32)}
-    if Assigned(FSubscriptionThread) and (not FSubscriptionThread.Finished) then
-      FSubscriptionThread.Terminate;
-  {$IFEND}
-
-  if Assigned(FMesssagesSubscription) then
-  begin
-    FMesssagesSubscription.WaitFor;
-    NxHorizon.Instance.Unsubscribe(FMesssagesSubscription);
-  end;
-
-  // Not yet suppported
-  //if FConfig.SubscriptionType in [TNotifySubscriptionType.WEB_SOCKET] then
-  //  FApi.DisconnectWebSocket;
-
+  UnsubscribeEventBus;
   inherited;
 end;
 
@@ -212,7 +196,7 @@ begin
   FNotification := ANotification;
 end;
 
-procedure TNotifyCore.Subscribe(const ATopic: String; const ACallBack: TProc<INotifyEvent>);
+procedure TNotifyCore.Subscribe(const ATopic: String; const ACallBack: TNotifyEventProc);
 begin
   FNotification.Topic(ATopic);
   FCallBack := ACallBack;
@@ -337,23 +321,13 @@ end;
 function TNotifyCore.Subscribe: INotifyCore;
 begin
   Result := Self;
-  FMesssagesSubscription := NxHorizon.Instance.Subscribe<TNotifySubscriptionEvent>(Async, SubscriptionEvent);
+  FMesssagesSubscription := NxHorizon.Instance.Subscribe<TNotifySubscriptionEvent>(MainSync, SubscriptionEvent);
 
   {$IFDEF CONSOLE}
     Writeln('Subscribing to topic: ' + FNotification.Topic);
-    DoSubscribe;
-    Exit;
   {$ENDIF}
 
-  {$IF DEFINED(WIN64) or DEFINED(WIN32)}
-    if Assigned(FSubscriptionThread) then
-      Exit;
-
-    FSubscriptionThread := TNotifySubcriptionThread.Create(DoSubscribe);
-    FSubscriptionThread.FreeOnTerminate := True;
-    FSubscriptionThread.Start;
-    Exit;
-  {$IFEND}
+  DoSubscribe;
 
 end;
 
@@ -371,11 +345,19 @@ begin
     raise Exception.Create('Unsubscribe for console application is not supported. Kill the process.');
   {$ENDIF}
 
-  {$IF DEFINED(WIN64) OR DEFINED(WIN32)}
-    if Assigned(FSubscriptionThread) and (not FSubscriptionThread.Finished) then
-      FSubscriptionThread.Terminate;
-  {$IFEND}
+  UnsubscribeEventBus;
+  FApi.AbortStream;
 
+end;
+
+procedure TNotifyCore.UnsubscribeEventBus;
+begin
+  if not FMesssagesSubscription.IsCanceled then
+    if Assigned(FMesssagesSubscription) then
+    begin
+      FMesssagesSubscription.WaitFor;
+      NxHorizon.Instance.Unsubscribe(FMesssagesSubscription);
+    end;
 end;
 
 function TNotifyCore.UserName(const AValue: String): INotifyCore;
@@ -395,8 +377,10 @@ begin
 
   if (LEventDTO.Value.Event = NotifyMessageEventArray[TNotifyMessageEvent.OPEN]) then
   begin
+    {$IF DEFINED(CONSOLE)}
     Writeln('Connection opened. Listening to incoming messages...');
     Writeln('Press Ctrl + C to kill the process.');
+    {$IFEND}
   end;
 
 

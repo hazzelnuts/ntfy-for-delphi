@@ -28,7 +28,7 @@ type
     function Subscribe: INotifyCore; overload;
     function Unsubscribe: INotifyCore;
     function Notification(const ANotification: INotifyNotification): INotifyCore; overload;
-    procedure Subscribe(const ATopic: String; const ACallBack: TProc<INotifyEvent>); overload;
+    procedure Subscribe(const ATopic: String; const ACallBack: TNotifyEventProc); overload;
   end;
 
   INotifyCoreFactory = interface
