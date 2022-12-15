@@ -321,6 +321,7 @@ end;
 function TNotifyCore.Subscribe: INotifyCore;
 begin
   Result := Self;
+
   FMesssagesSubscription := NxHorizon.Instance.Subscribe<TNotifySubscriptionEvent>(MainSync, SubscriptionEvent);
 
   {$IFDEF CONSOLE}
@@ -352,8 +353,8 @@ end;
 
 procedure TNotifyCore.UnsubscribeEventBus;
 begin
-  if not FMesssagesSubscription.IsCanceled then
-    if Assigned(FMesssagesSubscription) then
+  if Assigned(FMesssagesSubscription) then
+    if not FMesssagesSubscription.IsCanceled then
     begin
       FMesssagesSubscription.WaitFor;
       NxHorizon.Instance.Unsubscribe(FMesssagesSubscription);
