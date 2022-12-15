@@ -371,7 +371,7 @@ procedure TNotifyCore.SubscriptionEvent(const AEvent: TNotifySubscriptionEvent);
 var
   LEventDTO: TSmartPointer<TNotifyEventDTO>;
   LActionDTO: TNotifyActionDTO;
-  LEventAttachmentDTO: TNotifyAttachmentDTO;
+  LEventAttachmentDTO: TSmartPointer<TNotifyAttachmentDTO>;
 begin
 
   LEventDTO.Value.AsJson := AEvent;
@@ -415,11 +415,11 @@ begin
       LEventAttachmentDTO := LEventDTO.Value.Attachment;
       FEventMessage.Attachment(
         TNotifyCoreFacade.New.Attachment
-          .Name(LEventAttachmentDTO.Name)
-          .Url(LEventAttachmentDTO.Url)
-          .MimeType(LEventAttachmentDTO.MimeType)
-          .Size(LEventAttachmentDTO.Size)
-          .Expires(LEventAttachmentDTO.Expires)
+          .Name(LEventAttachmentDTO.Value.Name)
+          .Url(LEventAttachmentDTO.Value.Url)
+          .MimeType(LEventAttachmentDTO.Value.MimeType)
+          .Size(LEventAttachmentDTO.Value.Size)
+          .Expires(LEventAttachmentDTO.Value.Expires)
       );
     end;
 

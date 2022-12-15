@@ -8,7 +8,6 @@ uses
   IdTCPClient, IdHTTP, IdStream, IdGlobal,
   Notify.Api.Contract,
   Notify.Config.Contract,
-  Notify.SimpleWebsocket.Indy,
   NX.Horizon,
   Notify.Subscription.Event,
   System.Threading;
@@ -180,6 +179,10 @@ begin
     FConnectionThread := TSSEThread.Create(LUrl, FIdHTTP);
     FConnectionThread.Start;
   end;
+
+  {$IFDEF CONSOLE}
+  FConnectionThread.WaitFor;
+  {$ENDIF}
 
 end;
 

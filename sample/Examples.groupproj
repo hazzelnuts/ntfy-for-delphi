@@ -1,0 +1,72 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{F264D633-D2C1-4727-905B-2D467A832EC5}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="vcl\publisher\VCLPublisher.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="vcl\subscriber\VCLSubscriber.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="console\publisher\ConsolePublisher.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="console\subscriber\ConsoleSubscriber.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="VCLPublisher">
+        <MSBuild Projects="vcl\publisher\VCLPublisher.dproj"/>
+    </Target>
+    <Target Name="VCLPublisher:Clean">
+        <MSBuild Projects="vcl\publisher\VCLPublisher.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="VCLPublisher:Make">
+        <MSBuild Projects="vcl\publisher\VCLPublisher.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="VCLSubscriber">
+        <MSBuild Projects="vcl\subscriber\VCLSubscriber.dproj"/>
+    </Target>
+    <Target Name="VCLSubscriber:Clean">
+        <MSBuild Projects="vcl\subscriber\VCLSubscriber.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="VCLSubscriber:Make">
+        <MSBuild Projects="vcl\subscriber\VCLSubscriber.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ConsolePublisher">
+        <MSBuild Projects="console\publisher\ConsolePublisher.dproj"/>
+    </Target>
+    <Target Name="ConsolePublisher:Clean">
+        <MSBuild Projects="console\publisher\ConsolePublisher.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ConsolePublisher:Make">
+        <MSBuild Projects="console\publisher\ConsolePublisher.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ConsoleSubscriber">
+        <MSBuild Projects="console\subscriber\ConsoleSubscriber.dproj"/>
+    </Target>
+    <Target Name="ConsoleSubscriber:Clean">
+        <MSBuild Projects="console\subscriber\ConsoleSubscriber.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ConsoleSubscriber:Make">
+        <MSBuild Projects="console\subscriber\ConsoleSubscriber.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="VCLPublisher;VCLSubscriber;ConsolePublisher;ConsoleSubscriber"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="VCLPublisher:Clean;VCLSubscriber:Clean;ConsolePublisher:Clean;ConsoleSubscriber:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="VCLPublisher:Make;VCLSubscriber:Make;ConsolePublisher:Make;ConsoleSubscriber:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

@@ -1,4 +1,4 @@
-program Publisher;
+program ConsolePublisher;
 
 {$APPTYPE CONSOLE}
 
@@ -32,6 +32,6 @@ begin
   //UseIcons;
   //UseEmail;
 
-  Ntfy.Topic('your-very-secret-topic').Publish;
+  Ntfy.Topic('notify-delphi-integration-8jh27d').Publish;
 
 end.
