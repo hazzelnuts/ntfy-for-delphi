@@ -2,8 +2,8 @@ object ViewMain: TViewMain
   Left = 0
   Top = 0
   Caption = 'Subscriber'
-  ClientHeight = 355
-  ClientWidth = 577
+  ClientHeight = 411
+  ClientWidth = 699
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -11,20 +11,24 @@ object ViewMain: TViewMain
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  DesignSize = (
+    699
+    411)
   PixelsPerInch = 96
   TextHeight = 13
   object lblTopic: TLabel
     Left = 8
-    Top = 12
+    Top = 13
     Width = 25
     Height = 13
     Caption = 'Topic'
   end
   object Image1: TImage
-    Left = 324
-    Top = 4
+    Left = 446
+    Top = 8
     Width = 245
     Height = 110
+    Anchors = [akTop, akRight]
     ParentShowHint = False
     Picture.Data = {
       0954506E67496D61676589504E470D0A1A0A0000000D49484452000002BC0000
@@ -1504,7 +1508,7 @@ object ViewMain: TViewMain
   end
   object BtnSubscribe: TButton
     Left = 8
-    Top = 58
+    Top = 105
     Width = 75
     Height = 25
     Caption = 'Subscribe'
@@ -1513,7 +1517,7 @@ object ViewMain: TViewMain
   end
   object BtnUnsubscribe: TButton
     Left = 89
-    Top = 58
+    Top = 105
     Width = 75
     Height = 25
     Caption = 'Unsubscribe'
@@ -1523,9 +1527,9 @@ object ViewMain: TViewMain
   end
   object DBGrid1: TDBGrid
     Left = 0
-    Top = 89
-    Width = 577
-    Height = 266
+    Top = 136
+    Width = 699
+    Height = 275
     Align = alBottom
     Anchors = [akLeft, akTop, akRight, akBottom]
     DataSource = DsTable
@@ -1557,7 +1561,7 @@ object ViewMain: TViewMain
   end
   object CbTopic: TComboBox
     Left = 8
-    Top = 31
+    Top = 32
     Width = 278
     Height = 21
     ItemIndex = 0
@@ -1565,6 +1569,14 @@ object ViewMain: TViewMain
     Text = 'notify-delphi-integration-8jh27d'
     Items.Strings = (
       'notify-delphi-integration-8jh27d')
+  end
+  object CkPoll: TCheckBox
+    Left = 292
+    Top = 34
+    Width = 41
+    Height = 17
+    Caption = 'Poll'
+    TabOrder = 4
   end
   object TableNotification: TFDMemTable
     FetchOptions.AssignedValues = [evMode]

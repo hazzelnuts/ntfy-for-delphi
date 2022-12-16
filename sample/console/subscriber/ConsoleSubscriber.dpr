@@ -9,6 +9,8 @@ uses
 
 begin
 
+  ReportMemoryLeaksOnShutdown := True;
+
   Ntfy.Subscribe('notify-delphi-integration-8jh27d',
     procedure (AEvent: INotifyEvent)
     begin

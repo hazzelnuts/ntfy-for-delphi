@@ -15,8 +15,6 @@ type
 implementation
 
 uses
-  Notify.Config,
-  Notify.Types,
   Notify.Api.Indy;
 
 { TNotifyApiFactory }

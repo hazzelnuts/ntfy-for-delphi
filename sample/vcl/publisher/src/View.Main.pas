@@ -158,6 +158,8 @@ var
   LTags: TArray<string>;
   LTag: String;
 begin
+
+  FNotification := New.Notification;
   FNotification.Topic(CbTopic.Text);
   FNotification.Title(lbeTitle.Text);
   FNotification.MessageContent(lbeMessage.Text);

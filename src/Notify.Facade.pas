@@ -9,18 +9,20 @@ uses
   Notify.Action.Contract,
   Notify.Config.Contract,
   Notify.Event.Contract,
-  Notify.Attachment.Contract;
+  Notify.Attachment.Contract,
+  Notify.Parameters.Contract;
 
 type
   TNotifyCoreFacade = class sealed(TInterfacedObject, INotifyCoreFacade)
   strict private
-    FNotifyApiFactory: INotifyApiFactory;
-    FNotifyPublisherFactory: INotifyNotificationFactory;
-    FNotifyCoreFactory: INotifyCoreFactory;
-    FNotifyActionFactory: INotifyActionFactory;
-    FNotifyConfigFactory: INotifyConfigFactory;
-    FNotifyMessageFactory: INotifyEventFactory;
-    FNotifyAttachmentFactory: INotifyAttachmentFactory;
+    FApiFactory: INotifyApiFactory;
+    FPublisherFactory: INotifyNotificationFactory;
+    FCoreFactory: INotifyCoreFactory;
+    FActionFactory: INotifyActionFactory;
+    FConfigFactory: INotifyConfigFactory;
+    FMessageFactory: INotifyEventFactory;
+    FAttachmentFactory: INotifyAttachmentFactory;
+    FParametersFactory: INotifyParametersFactory;
   public
     constructor Create;
     class function New: INotifyCoreFacade;
@@ -31,6 +33,7 @@ type
     function Config: INotifyConfig;
     function Event: INotifyEvent;
     function Attachment: INotifyAttachment;
+    function Parameters: INotifyParameters;
   end;
 
 implementation
@@ -42,39 +45,46 @@ uses
   Notify.Action.Factory,
   Notify.Config.Factory,
   Notify.Attachment.Factory,
+  Notify.Parameters.Factory,
   Notify.Event.Factory;
 
 { TNotifyCoreFacade }
 
 function TNotifyCoreFacade.Notify: INotifyCore;
 begin
-  Result := FNotifyCoreFactory.Core;
+  Result := FCoreFactory.Core;
+end;
+
+function TNotifyCoreFacade.Parameters: INotifyParameters;
+begin
+  Result := FParametersFactory.Parameters;
 end;
 
 function TNotifyCoreFacade.Event: INotifyEvent;
 begin
-  Result := FNotifyMessageFactory.Event;
+  Result := FMessageFactory.Event;
 end;
 
 function TNotifyCoreFacade.Action: INotifyAction;
 begin
-  Result := FNotifyActionFactory.Action;
+  Result := FActionFactory.Action;
 end;
 
 function TNotifyCoreFacade.Config: INotifyConfig;
 begin
-  Result := FNotifyConfigFactory.Config;
+  Result := FConfigFactory.Config;
 end;
 
 constructor TNotifyCoreFacade.Create;
 begin
-  FNotifyApiFactory := TNotifyApiFactory.New;
-  FNotifyPublisherFactory := TNotifyNotificationFactory.New;
-  FNotifyCoreFactory := TNotifyCoreFactory.New;
-  FNotifyActionFactory := TNotifyActionFactory.New;
-  FNotifyConfigFactory := TNotifyConfigFactory.New;
-  FNotifyMessageFactory := TNotifyMessageFactory.New;
-  FNotifyAttachmentFactory := TNotifyAttachmentFactory.New;
+  FApiFactory := TNotifyApiFactory.New;
+  FPublisherFactory := TNotifyNotificationFactory.New;
+  FCoreFactory := TNotifyCoreFactory.New;
+  FActionFactory := TNotifyActionFactory.New;
+  FConfigFactory := TNotifyConfigFactory.New;
+  FMessageFactory := TNotifyMessageFactory.New;
+  FAttachmentFactory := TNotifyAttachmentFactory.New;
+  FParametersFactory := TNotifyParametersFactory.New;
 end;
 
 class function TNotifyCoreFacade.New: INotifyCoreFacade;
@@ -84,17 +94,17 @@ end;
 
 function TNotifyCoreFacade.Api: INotifyApi;
 begin
-  Result := FNotifyApiFactory.Api;
+  Result := FApiFactory.Api;
 end;
 
 function TNotifyCoreFacade.Attachment: INotifyAttachment;
 begin
-  Result := FNotifyAttachmentFactory.Attachment;
+  Result := FAttachmentFactory.Attachment;
 end;
 
 function TNotifyCoreFacade.Notification: INotifyNotification;
 begin
-  Result := FNotifyPublisherFactory.Notification;
+  Result := FPublisherFactory.Notification;
 end;
 
 end.

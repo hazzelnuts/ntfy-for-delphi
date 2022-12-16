@@ -3,8 +3,8 @@ unit Notify.Api.Contract;
 interface
 
 uses
-  Notify.Config.Contract,
-  System.Classes;
+  System.Classes,
+  Notify.Config.Contract;
 
 type
   INotifyApi = interface
@@ -20,7 +20,9 @@ type
     function AddEndPoint(const AValue: String): INotifyApi; overload;
     function ClearBody: INotifyApi;
     function Config(const AValue: INotifyConfig): INotifyApi;
+    function AddURLParameter(const AName: String; AValue: String): INotifyApi;
     function AbortStream: INotifyApi;
+    function ClearURLParameters: INotifyApi;
   end;
 
   INotifyApiFactory = interface

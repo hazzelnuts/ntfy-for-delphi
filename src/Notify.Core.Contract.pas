@@ -10,7 +10,8 @@ uses
   Notify.Config.Contract,
   Notify.Action.Contract,
   Notify.Event.Contract,
-  Notify.Attachment.Contract;
+  Notify.Attachment.Contract,
+  Notify.Parameters.Contract;
 
 type
   INotifyCore = interface
@@ -29,6 +30,7 @@ type
     function Unsubscribe: INotifyCore;
     function Notification(const ANotification: INotifyNotification): INotifyCore; overload;
     procedure Subscribe(const ATopic: String; const ACallBack: TNotifyEventProc); overload;
+    function Poll(const AValue: Boolean): INotifyCore;
   end;
 
   INotifyCoreFactory = interface
@@ -45,6 +47,7 @@ type
     function Config: INotifyConfig;
     function Event: INotifyEvent;
     function Attachment: INotifyAttachment;
+    function Parameters: INotifyParameters;
   end;
 
 implementation
