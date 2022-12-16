@@ -5,9 +5,7 @@ interface
 uses
   Notify.Event.Contract,
   Notify.Action.Contract,
-  Notify.Attachment.Contract,
-  Notify.Types,
-  System.Generics.Collections;
+  Notify.Attachment.Contract;
 
 type
   TNotifyMessage = class(TInterfacedObject, INotifyEvent)
@@ -54,6 +52,9 @@ type
   end;
 
 implementation
+
+uses
+  System.Generics.Collections;
 
 { TNotifySubscription }
 

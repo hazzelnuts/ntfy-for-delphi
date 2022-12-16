@@ -10,6 +10,7 @@ uses
   Notify.Notification.Contract,
   Notify.Subscription.Event,
   Notify.Event.Contract,
+  Notify.Parameters.Contract,
   NX.Horizon,
   System.SysUtils;
 
@@ -19,6 +20,7 @@ type
     FApi: INotifyApi;
     FNotification: INotifyNotification;
     FConfig: INotifyConfig;
+    FParameters: INotifyParameters;
     FMesssagesSubscription: INxEventSubscription;
     FEventMessage: INotifyEvent;
     FCallBack: TProc<INotifyEvent>;
@@ -51,6 +53,7 @@ type
     function BaseURL(const AValue: String): INotifyCore;
     function DisableFireBase(const AValue: Boolean): INotifyCore;
     function Notification(const ANotification: INotifyNotification): INotifyCore; overload;
+    function Poll(const AValue: Boolean): INotifyCore;
   end;
 
 var
@@ -60,15 +63,15 @@ implementation
 
 uses
   System.NetEncoding,
+  System.Classes,
+  System.TypInfo,
   Notify.Facade,
   Notify.SmartPointer,
   Notify.Event.DTO,
   Notify.Action.DTO,
   Notify.Attachment.DTO,
-  System.Classes,
-  System.TypInfo,
-  Notify.Action.Contract, Notify.Attachment.Contract;
-
+  Notify.Action.Contract,
+  Notify.Attachment.Contract;
 
 { TNotifyCore }
 
@@ -90,6 +93,7 @@ begin
   FNotification := TNotifyCoreFacade.New.Notification;
   FConfig := TNotifyCoreFacade.New.Config;
   FEventMessage := TNotifyCoreFacade.New.Event;
+  FParameters := TNotifyCoreFacade.New.Parameters;
 end;
 
 destructor TNotifyCore.Destroy;
@@ -206,7 +210,6 @@ end;
 procedure TNotifyCore.SubscribeAsJSONString;
 begin
   FApi
-    .Config(FConfig)
     .AddEndPoint(FNotification.Topic + '/json')
     .Get;
 end;
@@ -248,6 +251,12 @@ function TNotifyCore.Password(const AValue: String): INotifyCore;
 begin
   Result := Self;
   FConfig.Password(AValue);
+end;
+
+function TNotifyCore.Poll(const AValue: Boolean): INotifyCore;
+begin
+  Result := Self;
+  FParameters.Poll(AValue);
 end;
 
 function TNotifyCore.Publish: INotifyCore;
@@ -321,8 +330,12 @@ end;
 function TNotifyCore.Subscribe: INotifyCore;
 begin
   Result := Self;
-
   FMesssagesSubscription := NxHorizon.Instance.Subscribe<TNotifySubscriptionEvent>(MainSync, SubscriptionEvent);
+  FApi.Config(FConfig);
+  FApi.ClearURLParameters;
+
+  if FParameters.Poll then
+    FApi.AddURLParameter('poll', '1');
 
   {$IFDEF CONSOLE}
     Writeln('Subscribing to topic: ' + FNotification.Topic);

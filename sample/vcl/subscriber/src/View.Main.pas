@@ -23,9 +23,11 @@ type
     CbTopic: TComboBox;
     lblTopic: TLabel;
     Image1: TImage;
+    CkPoll: TCheckBox;
     procedure BtnSubscribeClick(Sender: TObject);
     procedure BtnUnsubscribeClick(Sender: TObject);
     private
+      procedure CheckButtons;
       procedure YourCallBackProcedure(AEvent: INotifyEvent);
 
   end;
@@ -41,16 +43,28 @@ uses Example.Push.Notifications;
 
 procedure TViewMain.BtnSubscribeClick(Sender: TObject);
 begin
-  BtnSubscribe.Enabled := not BtnSubscribe.Enabled;
-  BtnUnsubscribe.Enabled := not BtnUnsubscribe.Enabled;
-  Ntfy.Subscribe(CbTopic.Text, YourCallBackProcedure);
+
+  if not CkPoll.Checked then
+    CheckButtons;
+
+  Ntfy
+    .Poll(CkPoll.Checked)
+    .Subscribe(CbTopic.Text, YourCallBackProcedure);
+
 end;
 
 procedure TViewMain.BtnUnsubscribeClick(Sender: TObject);
 begin
+
+  Ntfy.Unsubscribe;
+  CheckButtons;
+
+end;
+
+procedure TViewMain.CheckButtons;
+begin
   BtnSubscribe.Enabled := not BtnSubscribe.Enabled;
   BtnUnsubscribe.Enabled := not BtnUnsubscribe.Enabled;
-  Ntfy.Unsubscribe;
 end;
 
 procedure TViewMain.YourCallBackProcedure(AEvent: INotifyEvent);

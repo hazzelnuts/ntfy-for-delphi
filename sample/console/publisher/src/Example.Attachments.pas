@@ -20,7 +20,7 @@ var
   LFilePath: String;
 begin
 
-  LFilePath := '..\img\delphi-notify.png';
+  LFilePath := '..\..\..\..\img\delphi-notify.png';
 
   Ntfy.Notification(
     New.Notification
