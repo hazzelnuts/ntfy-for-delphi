@@ -51,6 +51,7 @@ type
     TableActionsLABEL: TStringField;
     TableActionsURL: TStringField;
     Image1: TImage;
+    lbeDelay: TLabeledEdit;
     procedure FormCreate(Sender: TObject);
     procedure btnFileAttachmentClick(Sender: TObject);
     procedure CbActionTypeChange(Sender: TObject);
@@ -168,6 +169,7 @@ begin
   FNotification.FilePath(lbeFileAttachment.Text);
   FNotification.Attach(lbeURLAttachment.Text);
   FNotification.Email(lbeEmail.Text);
+  FNotification.Delay(lbeDelay.Text);
   //FNotification.Tags(CkTags.Items.ToStringArray);
 
   if not TableActions.IsEmpty then

@@ -24,13 +24,15 @@ type
     function BaseURL(const AValue: String): INotifyCore;
     function SubscriptionType(const AValue: TNotifySubscriptionType): INotifyCore;
     function Topic(const AValue: String): INotifyCore;
+    function Parameters(const AValue: INotifyParameters): INotifyCore;
     function DisableFireBase(const AValue: Boolean): INotifyCore;
     function Publish: INotifyCore;
     function Subscribe: INotifyCore; overload;
     function Unsubscribe: INotifyCore;
     function Notification(const ANotification: INotifyNotification): INotifyCore; overload;
     procedure Subscribe(const ATopic: String; const ACallBack: TNotifyEventProc); overload;
-    function Poll(const AValue: Boolean): INotifyCore;
+    function Filter(const AFilterType: TNotifyFilter; const AValue: String): INotifyCore;
+    function ClearFilters: INotifyCore;
   end;
 
   INotifyCoreFactory = interface

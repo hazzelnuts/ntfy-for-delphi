@@ -11,7 +11,7 @@ uses
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  TStyleManager.TrySetStyle('Glossy');
+  TStyleManager.TrySetStyle('Glow');
   Application.CreateForm(TViewMain, ViewMain);
   Application.Run;
 end.

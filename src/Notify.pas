@@ -19,6 +19,7 @@ type
   TNotifyActionType = Notify.Types.TNotifyActionType;
   TNotifySubscriptionType = Notify.Types.TNotifySubscriptionType;
   TJsonDTO = Notify.Types.TJsonDTO;
+  TNotifyFilter = Notify.Types.TNotifyFilter;
 
 var
   New: INotifyCoreFacade;
