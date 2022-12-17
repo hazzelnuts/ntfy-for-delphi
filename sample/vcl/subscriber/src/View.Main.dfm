@@ -2,7 +2,7 @@ object ViewMain: TViewMain
   Left = 0
   Top = 0
   Caption = 'Subscriber'
-  ClientHeight = 442
+  ClientHeight = 484
   ClientWidth = 724
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -13,7 +13,7 @@ object ViewMain: TViewMain
   OldCreateOrder = False
   DesignSize = (
     724
-    442)
+    484)
   PixelsPerInch = 96
   TextHeight = 13
   object lblTopic: TLabel
@@ -1448,7 +1448,7 @@ object ViewMain: TViewMain
   end
   object BtnSubscribe: TButton
     Left = 16
-    Top = 367
+    Top = 407
     Width = 132
     Height = 25
     Caption = 'Subscribe'
@@ -1457,7 +1457,7 @@ object ViewMain: TViewMain
   end
   object BtnUnsubscribe: TButton
     Left = 16
-    Top = 398
+    Top = 438
     Width = 132
     Height = 25
     Caption = 'Unsubscribe'
@@ -1469,7 +1469,7 @@ object ViewMain: TViewMain
     Left = 154
     Top = 94
     Width = 551
-    Height = 329
+    Height = 371
     Anchors = [akLeft, akTop, akRight, akBottom]
     DataSource = DsTable
     Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
@@ -1543,50 +1543,53 @@ object ViewMain: TViewMain
     Left = 16
     Top = 176
     Width = 132
-    Height = 185
+    Height = 225
     Caption = 'Filters'
     Enabled = False
     TabOrder = 7
     object lbPriority: TLabel
       Left = 15
-      Top = 132
+      Top = 177
       Width = 34
       Height = 13
       Caption = 'Priority'
     end
     object lbeIdFilter: TLabeledEdit
       Left = 15
-      Top = 24
+      Top = 31
       Width = 104
       Height = 21
-      EditLabel.Width = 3
+      EditLabel.Width = 53
       EditLabel.Height = 13
+      EditLabel.Caption = 'Message id'
       TabOrder = 0
       TextHint = 'Id'
     end
     object lbeFilterTitle: TLabeledEdit
       Left = 15
-      Top = 51
+      Top = 71
       Width = 104
       Height = 21
-      EditLabel.Width = 3
+      EditLabel.Width = 65
       EditLabel.Height = 13
+      EditLabel.Caption = 'Message Title'
       TabOrder = 1
       TextHint = 'Title'
     end
     object lbeFilterMessage: TLabeledEdit
       Left = 15
-      Top = 78
+      Top = 111
       Width = 104
       Height = 21
-      EditLabel.Width = 3
+      EditLabel.Width = 67
       EditLabel.Height = 13
+      EditLabel.Caption = 'Message Text'
       TabOrder = 2
       TextHint = 'Message'
     end
     object CbFilterPriority: TComboBox
       Left = 15
-      Top = 151
+      Top = 196
       Width = 104
       Height = 21
       Style = csDropDownList
@@ -1602,11 +1605,12 @@ object ViewMain: TViewMain
     end
     object lbeFilterTags: TLabeledEdit
       Left = 15
-      Top = 105
+      Top = 150
       Width = 104
       Height = 21
-      EditLabel.Width = 3
+      EditLabel.Width = 68
       EditLabel.Height = 13
+      EditLabel.Caption = 'Message Tags'
       TabOrder = 4
       TextHint = 'Tags'
     end
