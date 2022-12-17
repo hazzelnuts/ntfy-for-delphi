@@ -27,6 +27,14 @@ type
     POLL_REQUEST
   );
 
+  TNotifyFilter = (
+    ID,
+    TITLE,
+    MESSAGECONTENT,
+    PRIORITY,
+    TAGS
+  );
+
   {$SCOPEDENUMS OFF}
 
   TJsonDTO = Notify.JSON.Parser.TJsonDTO;
@@ -43,6 +51,14 @@ const
     'keepalive',
     'message',
     'poll_request'
+  );
+
+  NotifyFilterTypeDescription: array[TNotifyFilter] of String = (
+    'id',
+    'title',
+    'message',
+    'priority',
+    'tags'
   );
 
 implementation

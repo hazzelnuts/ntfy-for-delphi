@@ -3,6 +3,7 @@
 interface
 
 uses
+  System.SysUtils,
   Notify.Types,
   Notify.Core.Contract,
   Notify.Api.Contract,
@@ -11,8 +12,7 @@ uses
   Notify.Subscription.Event,
   Notify.Event.Contract,
   Notify.Parameters.Contract,
-  NX.Horizon,
-  System.SysUtils;
+  NX.Horizon;
 
 type
   TNotifyCore = class sealed(TInterfacedObject, INotifyCore)
@@ -21,6 +21,7 @@ type
     FNotification: INotifyNotification;
     FConfig: INotifyConfig;
     FParameters: INotifyParameters;
+    FFilterParameters: INotifyParametersFilters;
     FMesssagesSubscription: INxEventSubscription;
     FEventMessage: INotifyEvent;
     FCallBack: TProc<INotifyEvent>;
@@ -53,7 +54,9 @@ type
     function BaseURL(const AValue: String): INotifyCore;
     function DisableFireBase(const AValue: Boolean): INotifyCore;
     function Notification(const ANotification: INotifyNotification): INotifyCore; overload;
-    function Poll(const AValue: Boolean): INotifyCore;
+    function Parameters(const AParameters: INotifyParameters): INotifyCore;
+    function Filter(const AFilterType: TNotifyFilter; const AValue: String): INotifyCore;
+    function ClearFilters: INotifyCore;
   end;
 
 var
@@ -63,6 +66,7 @@ implementation
 
 uses
   System.NetEncoding,
+  System.Generics.Collections,
   System.Classes,
   System.TypInfo,
   Notify.Facade,
@@ -87,6 +91,12 @@ begin
   FConfig.Cache(AValue);
 end;
 
+function TNotifyCore.ClearFilters: INotifyCore;
+begin
+  Result := Self;
+  FFilterParameters.Clear;
+end;
+
 constructor TNotifyCore.Create;
 begin
   FApi := TNotifyCoreFacade.New.Api;
@@ -94,11 +104,13 @@ begin
   FConfig := TNotifyCoreFacade.New.Config;
   FEventMessage := TNotifyCoreFacade.New.Event;
   FParameters := TNotifyCoreFacade.New.Parameters;
+  FFilterParameters := TDictionary<String, String>.Create;
 end;
 
 destructor TNotifyCore.Destroy;
 begin
   UnsubscribeEventBus;
+  FFilterParameters.Free;
   inherited;
 end;
 
@@ -118,6 +130,16 @@ begin
     SubscribeAsRawStream
   else
     SubscribeAsWebSocket;
+end;
+
+function TNotifyCore.Filter(const AFilterType: TNotifyFilter; const AValue: String): INotifyCore;
+begin
+  Result := Self;
+
+  if FFilterParameters.ContainsValue(NotifyFilterTypeDescription[AFilterType])
+    then Exit;
+
+  FFilterParameters.Add(NotifyFilterTypeDescription[AFilterType], AValue);
 end;
 
 procedure TNotifyCore.ConsoleLogEvent;
@@ -247,16 +269,15 @@ begin
   FConfig.SubscriptionType(AValue);
 end;
 
+function TNotifyCore.Parameters(const AParameters: INotifyParameters): INotifyCore;
+begin
+  FParameters := AParameters;
+end;
+
 function TNotifyCore.Password(const AValue: String): INotifyCore;
 begin
   Result := Self;
   FConfig.Password(AValue);
-end;
-
-function TNotifyCore.Poll(const AValue: Boolean): INotifyCore;
-begin
-  Result := Self;
-  FParameters.Poll(AValue);
 end;
 
 function TNotifyCore.Publish: INotifyCore;
@@ -328,14 +349,33 @@ begin
 end;
 
 function TNotifyCore.Subscribe: INotifyCore;
+var
+  LFilterKey, LFilterValue: String;
 begin
   Result := Self;
-  FMesssagesSubscription := NxHorizon.Instance.Subscribe<TNotifySubscriptionEvent>(MainSync, SubscriptionEvent);
+
+  if (not Assigned(FMesssagesSubscription)) or (FMesssagesSubscription.IsCanceled) then
+    FMesssagesSubscription := NxHorizon
+      .Instance
+      .Subscribe<TNotifySubscriptionEvent>(MainSync, SubscriptionEvent);
+
   FApi.Config(FConfig);
   FApi.ClearURLParameters;
 
   if FParameters.Poll then
     FApi.AddURLParameter('poll', '1');
+
+  if FParameters.Since <> '' then
+    FApi.AddURLParameter('since', FParameters.Since);
+
+  if FParameters.Scheduled then
+    FApi.AddURLParameter('sched', '1');
+
+  for LFilterKey in FFilterParameters.Keys do
+  begin
+    FFilterParameters.TryGetValue(LFilterKey, LFilterValue);
+    FApi.AddURLParameter(LFilterKey, LFilterValue);
+  end;
 
   {$IFDEF CONSOLE}
     Writeln('Subscribing to topic: ' + FNotification.Topic);
