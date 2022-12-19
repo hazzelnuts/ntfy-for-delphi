@@ -17,11 +17,6 @@ type
     function Expires(const AValue: Integer): INotifyAttachment; overload;
   end;
 
-  INotifyAttachmentFactory = interface
-    ['{64C7D33A-56D6-46D5-A016-405D9F712BDC}']
-    function Attachment: INotifyAttachment;
-  end;
-
 implementation
 
 end.

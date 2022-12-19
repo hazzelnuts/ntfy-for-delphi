@@ -84,12 +84,10 @@ begin
   if not CkPoll.Checked and (CkTopic1.Checked or CkTopic2.Checked) then
     CheckButtons;
 
-  Ntfy.Parameters(
-    New.Parameters
-      .Poll(CkPoll.Checked)
-      .Since(LSince)
-      .Scheduled(CkScheduled.Checked)
-  );
+  Ntfy
+    .Poll(CkPoll.Checked)
+    .Since(LSince)
+    .Scheduled(CkScheduled.Checked);
 
   Ntfy.ClearFilters;
   

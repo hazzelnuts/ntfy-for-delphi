@@ -25,11 +25,6 @@ type
     function ClearURLParameters: INotifyApi;
   end;
 
-  INotifyApiFactory = interface
-    ['{E337A427-2614-448E-ABF5-82BE0769E016}']
-    function Api: INotifyApi;
-  end;
-
 implementation
 
 end.

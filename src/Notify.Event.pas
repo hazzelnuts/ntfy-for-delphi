@@ -8,7 +8,7 @@ uses
   Notify.Attachment.Contract;
 
 type
-  TNotifyMessage = class(TInterfacedObject, INotifyEvent)
+  TNotifyEvent = class(TInterfacedObject, INotifyEvent)
   private
     FId: String;
     FTime: Integer;
@@ -58,7 +58,7 @@ uses
 
 { TNotifySubscription }
 
-function TNotifyMessage.Action(const AValue: INotifyAction): INotifyEvent;
+function TNotifyEvent.Action(const AValue: INotifyAction): INotifyEvent;
 begin
   Result := Self;
   FAction := AValue;
@@ -72,138 +72,138 @@ begin
   FActions.Add(AValue.&Label, AValue);
 end;
 
-function TNotifyMessage.Actions: INotifyEventActions;
+function TNotifyEvent.Actions: INotifyEventActions;
 begin
   Result := FActions;
 end;
 
-function TNotifyMessage.Attachment(const AValue: INotifyAttachment): INotifyEvent;
+function TNotifyEvent.Attachment(const AValue: INotifyAttachment): INotifyEvent;
 begin
   Result := Self;
   FAttachment := AValue;
 end;
 
-function TNotifyMessage.Attachment: INotifyAttachment;
+function TNotifyEvent.Attachment: INotifyAttachment;
 begin
   Result := FAttachment;
 end;
 
-function TNotifyMessage.Action: INotifyAction;
+function TNotifyEvent.Action: INotifyAction;
 begin
   Result := FAction;
 end;
 
-function TNotifyMessage.Click(const AValue: String): INotifyEvent;
+function TNotifyEvent.Click(const AValue: String): INotifyEvent;
 begin
   Result := Self;
   FClick := AValue;
 end;
 
-constructor TNotifyMessage.Create;
+constructor TNotifyEvent.Create;
 begin
   FActions := TDictionary<String, INotifyAction>.Create();
 end;
 
-destructor TNotifyMessage.Destroy;
+destructor TNotifyEvent.Destroy;
 begin
   FActions.Free;
   inherited;
 end;
 
-function TNotifyMessage.Click: String;
+function TNotifyEvent.Click: String;
 begin
   Result := FClick;
 end;
 
-function TNotifyMessage.Event: String;
+function TNotifyEvent.Event: String;
 begin
   Result := FEvent;
 end;
 
-function TNotifyMessage.Event(const AValue: String): INotifyEvent;
+function TNotifyEvent.Event(const AValue: String): INotifyEvent;
 begin
   Result := Self;
   FEvent := AValue;
 end;
 
-function TNotifyMessage.Id(const AValue: String): INotifyEvent;
+function TNotifyEvent.Id(const AValue: String): INotifyEvent;
 begin
   Result := Self;
   FId := AValue;
 end;
 
-function TNotifyMessage.Id: String;
+function TNotifyEvent.Id: String;
 begin
   Result := FId;
 end;
 
-function TNotifyMessage.MessageContent: String;
+function TNotifyEvent.MessageContent: String;
 begin
   Result := FMessage;
 end;
 
-function TNotifyMessage.MessageContent(const AValue: String): INotifyEvent;
+function TNotifyEvent.MessageContent(const AValue: String): INotifyEvent;
 begin
   Result := Self;
   FMessage := AValue;
 end;
 
-class function TNotifyMessage.New: INotifyEvent;
+class function TNotifyEvent.New: INotifyEvent;
 begin
   Result := Self.Create;
 end;
 
-function TNotifyMessage.Priority(const AValue: Integer): INotifyEvent;
+function TNotifyEvent.Priority(const AValue: Integer): INotifyEvent;
 begin
   Result := Self;
   FPriority := AValue;
 end;
 
-function TNotifyMessage.Priority: Integer;
+function TNotifyEvent.Priority: Integer;
 begin
   Result := FPriority;
 end;
 
-function TNotifyMessage.Tags(const AValue: TArray<String>): INotifyEvent;
+function TNotifyEvent.Tags(const AValue: TArray<String>): INotifyEvent;
 begin
   Result := Self;
   FTags := AValue;
 end;
 
-function TNotifyMessage.Tags: TArray<String>;
+function TNotifyEvent.Tags: TArray<String>;
 begin
   Result := FTags;
 end;
 
-function TNotifyMessage.Time: Integer;
+function TNotifyEvent.Time: Integer;
 begin
   Result := FTime;
 end;
 
-function TNotifyMessage.Time(const AValue: Integer): INotifyEvent;
+function TNotifyEvent.Time(const AValue: Integer): INotifyEvent;
 begin
   Result := Self;
   FTime := AValue;
 end;
 
-function TNotifyMessage.Title(const AValue: String): INotifyEvent;
+function TNotifyEvent.Title(const AValue: String): INotifyEvent;
 begin
   Result := Self;
   FTitle := AValue;
 end;
 
-function TNotifyMessage.Title: String;
+function TNotifyEvent.Title: String;
 begin
   Result := FTitle;
 end;
 
-function TNotifyMessage.Topic(const AValue: String): INotifyEvent;
+function TNotifyEvent.Topic(const AValue: String): INotifyEvent;
 begin
   Result := Self;
   FTopic := AValue;
 end;
 
-function TNotifyMessage.Topic: String;
+function TNotifyEvent.Topic: String;
 begin
   Result := FTopic;
 end;

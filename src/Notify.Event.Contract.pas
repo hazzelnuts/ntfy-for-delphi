@@ -41,11 +41,6 @@ type
 
   TNotifyEventProc = TProc<INotifyEvent>;
 
-  INotifyEventFactory = interface
-    ['{8DE90B5D-61A1-4369-B6C7-054F96454546}']
-    function Event: INotifyEvent;
-  end;
-
 implementation
 
 end.

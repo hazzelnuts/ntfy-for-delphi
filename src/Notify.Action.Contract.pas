@@ -25,11 +25,6 @@ type
     function Headers(const AValue: TJsonDTO): INotifyAction; overload;
   end;
 
-  INotifyActionFactory = interface
-    ['{8BFE4C0F-87F4-42DE-B995-2CCA6950FA26}']
-    function Action: INotifyAction;
-  end;
-
 implementation
 
 end.

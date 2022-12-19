@@ -26,11 +26,6 @@ type
     function SubscriptionType(const AValue: TNotifySubscriptionType): INotifyConfig; overload;
   end;
 
-  INotifyConfigFactory = interface
-    ['{E3FFED5C-4F3D-4C7F-BD80-BD13EFE528CF}']
-    function Config: INotifyConfig;
-  end;
-
 implementation
 
 end.

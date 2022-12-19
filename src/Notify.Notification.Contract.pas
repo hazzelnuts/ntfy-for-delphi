@@ -39,11 +39,6 @@ type
     function Delay(const AValue: String): INotifyNotification; overload;
   end;
 
-  INotifyNotificationFactory = interface
-    ['{06D69619-D97A-4070-8056-846D181955D8}']
-    function Notification: INotifyNotification;
-  end;
-
 implementation
 
 end.

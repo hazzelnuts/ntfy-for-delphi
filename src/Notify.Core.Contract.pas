@@ -10,8 +10,7 @@ uses
   Notify.Config.Contract,
   Notify.Action.Contract,
   Notify.Event.Contract,
-  Notify.Attachment.Contract,
-  Notify.Parameters.Contract;
+  Notify.Attachment.Contract, System.Generics.Collections;
 
 type
   INotifyCore = interface
@@ -24,7 +23,6 @@ type
     function BaseURL(const AValue: String): INotifyCore;
     function SubscriptionType(const AValue: TNotifySubscriptionType): INotifyCore;
     function Topic(const AValue: String): INotifyCore;
-    function Parameters(const AValue: INotifyParameters): INotifyCore;
     function DisableFireBase(const AValue: Boolean): INotifyCore;
     function Publish: INotifyCore;
     function Subscribe: INotifyCore; overload;
@@ -33,11 +31,12 @@ type
     procedure Subscribe(const ATopic: String; const ACallBack: TNotifyEventProc); overload;
     function Filter(const AFilterType: TNotifyFilter; const AValue: String): INotifyCore;
     function ClearFilters: INotifyCore;
-  end;
-
-  INotifyCoreFactory = interface
-    ['{9FCCC1D0-EB04-4307-8F4C-C5642F6F5A52}']
-    function Core: INotifyCore;
+    function Poll: Boolean; overload;
+    function Poll(const AValue: Boolean): INotifyCore; overload;
+    function Since: String; overload;
+    function Since(const AValue: String): INotifyCore; overload;
+    function Scheduled: Boolean; overload;
+    function Scheduled(const AValue: Boolean): INotifyCore; overload;
   end;
 
   INotifyCoreFacade = interface
@@ -49,8 +48,9 @@ type
     function Config: INotifyConfig;
     function Event: INotifyEvent;
     function Attachment: INotifyAttachment;
-    function Parameters: INotifyParameters;
   end;
+
+  INotifyParametersFilters = TDictionary<String, String>;
 
 implementation
 

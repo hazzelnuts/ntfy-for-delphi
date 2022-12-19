@@ -20,7 +20,6 @@ uses
   Notify.Api.Contract,
   Notify.Config.Contract,
   Notify.Subscription.Event,
-  Notify.Parameters.Contract,
   NX.Horizon;
 
 type
@@ -39,7 +38,7 @@ type
     procedure AbortStream;
   end;
 
-  TNotityApiIndy = class(TInterfacedObject, INotifyApi)
+  TNotifyApiIndy = class(TInterfacedObject, INotifyApi)
   strict private
     FIOHandlerSSL: TIdSSLIOHandlerSocketOpenSSL;
     FIdHTTP: TIdHTTP;
@@ -47,7 +46,6 @@ type
     FNotifyConfig: INotifyConfig;
     FEndPoint: String;
     FConnectionThread: TSSEThread;
-    FNotifyParameters: INotifyParameters;
     FURLParametersList: TStringList;
   public
     constructor Create;
@@ -55,7 +53,6 @@ type
     class function New: INotifyApi;
   private
     function Config(const AValue: INotifyConfig): INotifyApi;
-    function Parameters(const AValue: INotifyParameters): INotifyApi;
     function ClearHeaders: INotifyApi;
     function ClearBody: INotifyApi;
     function AddHeader(const AName: String; AValue: String): INotifyApi; overload;
@@ -83,7 +80,7 @@ uses
 
 { TNotityApiIndy }
 
-function TNotityApiIndy.AddBody(const AValue: String): INotifyApi;
+function TNotifyApiIndy.AddBody(const AValue: String): INotifyApi;
 var
   LBodyStream: TSmartPointer<TStringStream>;
 begin
@@ -92,24 +89,24 @@ begin
   FBodyStream.CopyFrom(LBodyStream.Value, LBodyStream.Value.Size);
 end;
 
-function TNotityApiIndy.AbortStream: INotifyApi;
+function TNotifyApiIndy.AbortStream: INotifyApi;
 begin
   Destroythread;
 end;
 
-function TNotityApiIndy.AddBody(const AValue: TFileStream): INotifyApi;
+function TNotifyApiIndy.AddBody(const AValue: TFileStream): INotifyApi;
 begin
   Result := Self;
   FBodyStream.CopyFrom(AValue, AValue.Size);
 end;
 
-function TNotityApiIndy.AddEndPoint(const AValue: String): INotifyApi;
+function TNotifyApiIndy.AddEndPoint(const AValue: String): INotifyApi;
 begin
   Result := Self;
   FEndPoint := AValue;
 end;
 
-function TNotityApiIndy.AddHeader(const AName: String; AValues: array of String): INotifyApi;
+function TNotifyApiIndy.AddHeader(const AName: String; AValues: array of String): INotifyApi;
 var
   LString, LValue: String;
 begin
@@ -122,7 +119,7 @@ begin
   FIdHTTP.Request.CustomHeaders.AddValue(AName, LValue);
 end;
 
-function TNotityApiIndy.AddURLParameter(const AName: String; AValue: String): INotifyApi;
+function TNotifyApiIndy.AddURLParameter(const AName: String; AValue: String): INotifyApi;
 var
   LParam: String;
 begin
@@ -131,37 +128,37 @@ begin
   FURLParametersList.Add(LParam);
 end;
 
-function TNotityApiIndy.AddHeader(const AName: String; AValue: String): INotifyApi;
+function TNotifyApiIndy.AddHeader(const AName: String; AValue: String): INotifyApi;
 begin
   Result := Self;
   FIdHTTP.Request.CustomHeaders.AddValue(AName, AValue);
 end;
 
-function TNotityApiIndy.ClearBody: INotifyApi;
+function TNotifyApiIndy.ClearBody: INotifyApi;
 begin
   Result := Self;
   FBodyStream.Clear;
 end;
 
-function TNotityApiIndy.ClearHeaders: INotifyApi;
+function TNotifyApiIndy.ClearHeaders: INotifyApi;
 begin
   Result := Self;
   FIdHTTP.Request.CustomHeaders.Clear;
 end;
 
-function TNotityApiIndy.ClearURLParameters: INotifyApi;
+function TNotifyApiIndy.ClearURLParameters: INotifyApi;
 begin
   Result := Self;
   FURLParametersList.Clear;
 end;
 
-function TNotityApiIndy.Config(const AValue: INotifyConfig): INotifyApi;
+function TNotifyApiIndy.Config(const AValue: INotifyConfig): INotifyApi;
 begin
   Result := Self;
   FNotifyConfig := AValue;
 end;
 
-constructor TNotityApiIndy.Create;
+constructor TNotifyApiIndy.Create;
 begin
   FIdHTTP := TIdHTTP.Create(nil);
   FIOHandlerSSL := TIdSSLIOHandlerSocketOpenSSL.Create;
@@ -172,7 +169,7 @@ begin
   FURLParametersList := TStringList.Create;
 end;
 
-function TNotityApiIndy.CreateURL: String;
+function TNotifyApiIndy.CreateURL: String;
 var
   I: Integer;
 begin
@@ -189,7 +186,7 @@ begin
   end;
 end;
 
-destructor TNotityApiIndy.Destroy;
+destructor TNotifyApiIndy.Destroy;
 begin
   try
     Destroythread;
@@ -202,7 +199,7 @@ begin
   inherited;
 end;
 
-procedure TNotityApiIndy.Destroythread;
+procedure TNotifyApiIndy.Destroythread;
 begin
   if Assigned(FConnectionThread) then
   begin
@@ -220,7 +217,7 @@ begin
   end;
 end;
 
-function TNotityApiIndy.Get: INotifyApi;
+function TNotifyApiIndy.Get: INotifyApi;
 begin
   Result := Self;
   try
@@ -237,18 +234,12 @@ begin
 
 end;
 
-class function TNotityApiIndy.New: INotifyApi;
+class function TNotifyApiIndy.New: INotifyApi;
 begin
   Result := Self.Create;
 end;
 
-function TNotityApiIndy.Parameters(const AValue: INotifyParameters): INotifyApi;
-begin
-  Result := Self;
-  FNotifyParameters := AValue;
-end;
-
-function TNotityApiIndy.Post: INotifyApi;
+function TNotifyApiIndy.Post: INotifyApi;
 begin
   Result := Self;
   FIdHTTP.Post(TIdURI.URLEncode(CreateURL), FBodyStream);
@@ -256,7 +247,7 @@ begin
     TNotifyLogs.Log(FNotifyConfig.LogPath, FIdHTTP.ResponseText);
 end;
 
-function TNotityApiIndy.Put: INotifyApi;
+function TNotifyApiIndy.Put: INotifyApi;
 begin
   Result := Self;
   FIdHTTP.Put(TIdURI.URLEncode(CreateURL), FBodyStream);

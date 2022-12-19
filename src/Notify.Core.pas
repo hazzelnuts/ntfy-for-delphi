@@ -11,7 +11,6 @@ uses
   Notify.Notification.Contract,
   Notify.Subscription.Event,
   Notify.Event.Contract,
-  Notify.Parameters.Contract,
   NX.Horizon;
 
 type
@@ -20,11 +19,13 @@ type
     FApi: INotifyApi;
     FNotification: INotifyNotification;
     FConfig: INotifyConfig;
-    FParameters: INotifyParameters;
     FFilterParameters: INotifyParametersFilters;
     FMesssagesSubscription: INxEventSubscription;
     FEventMessage: INotifyEvent;
     FCallBack: TProc<INotifyEvent>;
+    FPoll: Boolean;
+    FSince: String;
+    FScheduled: Boolean;
   public
     constructor Create;
     destructor Destroy; override;
@@ -54,9 +55,14 @@ type
     function BaseURL(const AValue: String): INotifyCore;
     function DisableFireBase(const AValue: Boolean): INotifyCore;
     function Notification(const ANotification: INotifyNotification): INotifyCore; overload;
-    function Parameters(const AParameters: INotifyParameters): INotifyCore;
     function Filter(const AFilterType: TNotifyFilter; const AValue: String): INotifyCore;
     function ClearFilters: INotifyCore;
+    function Poll: Boolean; overload;
+    function Poll(const AValue: Boolean): INotifyCore; overload;
+    function Since: String; overload;
+    function Since(const AValue: String): INotifyCore; overload;
+    function Scheduled: Boolean; overload;
+    function Scheduled(const AValue: Boolean): INotifyCore; overload;
   end;
 
 var
@@ -103,7 +109,6 @@ begin
   FNotification := TNotifyCoreFacade.New.Notification;
   FConfig := TNotifyCoreFacade.New.Config;
   FEventMessage := TNotifyCoreFacade.New.Event;
-  FParameters := TNotifyCoreFacade.New.Parameters;
   FFilterParameters := TDictionary<String, String>.Create;
 end;
 
@@ -269,15 +274,21 @@ begin
   FConfig.SubscriptionType(AValue);
 end;
 
-function TNotifyCore.Parameters(const AParameters: INotifyParameters): INotifyCore;
-begin
-  FParameters := AParameters;
-end;
-
 function TNotifyCore.Password(const AValue: String): INotifyCore;
 begin
   Result := Self;
   FConfig.Password(AValue);
+end;
+
+function TNotifyCore.Poll: Boolean;
+begin
+  Result := FPoll;
+end;
+
+function TNotifyCore.Poll(const AValue: Boolean): INotifyCore;
+begin
+  Result := Self;
+  FPoll := AValue;
 end;
 
 function TNotifyCore.Publish: INotifyCore;
@@ -324,6 +335,17 @@ begin
   FConfig.SaveLog(AValue);
 end;
 
+function TNotifyCore.Scheduled(const AValue: Boolean): INotifyCore;
+begin
+  Result := Self;
+  FScheduled := AValue;
+end;
+
+function TNotifyCore.Scheduled: Boolean;
+begin
+  Result := FScheduled;
+end;
+
 function TNotifyCore.SendFile: INotifyCore;
 var
   LFileStream: TSmartPointer<TFileStream>;
@@ -348,6 +370,17 @@ begin
 
 end;
 
+function TNotifyCore.Since: String;
+begin
+  Result := FSince;
+end;
+
+function TNotifyCore.Since(const AValue: String): INotifyCore;
+begin
+  Result := Self;
+  FSince := AValue;
+end;
+
 function TNotifyCore.Subscribe: INotifyCore;
 var
   LFilterKey, LFilterValue: String;
@@ -362,13 +395,13 @@ begin
   FApi.Config(FConfig);
   FApi.ClearURLParameters;
 
-  if FParameters.Poll then
+  if FPoll then
     FApi.AddURLParameter('poll', '1');
 
-  if FParameters.Since <> '' then
-    FApi.AddURLParameter('since', FParameters.Since);
+  if FSince <> '' then
+    FApi.AddURLParameter('since', FSince);
 
-  if FParameters.Scheduled then
+  if FScheduled then
     FApi.AddURLParameter('sched', '1');
 
   for LFilterKey in FFilterParameters.Keys do
