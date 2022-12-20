@@ -7,7 +7,8 @@ uses
   Notify.Action.Contract,
   Notify.Notification.Contract,
   Notify.Event.Contract,
-  Notify.Core.Contract;
+  Notify.Core.Contract,
+  Notify.Api.Response;
 
 type
   INotify = Notify.Core.Contract.INotifyCore;
@@ -20,6 +21,7 @@ type
   TNotifySubscriptionType = Notify.Types.TNotifySubscriptionType;
   TJsonDTO = Notify.Types.TJsonDTO;
   TNotifyFilter = Notify.Types.TNotifyFilter;
+  TNotifyApiResponse = Notify.Api.Response.TNotifyApiResponse;
 
 var
   New: INotifyCoreFacade;

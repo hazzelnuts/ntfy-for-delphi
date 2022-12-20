@@ -20,7 +20,8 @@ uses
   Notify.Api.Contract,
   Notify.Config.Contract,
   Notify.Subscription.Event,
-  NX.Horizon;
+  NX.Horizon,
+  Notify.Api.Response;
 
 type
 
@@ -29,6 +30,7 @@ type
     FUrl: String;
     FIdHttp: TIdHTTP;
     FIdEventStream: TMemoryStream;
+    FResponse: TNotifyApiResponse;
     const FCloseConnectionMessage = '/\/\';
     procedure DoOnWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
   public
@@ -36,6 +38,7 @@ type
     procedure Execute; override;
     destructor Destroy; override;
     procedure AbortStream;
+    property Response: TNotifyApiResponse read FResponse write FResponse;
   end;
 
   TNotifyApiIndy = class(TInterfacedObject, INotifyApi)
@@ -52,6 +55,7 @@ type
     destructor Destroy; override;
     class function New: INotifyApi;
   private
+    FResponse: TNotifyApiResponse;
     function Config(const AValue: INotifyConfig): INotifyApi;
     function ClearHeaders: INotifyApi;
     function ClearBody: INotifyApi;
@@ -68,6 +72,7 @@ type
     procedure Destroythread;
     function CreateURL: String;
     function ClearURLParameters: INotifyApi;
+    function Response: TNotifyApiResponse;
   end;
 
 implementation
@@ -76,7 +81,8 @@ uses
   IdURI,
   Notify.SmartPointer,
   System.SysUtils,
-  Notify.Logs;
+  Notify.Logs,
+  Notify.Notification.DTO;
 
 { TNotityApiIndy }
 
@@ -167,6 +173,7 @@ begin
   FIdHTTP.IOHandler := FIOHandlerSSL;
   FIdHTTP.HTTPOptions := [hoNoReadMultipartMIME];
   FURLParametersList := TStringList.Create;
+  FResponse.Notification := TNotifyNotificationDTO.Create;
 end;
 
 function TNotifyApiIndy.CreateURL: String;
@@ -191,6 +198,7 @@ begin
   try
     Destroythread;
   finally
+    FResponse.Notification.Free;
     FreeAndNil(FIdHTTP);
     FreeAndNil(FIOHandlerSSL);
     FreeAndNil(FBodyStream);
@@ -225,6 +233,7 @@ begin
       Destroythread;
   finally
     FConnectionThread := TSSEThread.Create(TIdURI.URLEncode(CreateURL), FIdHTTP);
+    FResponse := FConnectionThread.Response;
     FConnectionThread.Start;
   end;
 
@@ -242,7 +251,9 @@ end;
 function TNotifyApiIndy.Post: INotifyApi;
 begin
   Result := Self;
-  FIdHTTP.Post(TIdURI.URLEncode(CreateURL), FBodyStream);
+  FResponse.Content := FIdHTTP.Post(TIdURI.URLEncode(CreateURL), FBodyStream);
+  FResponse.Notification.AsJson := FResponse.Content;
+  FResponse.StatusCode := FIdHttp.ResponseCode;
   if FNotifyConfig.SaveLog then
     TNotifyLogs.Log(FNotifyConfig.LogPath, FIdHTTP.ResponseText);
 end;
@@ -250,9 +261,16 @@ end;
 function TNotifyApiIndy.Put: INotifyApi;
 begin
   Result := Self;
-  FIdHTTP.Put(TIdURI.URLEncode(CreateURL), FBodyStream);
+  FResponse.Content := FIdHTTP.Put(TIdURI.URLEncode(CreateURL), FBodyStream);
+  FResponse.Notification.AsJson := FResponse.Content;
+  FResponse.StatusCode := FIdHttp.ResponseCode;
   if FNotifyConfig.SaveLog then
     TNotifyLogs.Log(FNotifyConfig.LogPath, FIdHTTP.ResponseText);
+end;
+
+function TNotifyApiIndy.Response: TNotifyApiResponse;
+begin
+  Result := FResponse;
 end;
 
 { TSSEThread }
@@ -289,7 +307,7 @@ end;
 
 procedure TSSEThread.DoOnWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
 var
-  LEventString: String;
+  LEventString: UTF8String;
 begin
 
   if Terminated then
@@ -305,6 +323,9 @@ begin
     FIdHttp.Socket.Close;
 
   NxHorizon.Instance.Post<TNotifySubscriptionEvent>(LEventString);
+  FResponse.Content :=  UnicodeString(LEventString);
+  FResponse.StatusCode := FIdHttp.ResponseCode;
+
 end;
 
 procedure TSSEThread.Execute;

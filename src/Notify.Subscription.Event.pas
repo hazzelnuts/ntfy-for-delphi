@@ -3,7 +3,7 @@ unit Notify.Subscription.Event;
 interface
 
 type
-  TNotifySubscriptionEvent = type string;
+  TNotifySubscriptionEvent = type UTF8String;
 
 implementation
 

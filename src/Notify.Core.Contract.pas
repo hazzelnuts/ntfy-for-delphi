@@ -10,7 +10,9 @@ uses
   Notify.Config.Contract,
   Notify.Action.Contract,
   Notify.Event.Contract,
-  Notify.Attachment.Contract, System.Generics.Collections;
+  Notify.Attachment.Contract,
+  Notify.Api.Response,
+  System.Generics.Collections;
 
 type
   INotifyCore = interface
@@ -37,6 +39,7 @@ type
     function Since(const AValue: String): INotifyCore; overload;
     function Scheduled: Boolean; overload;
     function Scheduled(const AValue: Boolean): INotifyCore; overload;
+    function Response: TNotifyApiResponse;
   end;
 
   INotifyCoreFacade = interface

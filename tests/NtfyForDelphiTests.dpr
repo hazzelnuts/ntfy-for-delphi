@@ -16,7 +16,6 @@ program NtfyForDelphiTests;
 
 uses
   DUnitTestRunner,
-  TestCases in 'src\TestCases.pas',
   Notify.Action.Contract in '..\src\Notify.Action.Contract.pas',
   Notify.Action.DTO in '..\src\Notify.Action.DTO.pas',
   Notify.Action in '..\src\Notify.Action.pas',
@@ -42,7 +41,8 @@ uses
   Notify.SmartPointer in '..\src\Notify.SmartPointer.pas',
   Notify.Subscription.Event in '..\src\Notify.Subscription.Event.pas',
   Notify.Types in '..\src\Notify.Types.pas',
-  NX.Horizon in '..\src\NX.Horizon.pas';
+  NX.Horizon in '..\src\NX.Horizon.pas',
+  Test.Simple.Message in 'src\Test.Simple.Message.pas';
 
 {$R *.RES}
 

@@ -4,11 +4,13 @@ interface
 
 uses
   System.Classes,
-  Notify.Config.Contract;
+  Notify.Config.Contract,
+  Notify.Api.Response;
 
 type
   INotifyApi = interface
     ['{4A4C86DB-6176-404E-A317-BA789ED4848B}']
+    function Response: TNotifyApiResponse;
     function Get: INotifyApi;
     function Post: INotifyApi;
     function Put: INotifyApi;

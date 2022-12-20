@@ -11,7 +11,8 @@ uses
   Notify.Notification.Contract,
   Notify.Subscription.Event,
   Notify.Event.Contract,
-  NX.Horizon;
+  NX.Horizon,
+  Notify.Api.Response;
 
 type
   TNotifyCore = class sealed(TInterfacedObject, INotifyCore)
@@ -63,6 +64,7 @@ type
     function Since(const AValue: String): INotifyCore; overload;
     function Scheduled: Boolean; overload;
     function Scheduled(const AValue: Boolean): INotifyCore; overload;
+    function Response: TNotifyApiResponse;
   end;
 
 var
@@ -158,34 +160,37 @@ begin
     Exit;
 
   {$IFDEF CONSOLE}
-  Writeln(Format('===========[ NEW MESSAGE %s ]==========', [DateTimeToStr(Now)]));
-  Writeln(Format('Id: %s', [FEventMessage.Id]));
-  Writeln(Format('Time: %d', [FEventMessage.Time]));
-  Writeln(Format('Event: %s', [FEventMessage.Event]));
-  Writeln(Format('Topic: %s', [FEventMessage.Topic]));
-  Writeln(Format('Message: %s', [FEventMessage.MessageContent]));
-  Writeln(Format('Title: %s', [FEventMessage.Title]));
-  Writeln(Format('Priority: %d', [FEventMessage.Priority]));
-  Writeln(Format('Click: %s', [FEventMessage.Click]));
-
-  for LTag in FEventMessage.Tags do
-    Writeln(Format('Tag: %s', [LTag]));
-
-  for LAction in FEventMessage.Actions.Values do
+  if FConfig.SaveLog then
   begin
+    Writeln(Format('===========[ NEW MESSAGE %s ]==========', [DateTimeToStr(Now)]));
+    Writeln(Format('Id: %s', [FEventMessage.Id]));
+    Writeln(Format('Time: %d', [FEventMessage.Time]));
+    Writeln(Format('Event: %s', [FEventMessage.Event]));
+    Writeln(Format('Topic: %s', [FEventMessage.Topic]));
+    Writeln(Format('Message: %s', [FEventMessage.MessageContent]));
+    Writeln(Format('Title: %s', [FEventMessage.Title]));
+    Writeln(Format('Priority: %d', [FEventMessage.Priority]));
+    Writeln(Format('Click: %s', [FEventMessage.Click]));
 
-    Writeln(Format('Action Type: %s', [GetEnumName(TypeInfo(TNotifyActionType), Integer(LAction.&Type))]));
-    Writeln(Format('Action Label: %s', [LAction.&Label])); // comment this line to edit this function
-    Writeln(Format('Action Url: %s', [LAction.Url]));
-    Writeln(Format('Action Clear: %s', [LAction.Clear.ToString]));
-    Writeln(Format('Action Method: %s', [LAction.Method]));
-    Writeln(Format('Action Body: %s', [LAction.Body]));
+    for LTag in FEventMessage.Tags do
+      Writeln(Format('Tag: %s', [LTag]));
 
-    if Assigned(LAction.Headers) then
+    for LAction in FEventMessage.Actions.Values do
     begin
-      Writeln(Format('Action Headers: %s', [LAction.Headers.AsJson]));
-    end;
 
+      Writeln(Format('Action Type: %s', [GetEnumName(TypeInfo(TNotifyActionType), Integer(LAction.&Type))]));
+      Writeln(Format('Action Label: %s', [LAction.&Label])); // comment this line to edit this function
+      Writeln(Format('Action Url: %s', [LAction.Url]));
+      Writeln(Format('Action Clear: %s', [LAction.Clear.ToString]));
+      Writeln(Format('Action Method: %s', [LAction.Method]));
+      Writeln(Format('Action Body: %s', [LAction.Body]));
+
+      if Assigned(LAction.Headers) then
+      begin
+        Writeln(Format('Action Headers: %s', [LAction.Headers.AsJson]));
+      end;
+
+    end;
   end;
   {$ENDIF}
 
@@ -193,12 +198,15 @@ begin
     Exit;
 
   {$IFDEF CONSOLE}
-  LAttachment := FEventMessage.Attachment;
-  Writeln(Format('Attachment Name: %s', [LAttachment.Name]));
-  Writeln(Format('Attachment Url: %s', [LAttachment.Url]));
-  Writeln(Format('Attachment MimeType: %s', [LAttachment.MimeType]));
-  Writeln(Format('Attachment Size: %s', [LAttachment.Size.ToString]));
-  Writeln(Format('Attachment Expires: %s', [LAttachment.Expires.ToString]));
+  if FConfig.SaveLog then
+  begin
+    LAttachment := FEventMessage.Attachment;
+    Writeln(Format('Attachment Name: %s', [LAttachment.Name]));
+    Writeln(Format('Attachment Url: %s', [LAttachment.Url]));
+    Writeln(Format('Attachment MimeType: %s', [LAttachment.MimeType]));
+    Writeln(Format('Attachment Size: %s', [LAttachment.Size.ToString]));
+    Writeln(Format('Attachment Expires: %s', [LAttachment.Expires.ToString]));
+  end;
   {$ENDIF}
 
 end;
@@ -298,7 +306,10 @@ var
 begin
   Result := Self;
 
-  FApi.Config(FConfig).ClearHeaders.ClearBody;
+  FApi
+    .Config(FConfig)
+    .ClearHeaders
+    .ClearBody;
 
   if (FConfig.Cache = False) then
     FApi.AddHeader('Cache', 'no');
@@ -327,6 +338,11 @@ begin
     .AddBody(FNotification.AsJSONString)
     .Post;
 
+end;
+
+function TNotifyCore.Response: TNotifyApiResponse;
+begin
+  Result := FApi.Response;
 end;
 
 function TNotifyCore.SaveLog(const AValue: Boolean): INotifyCore;
@@ -392,8 +408,9 @@ begin
       .Instance
       .Subscribe<TNotifySubscriptionEvent>(MainSync, SubscriptionEvent);
 
-  FApi.Config(FConfig);
-  FApi.ClearURLParameters;
+  FApi
+    .Config(FConfig)
+    .ClearURLParameters;
 
   if FPoll then
     FApi.AddURLParameter('poll', '1');
@@ -411,7 +428,7 @@ begin
   end;
 
   {$IFDEF CONSOLE}
-    Writeln('Subscribing to topic: ' + FNotification.Topic);
+  Writeln('Subscribing to topic: ' + FNotification.Topic);
   {$ENDIF}
 
   DoSubscribe;
@@ -429,7 +446,7 @@ begin
   Result := Self;
 
   {$IFDEF CONSOLE}
-    raise Exception.Create('Unsubscribe for console application is not supported. Kill the process.');
+  //  raise Exception.Create('Unsubscribe for console application is not supported. Kill the process.');
   {$ENDIF}
 
   UnsubscribeEventBus;
@@ -460,7 +477,7 @@ var
   LEventAttachmentDTO: TSmartPointer<TNotifyAttachmentDTO>;
 begin
 
-  LEventDTO.Value.AsJson := AEvent;
+  LEventDTO.Value.AsJson := UnicodeString(AEvent);
 
   if (LEventDTO.Value.Event = NotifyMessageEventArray[TNotifyMessageEvent.OPEN]) then
   begin
@@ -469,7 +486,6 @@ begin
     Writeln('Press Ctrl + C to kill the process.');
     {$IFEND}
   end;
-
 
   if (LEventDTO.Value.Id <> '') and (LEventDTO.Value.Event = NotifyMessageEventArray[TNotifyMessageEvent.MSG]) then
   begin
