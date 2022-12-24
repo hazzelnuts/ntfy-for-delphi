@@ -169,7 +169,7 @@ begin
     Writeln(Format('Topic: %s', [FEventMessage.Topic]));
     Writeln(Format('Message: %s', [FEventMessage.MessageContent]));
     Writeln(Format('Title: %s', [FEventMessage.Title]));
-    Writeln(Format('Priority: %d', [FEventMessage.Priority]));
+    Writeln(Format('Priority: %d', [Ord(FEventMessage.Priority)]));
     Writeln(Format('Click: %s', [FEventMessage.Click]));
 
     for LTag in FEventMessage.Tags do
@@ -498,7 +498,7 @@ begin
       .MessageContent(LEventDTO.Value.Message)
       .Title(LEventDTO.Value.Title)
       .Tags(LEventDTO.Value.Tags.ToArray)
-      .Priority(LEventDTO.Value.Priority)
+      .Priority(TNotifyPriority(LEventDTO.Value.Priority))
       .Click(LEventDTO.Value.Click);
 
     for LActionDTO in LEventDTO.Value.Actions do

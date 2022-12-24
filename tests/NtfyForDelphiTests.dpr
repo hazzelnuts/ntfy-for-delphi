@@ -42,7 +42,8 @@ uses
   Notify.Subscription.Event in '..\src\Notify.Subscription.Event.pas',
   Notify.Types in '..\src\Notify.Types.pas',
   NX.Horizon in '..\src\NX.Horizon.pas',
-  Test.Simple.Message in 'src\Test.Simple.Message.pas';
+  Test.Simple.Message in 'src\Test.Simple.Message.pas',
+  Test.Constants in 'src\Test.Constants.pas';
 
 {$R *.RES}
 

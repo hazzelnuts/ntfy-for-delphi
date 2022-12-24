@@ -5,7 +5,7 @@ interface
 uses
   Notify.Event.Contract,
   Notify.Action.Contract,
-  Notify.Attachment.Contract;
+  Notify.Attachment.Contract, Notify;
 
 type
   TNotifyEvent = class(TInterfacedObject, INotifyEvent)
@@ -18,7 +18,7 @@ type
     FClick: String;
     FTitle: String;
     FMessage: String;
-    FPriority: Integer;
+    FPriority: TNotifyPriority;
     FAction: INotifyAction;
     FActions: INotifyEventActions;
     FAttachment: INotifyAttachment;
@@ -42,8 +42,8 @@ type
     function Title(const AValue: String): INotifyEvent; overload;
     function MessageContent: String; overload;
     function MessageContent(const AValue: String): INotifyEvent; overload;
-    function Priority: Integer; overload;
-    function Priority(const AValue: Integer): INotifyEvent; overload;
+    function Priority: TNotifyPriority; overload;
+    function Priority(const AValue: TNotifyPriority): INotifyEvent; overload;
     function Action: INotifyAction; overload;
     function Action(const AValue: INotifyAction): INotifyEvent; overload;
     function Actions: INotifyEventActions;
@@ -153,13 +153,13 @@ begin
   Result := Self.Create;
 end;
 
-function TNotifyEvent.Priority(const AValue: Integer): INotifyEvent;
+function TNotifyEvent.Priority(const AValue: TNotifyPriority): INotifyEvent;
 begin
   Result := Self;
   FPriority := AValue;
 end;
 
-function TNotifyEvent.Priority: Integer;
+function TNotifyEvent.Priority: TNotifyPriority;
 begin
   Result := FPriority;
 end;

@@ -27,17 +27,13 @@ type
     function Topic(const AValue: String): INotifyCore;
     function DisableFireBase(const AValue: Boolean): INotifyCore;
     function Publish: INotifyCore;
-    function Subscribe: INotifyCore; overload;
     function Unsubscribe: INotifyCore;
     function Notification(const ANotification: INotifyNotification): INotifyCore; overload;
     procedure Subscribe(const ATopic: String; const ACallBack: TNotifyEventProc); overload;
     function Filter(const AFilterType: TNotifyFilter; const AValue: String): INotifyCore;
     function ClearFilters: INotifyCore;
-    function Poll: Boolean; overload;
     function Poll(const AValue: Boolean): INotifyCore; overload;
-    function Since: String; overload;
     function Since(const AValue: String): INotifyCore; overload;
-    function Scheduled: Boolean; overload;
     function Scheduled(const AValue: Boolean): INotifyCore; overload;
     function Response: TNotifyApiResponse;
   end;

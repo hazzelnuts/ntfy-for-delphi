@@ -9,14 +9,9 @@ type
   TTestSimpleMessage = class(TTestCase)
   private
     FTitle: String;
-    FMessageContent: String;
+    FMessage: String;
+    FPriority: TNotifyPriority;
     procedure CallBack(AEvent: INotifyEvent);
-    const Title = '⚡ Ntfy for Delphi';
-    const MessageContent = 'A friendly Delphi library to ntfy.sh';
-    const Topic = 'notify-delphi-integration-8jh27d';
-    const FailureMessage = 'Response status differs from 200';
-    const TitleDifferent = 'Published title differs from received one';
-    const MessageDiffent = 'Message content differs from received one';
   public
     procedure SetUp; override;
   published
@@ -26,49 +21,62 @@ type
 implementation
 
 uses
-  Winapi.Windows, System.Classes, System.SysUtils;
+  Test.Constants, Winapi.Windows, System.SysUtils;
 
 { TTestSimpleMessage }
 
 procedure TTestSimpleMessage.CallBack(AEvent: INotifyEvent);
 begin
   FTitle := AEvent.Title;
-  FMessageContent := AEvent.MessageContent;
+  FMessage := AEvent.MessageContent;
+  FPriority := AEvent.Priority;
 end;
 
 procedure TTestSimpleMessage.SendSimpleMessage;
 begin
-
   WriteLn('Simple message test...');
 
-  Ntfy.Notification(
-    New.Notification
-      .Topic(Topic)
-      .Title(Title)
-      .MessageContent(MessageContent)
-  );
 
-  Ntfy.Publish;
-  Sleep(2000);
+  try
+    Ntfy.Publish;
+    Sleep(1000);
+  finally
+    CheckEquals(
+      Ord(TStatusCode.OK),
+      Ntfy.Response.StatusCode,
+      MSG_WRONG_STATUS_CODE
+    );
+  end;
 
-  Ntfy
-    .SaveLog(True)
-    .Poll(True)
-    .Since(Ntfy.Response.Notification.Time.ToString)
-    .Subscribe(Topic, CallBack);
-
-  CheckEquals(Title, FTitle, TitleDifferent);
-  CheckEquals(MessageContent, FMessageContent, MessageDiffent);
-  Ntfy.Unsubscribe;
-
+  try
+    try
+      Ntfy.Since(Ntfy.Response.Notification.Time.ToString);
+      Ntfy.Subscribe(Topic, CallBack);
+    finally
+      Ntfy.Unsubscribe;
+    end;
+  finally
+    CheckEquals(TITLE, FTitle, MSG_WRONG_TITLE);
+    CheckEquals(MESSAGECONTENT, FMessage, MSG_WRONG_MESSAGE);
+    CheckEquals(Ord(PRIORITY), Ord(FPriority), MSG_WRONG_PRIORITY);
+  end;
 end;
 
 procedure TTestSimpleMessage.SetUp;
 begin
   inherited;
+  Ntfy.SaveLog(True);
+  Ntfy.Poll(True);
+  Ntfy.Notification(
+    New.Notification
+      .Topic(TOPIC)
+      .Title(TITLE)
+      .MessageContent(MESSAGECONTENT)
+      .Priority(TNotifyPriority.MAX)
+  );
 end;
 
 initialization
-  RegisterTest('Sending simple message', TTestSimpleMessage.Suite);
+  //RegisterTest('Sending simple message', TTestSimpleMessage.Suite);
 
 end.

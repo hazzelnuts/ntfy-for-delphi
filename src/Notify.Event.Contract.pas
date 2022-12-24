@@ -4,6 +4,7 @@ interface
 
 uses
   System.SysUtils,
+  Notify.Types,
   Notify.Action.Contract,
   Notify.Attachment.Contract,
   System.Generics.Collections;
@@ -30,8 +31,8 @@ type
     function Title(const AValue: String): INotifyEvent; overload;
     function MessageContent: String; overload;
     function MessageContent(const AValue: String): INotifyEvent; overload;
-    function Priority: Integer; overload;
-    function Priority(const AValue: Integer): INotifyEvent; overload;
+    function Priority: TNotifyPriority; overload;
+    function Priority(const AValue: TNotifyPriority): INotifyEvent; overload;
     function Action: INotifyAction; overload;
     function Action(const AValue: INotifyAction): INotifyEvent; overload;
     function Actions: INotifyEventActions;
