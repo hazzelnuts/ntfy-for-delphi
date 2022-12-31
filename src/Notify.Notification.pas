@@ -109,22 +109,16 @@ begin
 
   for LAction in FActions.Values do
   begin
-
     LActionDTO := TNotifyActionDTO.Create;
     LActionDTO.Action := NotifyActionTypesArray[LAction.&Type];
     LActionDTO.&Label := LAction.&Label;
     LActionDTO.Clear := LAction.Clear;
     LActionDTO.Url := LAction.Url;
     LActionDTO.Headers := LAction.Headers;
-
-    if LAction.&Type = TNotifyActionType.HTTP then
-    begin
-      LActionDTO.Method := LAction.Method;
-      LActionDTO.Body := LAction.Body;
-      LActionDTO.Method := LAction.Method;
-      LActionDTO.Headers := LAction.Headers;
-    end;
-
+    LActionDTO.Method := LAction.Method;
+    LActionDTO.Body := LAction.Body;
+    LActionDTO.Method := LAction.Method;
+    LActionDTO.Headers := LAction.Headers;
     LAction.Validate;
     LNotificationDTO.Value.Actions.Add(LActionDTO);
   end;

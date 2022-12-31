@@ -231,6 +231,14 @@ end;
 
 procedure TNotifyCore.SubscribeAsJSONString;
 begin
+
+  if FConfig.SaveLog then
+  begin
+    {$IFDEF CONSOLE}
+    Writeln('Subscribing to topic: ' + FNotification.Topic);
+    {$ENDIF}
+  end;
+
   FApi
     .AddEndPoint(FNotification.Topic + '/json')
     .Get;
@@ -401,12 +409,6 @@ begin
     FApi.AddURLParameter(LFilterKey, LFilterValue);
   end;
 
-  if FConfig.SaveLog then
-  begin
-    {$IFDEF CONSOLE}
-    Writeln('Subscribing to topic: ' + FNotification.Topic);
-    {$ENDIF}
-  end;
   DoSubscribe;
 
 end;

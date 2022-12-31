@@ -11,7 +11,7 @@ uses
   const TAGS: array [0..1] of String =  ('construction', 'smiley');
   const PRIORITY = Ord(TNotifyPriority.MAX);
   const ACTION_URL = 'https://ntfy.sh';
-
+  const TIME_DELAY = 1500;
   const MSG_WRONG_PRIORITY = 'Published priority differs from received';
   const MSG_WRONG_MESSAGE = 'Published message differs from received';
   const MSG_WRONG_TITLE = 'Published title differs from received';

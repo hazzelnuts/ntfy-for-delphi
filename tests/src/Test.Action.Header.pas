@@ -16,7 +16,8 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
-    procedure SendMessageWithActionHeaders;
+    procedure Publish;
+    procedure Subscribe;
   end;
 
 implementation
@@ -31,13 +32,8 @@ begin
   FEventHeaders := AEvent.Action.EventHeaders;
 end;
 
-procedure TTestActionHeader.SendMessageWithActionHeaders;
+procedure TTestActionHeader.Publish;
 begin
-
-  WriteLn('Action headers test');
-  FHeaders.Cmd := 'systeminfo';
-  FHeaders.Parameter := '/FO LIST';
-  FHeaders.SystemDate := 'date';
 
   Ntfy := New.Notify;
   Ntfy.Notification(
@@ -52,7 +48,7 @@ begin
 
   try
     try
-      Sleep(1000);
+      Sleep(TIME_DELAY);
       Ntfy.ClearFilters;
       Ntfy.Publish;
     except on E: Exception do
@@ -66,9 +62,24 @@ begin
     );
   end;
 
+end;
+
+procedure TTestActionHeader.SetUp;
+begin
+  inherited;
+  FHeaders := TNotifyActionHeaders.Create;
+  FEventHeaders := TNotifyActionHeaders.Create;
+  WriteLn('Action headers test');
+  FHeaders.Cmd := 'systeminfo';
+  FHeaders.Parameter := '/FO LIST';
+  FHeaders.SystemDate := 'date';
+end;
+
+procedure TTestActionHeader.Subscribe;
+begin
   try
     try
-      Sleep(1000);
+      Sleep(TIME_DELAY);
       Ntfy := New.Notify;
       Ntfy.Poll(True);
       Ntfy.Since(Ntfy.Response.Data.Id);
@@ -81,13 +92,6 @@ begin
     CheckEquals(FHeaders.Parameter, FEventHeaders.Parameter, MSG_WRONG_HEADERS);
     CheckEquals(FHeaders.SystemDate, FEventHeaders.SystemDate, MSG_WRONG_HEADERS);
   end;
-end;
-
-procedure TTestActionHeader.SetUp;
-begin
-  inherited;
-  FHeaders := TNotifyActionHeaders.Create;
-  FEventHeaders := TNotifyActionHeaders.Create;
 end;
 
 procedure TTestActionHeader.TearDown;

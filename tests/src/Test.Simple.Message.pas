@@ -15,7 +15,8 @@ type
   public
     procedure SetUp; override;
   published
-    procedure SendSimpleMessage;
+    procedure Publish;
+    procedure Subscribe;
   end;
 
 implementation
@@ -32,21 +33,11 @@ begin
   FPriority := AEvent.Priority;
 end;
 
-procedure TTestSimpleMessage.SendSimpleMessage;
+procedure TTestSimpleMessage.Publish;
 begin
-  WriteLn('.Simple message test');
-  Ntfy := New.Notify;
-  Ntfy.Notification(
-    New.Notification
-      .Topic(TOPIC)
-      .Title(TITLE)
-      .MessageContent(MESSAGECONTENT)
-      .Priority(TNotifyPriority.MAX)
-  );
-
   try
     try
-      Sleep(1000);
+      Sleep(TIME_DELAY);
       Ntfy.ClearFilters;
       Ntfy.Publish;
     except on E: Exception do
@@ -59,10 +50,27 @@ begin
       MSG_REQUEST_FAILED
     );
   end;
+end;
 
+procedure TTestSimpleMessage.SetUp;
+begin
+  inherited;
+  WriteLn('Simple message test');
+  Ntfy := New.Notify;
+  Ntfy.Notification(
+    New.Notification
+      .Topic(TOPIC)
+      .Title(TITLE)
+      .MessageContent(MESSAGECONTENT)
+      .Priority(TNotifyPriority.MAX)
+  );
+end;
+
+procedure TTestSimpleMessage.Subscribe;
+begin
   try
     try
-      Sleep(1000);
+      Sleep(TIME_DELAY);
       Ntfy := New.Notify;
       Ntfy.Poll(True);
       Ntfy.Since(Ntfy.Response.Data.Id);
@@ -75,12 +83,6 @@ begin
     CheckEquals(MESSAGECONTENT, FMessage, MSG_WRONG_MESSAGE);
     CheckEquals(Ord(PRIORITY), Ord(FPriority), MSG_WRONG_PRIORITY);
   end;
-end;
-
-procedure TTestSimpleMessage.SetUp;
-begin
-  inherited;
-
 end;
 
 initialization
