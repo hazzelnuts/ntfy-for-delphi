@@ -107,6 +107,7 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
+        <DCCReference Include="..\src\Notify.pas"/>
         <DCCReference Include="..\src\Notify.Action.Contract.pas"/>
         <DCCReference Include="..\src\Notify.Action.DTO.pas"/>
         <DCCReference Include="..\src\Notify.Action.pas"/>
@@ -128,18 +129,17 @@
         <DCCReference Include="..\src\Notify.Notification.Contract.pas"/>
         <DCCReference Include="..\src\Notify.Notification.DTO.pas"/>
         <DCCReference Include="..\src\Notify.Notification.pas"/>
-        <DCCReference Include="..\src\Notify.pas"/>
         <DCCReference Include="..\src\Notify.SmartPointer.pas"/>
         <DCCReference Include="..\src\Notify.Subscription.Event.pas"/>
         <DCCReference Include="..\src\Notify.Types.pas"/>
-        <DCCReference Include="..\src\NX.Horizon.pas"/>
-        <DCCReference Include="src\Test.Simple.Message.pas"/>
-        <DCCReference Include="src\Test.Constants.pas"/>
-        <DCCReference Include="src\Test.Action.Header.pas"/>
         <DCCReference Include="..\src\Notify.Error.pas"/>
         <DCCReference Include="..\src\Notify.Api.Response.pas"/>
         <DCCReference Include="..\src\Notify.Response.Data.pas"/>
         <DCCReference Include="..\src\Notify.Custom.Types.pas"/>
+        <DCCReference Include="..\src\NX.Horizon.pas"/>
+        <DCCReference Include="src\Test.Simple.Message.pas"/>
+        <DCCReference Include="src\Test.Action.Header.pas"/>
+        <DCCReference Include="src\Test.Constants.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

@@ -34,7 +34,6 @@ uses
 
 initialization
   New := TNotifyCoreFacade.New;
-  Ntfy := New.Notify;
 
 finalization
 

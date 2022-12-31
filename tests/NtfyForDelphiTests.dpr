@@ -16,6 +16,7 @@ program NtfyForDelphiTests;
 
 uses
   DUnitTestRunner,
+  Notify in '..\src\Notify.pas',
   Notify.Action.Contract in '..\src\Notify.Action.Contract.pas',
   Notify.Action.DTO in '..\src\Notify.Action.DTO.pas',
   Notify.Action in '..\src\Notify.Action.pas',
@@ -37,18 +38,17 @@ uses
   Notify.Notification.Contract in '..\src\Notify.Notification.Contract.pas',
   Notify.Notification.DTO in '..\src\Notify.Notification.DTO.pas',
   Notify.Notification in '..\src\Notify.Notification.pas',
-  Notify in '..\src\Notify.pas',
   Notify.SmartPointer in '..\src\Notify.SmartPointer.pas',
   Notify.Subscription.Event in '..\src\Notify.Subscription.Event.pas',
   Notify.Types in '..\src\Notify.Types.pas',
-  NX.Horizon in '..\src\NX.Horizon.pas',
-  Test.Simple.Message in 'src\Test.Simple.Message.pas',
-  Test.Constants in 'src\Test.Constants.pas',
-  Test.Action.Header in 'src\Test.Action.Header.pas',
   Notify.Error in '..\src\Notify.Error.pas',
   Notify.Api.Response in '..\src\Notify.Api.Response.pas',
   Notify.Response.Data in '..\src\Notify.Response.Data.pas',
-  Notify.Custom.Types in '..\src\Notify.Custom.Types.pas';
+  Notify.Custom.Types in '..\src\Notify.Custom.Types.pas',
+  NX.Horizon in '..\src\NX.Horizon.pas',
+  Test.Simple.Message in 'src\Test.Simple.Message.pas',
+  Test.Action.Header in 'src\Test.Action.Header.pas',
+  Test.Constants in 'src\Test.Constants.pas';
 
 {$R *.RES}
 

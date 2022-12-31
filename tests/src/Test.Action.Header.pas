@@ -34,10 +34,12 @@ end;
 procedure TTestActionHeader.SendMessageWithActionHeaders;
 begin
 
-  WriteLn('Action headers test...');
+  WriteLn('Action headers test');
   FHeaders.Cmd := 'systeminfo';
   FHeaders.Parameter := '/FO LIST';
   FHeaders.SystemDate := 'date';
+
+  Ntfy := New.Notify;
   Ntfy.Notification(
     New.Notification
       .Topic(TOPIC)

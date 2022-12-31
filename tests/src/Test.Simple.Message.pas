@@ -34,7 +34,7 @@ end;
 
 procedure TTestSimpleMessage.SendSimpleMessage;
 begin
-  WriteLn('Simple message test...');
+  WriteLn('.Simple message test');
   Ntfy := New.Notify;
   Ntfy.Notification(
     New.Notification

@@ -31,7 +31,6 @@ type
     constructor Create;
     destructor Destroy; override;
     class function New: INotifyCore;
-    //class function NewInstance: TObject; override;
     function Publish: INotifyCore;
     function Subscribe: INotifyCore; overload;
     procedure Subscribe(const ATopic: String; const ACallBack: TNotifyEventProc); overload;
@@ -63,9 +62,6 @@ type
     function Scheduled(const AValue: Boolean): INotifyCore; overload;
     function Response: TNotifyApiResponse;
   end;
-
-var
-  NotifyCore: TNotifyCore;
 
 implementation
 
@@ -219,13 +215,6 @@ class function TNotifyCore.New: INotifyCore;
 begin
   Result := Self.Create;
 end;
-
-//class function TNotifyCore.NewInstance: TObject;
-//begin
-//  if not (Assigned(NotifyCore)) then
-//    NotifyCore := TNotifyCore(inherited NewInstance);
-//  Result := NotifyCore;
-//end;
 
 function TNotifyCore.Notification(const ANotification: INotifyNotification): INotifyCore;
 begin
@@ -412,10 +401,12 @@ begin
     FApi.AddURLParameter(LFilterKey, LFilterValue);
   end;
 
-  {$IFDEF CONSOLE}
-  Writeln('Subscribing to topic: ' + FNotification.Topic);
-  {$ENDIF}
-
+  if FConfig.SaveLog then
+  begin
+    {$IFDEF CONSOLE}
+    Writeln('Subscribing to topic: ' + FNotification.Topic);
+    {$ENDIF}
+  end;
   DoSubscribe;
 
 end;

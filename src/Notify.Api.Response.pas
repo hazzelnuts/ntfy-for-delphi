@@ -9,48 +9,72 @@ uses
   System.Classes;
 
 type
-  TNotifyApiResponse = record
-    StatusCode: Integer;
-    ResponseStream: TMemoryStream;
-    ResponseData: TNotifyResponseData;
-    ResponseErrors: TNotifyErrors;
-    RawContent: String;
+
+  {$M+}
+
+  TNotifyApiResponse = class
+  private
+    FStatusCode: Integer;
+    FResponseStream: TMemoryStream;
+    FResponseData: TNotifyResponseData;
+    FResponseErrors: TNotifyErrors;
     function GetErros: TNotifyErrors;
     function GetData: TNotifyResponseData;
+  public
+    constructor Create;
+    destructor Destroy; override;
+  published
     property Erros: TNotifyErrors read GetErros;
     property Data: TNotifyResponseData read GetData;
+    property StatusCode: Integer read FStatusCode write FStatusCode;
+    property ResponseStream: TMemoryStream read FResponseStream write FResponseStream;
   end;
 
 implementation
 
 { TNotifyApiResponse }
 
+constructor TNotifyApiResponse.Create;
+begin
+  FResponseData := TNotifyResponseData.Create;
+  FResponseErrors := TNotifyErrors.Create;
+  FResponseStream := TMemoryStream.Create
+end;
+
+destructor TNotifyApiResponse.Destroy;
+begin
+  FResponseData.Free;
+  FResponseErrors.Free;
+  FResponseStream.Free;
+  inherited
+end;
+
 function TNotifyApiResponse.GetData: TNotifyResponseData;
 var
   LRawString: String;
 begin
-  Result := ResponseData;
+  Result := FResponseData;
 
-  if not Assigned(ResponseData) then
+  if not Assigned(FResponseData) then
     Exit;
 
-  ResponseStream.Position := 0;
-  SetString(LRawString, PAnsiChar(ResponseStream.Memory), ResponseStream.Size);
-  ResponseData.AsJson := LRawString;
+  FResponseStream.Position := 0;
+  SetString(LRawString, PAnsiChar(FResponseStream.Memory), FResponseStream.Size);
+  FResponseData.AsJson := LRawString;
 end;
 
 function TNotifyApiResponse.GetErros: TNotifyErrors;
 var
   LRawString: String;
 begin
-  Result := ResponseErrors;
+  Result := FResponseErrors;
 
-  if not Assigned(ResponseData) then
+  if not Assigned(FResponseData) then
     Exit;
 
-  ResponseStream.Position := 0;
-  SetString(LRawString, PAnsiChar(ResponseStream.Memory), ResponseStream.Size);
-  ResponseErrors.AsJson := LRawString;
+  FResponseStream.Position := 0;
+  SetString(LRawString, PAnsiChar(FResponseStream.Memory), FResponseStream.Size);
+  FResponseErrors.AsJson := LRawString;
 end;
 
 end.

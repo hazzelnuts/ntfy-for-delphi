@@ -181,9 +181,7 @@ begin
   FIdHTTP.IOHandler := FIOHandlerSSL;
   FIdHTTP.HTTPOptions := [hoNoReadMultipartMIME];
   FURLParametersList := TStringList.Create;
-  FResponse.ResponseData := TNotifyResponseData.Create;
-  FResponse.ResponseErrors := TNotifyErrors.Create;
-  FResponse.ResponseStream := TMemoryStream.Create;
+  FResponse := TNotifyApiResponse.Create;
 end;
 
 function TNotifyApiIndy.CreateURL: String;
@@ -213,9 +211,7 @@ begin
   try
     Destroythread;
   finally
-    FResponse.ResponseData.Free;
-    FResponse.ResponseErrors.Free;
-    FResponse.ResponseStream.Free;
+    FResponse.Free;
     FreeAndNil(FIdHTTP);
     FreeAndNil(FIOHandlerSSL);
     FreeAndNil(FBodyStream);
