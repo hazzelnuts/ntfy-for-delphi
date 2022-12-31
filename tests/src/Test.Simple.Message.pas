@@ -35,12 +35,20 @@ end;
 procedure TTestSimpleMessage.SendSimpleMessage;
 begin
   WriteLn('Simple message test...');
+  Ntfy := New.Notify;
+  Ntfy.Notification(
+    New.Notification
+      .Topic(TOPIC)
+      .Title(TITLE)
+      .MessageContent(MESSAGECONTENT)
+      .Priority(TNotifyPriority.MAX)
+  );
 
   try
     try
+      Sleep(1000);
       Ntfy.ClearFilters;
       Ntfy.Publish;
-      Sleep(1000);
     except on E: Exception do
       Writeln(E.Message)
     end;
@@ -54,7 +62,10 @@ begin
 
   try
     try
-      Ntfy.Since(Ntfy.Response.Data.Time.ToString);
+      Sleep(1000);
+      Ntfy := New.Notify;
+      Ntfy.Poll(True);
+      Ntfy.Since(Ntfy.Response.Data.Id);
       Ntfy.Subscribe(Topic, CallBack);
     finally
       Ntfy.Unsubscribe;
@@ -69,18 +80,10 @@ end;
 procedure TTestSimpleMessage.SetUp;
 begin
   inherited;
-  Ntfy.SaveLog(True);
-  Ntfy.Poll(True);
-  Ntfy.Notification(
-    New.Notification
-      .Topic(TOPIC)
-      .Title(TITLE)
-      .MessageContent(MESSAGECONTENT)
-      .Priority(TNotifyPriority.MAX)
-  );
+
 end;
 
 initialization
- // RegisterTest('Sending simple message', TTestSimpleMessage.Suite);
+  RegisterTest('Sending simple message', TTestSimpleMessage.Suite);
 
 end.

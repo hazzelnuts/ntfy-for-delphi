@@ -4,6 +4,7 @@ interface
 
 uses
   Notify.Types,
+  Notify.Custom.Types,
   System.Generics.Collections;
 
 type
@@ -21,10 +22,10 @@ type
     function Method(const AValue: String): INotifyAction; overload;
     function Body: String; overload;
     function Body(const AValue: String): INotifyAction; overload;
-    function Headers: TJsonDTO; overload;
-    function Headers(const AValue: TJsonDTO): INotifyAction; overload;
-    function EventHeaders(const AValue: TJsonDTO): INotifyAction; overload;
-    function EventHeaders: TJsonDTO; overload;
+    function Headers: TNotifyActionHeaders; overload;
+    function Headers(const AValue: TNotifyActionHeaders): INotifyAction; overload;
+    function EventHeaders(const AValue: TNotifyActionHeaders): INotifyAction; overload;
+    function EventHeaders: TNotifyActionHeaders; overload;
     function Validate: INotifyAction;
   end;
 

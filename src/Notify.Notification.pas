@@ -122,7 +122,7 @@ begin
       LActionDTO.Method := LAction.Method;
       LActionDTO.Body := LAction.Body;
       LActionDTO.Method := LAction.Method;
-      LActionDTO.Headers := TJsonDTO(LAction.Headers);
+      LActionDTO.Headers := LAction.Headers;
     end;
 
     LAction.Validate;

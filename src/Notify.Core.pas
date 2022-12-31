@@ -185,7 +185,7 @@ begin
 
       if Assigned(LAction.Headers) then
       begin
-        Writeln(Format('Action Headers: %s', [LAction.Headers.AsJson]));
+        Writeln(Format('Action Headers: %s', [TJsonDto(LAction.Headers).AsJson]));
       end;
 
     end;

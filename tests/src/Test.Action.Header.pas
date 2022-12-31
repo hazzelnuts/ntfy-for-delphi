@@ -3,25 +3,14 @@ unit Test.Action.Header;
 interface
 
 uses
-  Notify, TestFrameWork, REST.Json.Types;
+  TestFrameWork, REST.Json.Types, Notify.Custom.Types, Notify;
 
 type
 
-  TActionHeaders = class(TJsonDTO)
-  private
-    [JSONName('cmd')]
-    FCmd: String;
-    [JSONName('parameter')]
-    FParameter: String;
-  published
-    property Cmd: String read FCmd write FCmd;
-    property Parameter: String read FParameter write FParameter;
-  end;
-
   TTestActionHeader = class(TTestCase)
   private
-    FHeaders: TActionHeaders;
-    FEventHeaders: TActionHeaders;
+    FHeaders: TNotifyActionHeaders;
+    FEventHeaders: TNotifyActionHeaders;
     procedure CallBack(AEvent: INotifyEvent);
   public
     procedure SetUp; override;
@@ -39,15 +28,16 @@ uses
 
 procedure TTestActionHeader.CallBack(AEvent: INotifyEvent);
 begin
-  FEventHeaders.AsJson := AEvent.Action.EventHeaders.AsJson;
+  FEventHeaders := AEvent.Action.EventHeaders;
 end;
 
 procedure TTestActionHeader.SendMessageWithActionHeaders;
 begin
 
+  WriteLn('Action headers test...');
   FHeaders.Cmd := 'systeminfo';
-  FHeaders.Parameter := ' C:\';
-
+  FHeaders.Parameter := '/FO LIST';
+  FHeaders.SystemDate := 'date';
   Ntfy.Notification(
     New.Notification
       .Topic(TOPIC)
@@ -60,6 +50,7 @@ begin
 
   try
     try
+      Sleep(1000);
       Ntfy.ClearFilters;
       Ntfy.Publish;
     except on E: Exception do
@@ -75,9 +66,10 @@ begin
 
   try
     try
-      Ntfy.SaveLog(True);
+      Sleep(1000);
+      Ntfy := New.Notify;
       Ntfy.Poll(True);
-      Ntfy.Since(Ntfy.Response.Data.Time.ToString);
+      Ntfy.Since(Ntfy.Response.Data.Id);
       Ntfy.Subscribe(TOPIC, CallBack);
     finally
       Ntfy.Unsubscribe;
@@ -85,14 +77,15 @@ begin
   finally
     CheckEquals(FHeaders.Cmd, FEventHeaders.Cmd, MSG_WRONG_HEADERS);
     CheckEquals(FHeaders.Parameter, FEventHeaders.Parameter, MSG_WRONG_HEADERS);
+    CheckEquals(FHeaders.SystemDate, FEventHeaders.SystemDate, MSG_WRONG_HEADERS);
   end;
 end;
 
 procedure TTestActionHeader.SetUp;
 begin
   inherited;
-  FHeaders := TActionHeaders.Create;
-  FEventHeaders := TActionHeaders.Create;
+  FHeaders := TNotifyActionHeaders.Create;
+  FEventHeaders := TNotifyActionHeaders.Create;
 end;
 
 procedure TTestActionHeader.TearDown;

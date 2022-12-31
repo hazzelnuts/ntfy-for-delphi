@@ -4,6 +4,7 @@ interface
 
 uses
   Notify.Types,
+  Notify.Custom.Types,
   Notify.Action.Contract,
   System.Generics.Collections;
 
@@ -16,8 +17,8 @@ type
     FClear: Boolean;
     FMethod: String;
     FBody: String;
-    FEventHeaders: TJsonDTO;
-    FHeaders: TJsonDTO;
+    FEventHeaders: TNotifyActionHeaders;
+    FHeaders: TNotifyActionHeaders;
   public
     class function New: INotifyAction;
     constructor Create;
@@ -35,10 +36,10 @@ type
     function Method(const AValue: String): INotifyAction; overload;
     function Body: String; overload;
     function Body(const AValue: String): INotifyAction; overload;
-    function Headers: TJsonDTO; overload;
-    function Headers(const AValue: TJsonDTO): INotifyAction; overload;
-    function EventHeaders: TJsonDTO; overload;
-    function EventHeaders(const AValue: TJsonDTO): INotifyAction; overload;
+    function Headers: TNotifyActionHeaders; overload;
+    function Headers(const AValue: TNotifyActionHeaders): INotifyAction; overload;
+    function EventHeaders: TNotifyActionHeaders; overload;
+    function EventHeaders(const AValue: TNotifyActionHeaders): INotifyAction; overload;
     function Validate: INotifyAction;
   end;
 
@@ -88,18 +89,18 @@ begin
   inherited;
 end;
 
-function TNofifyAction.EventHeaders(const AValue: TJsonDTO): INotifyAction;
+function TNofifyAction.EventHeaders(const AValue: TNotifyActionHeaders): INotifyAction;
 begin
   Result := Self;
   FEventHeaders := AValue;
 end;
 
-function TNofifyAction.EventHeaders: TJsonDTO;
+function TNofifyAction.EventHeaders: TNotifyActionHeaders;
 begin
   Result := FEventHeaders;
 end;
 
-function TNofifyAction.Headers: TJsonDTO;
+function TNofifyAction.Headers: TNotifyActionHeaders;
 begin
   Result := FHeaders;
 end;
@@ -156,7 +157,7 @@ begin
     raise Exception.Create('Label field is missing in one of the action items');
 end;
 
-function TNofifyAction.Headers(const AValue: TJsonDTO): INotifyAction;
+function TNofifyAction.Headers(const AValue: TNotifyActionHeaders): INotifyAction;
 begin
   Result := Self;
   FHeaders := AValue;

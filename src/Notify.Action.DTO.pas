@@ -3,7 +3,10 @@ unit Notify.Action.DTO;
 interface
 
 uses
-  Notify.JSON.Parser, System.Generics.Collections, REST.Json.Types;
+  Notify.Custom.Types,
+  Notify.JSON.Parser,
+  System.Generics.Collections,
+  REST.Json.Types;
 
 type
 
@@ -22,7 +25,7 @@ type
     [JSONName('body')]
     FBody: String;
     [JSONName('headers'), JSONMarshalled]
-    FHeaders: TJsonDTO;
+    FHeaders: TNotifyActionHeaders;
   published
     property Action: String read FAction write FAction;
     property Clear: Boolean read FClear write FClear;
@@ -30,7 +33,7 @@ type
     property Url: String read FUrl write FUrl;
     property Method: String read FMethod write FMethod;
     property Body: String read FBody write FBody;
-    property Headers: TJsonDTO read FHeaders write FHeaders;
+    property Headers: TNotifyActionHeaders read FHeaders write FHeaders;
   end;
 
 
