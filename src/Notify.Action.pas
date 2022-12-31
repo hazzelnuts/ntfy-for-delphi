@@ -16,8 +16,8 @@ type
     FClear: Boolean;
     FMethod: String;
     FBody: String;
-    FHeaders: TDictionary<String, String>;
-    FHeader: TJsonDTO;
+    FEventHeaders: TJsonDTO;
+    FHeaders: TJsonDTO;
   public
     class function New: INotifyAction;
     constructor Create;
@@ -37,9 +37,15 @@ type
     function Body(const AValue: String): INotifyAction; overload;
     function Headers: TJsonDTO; overload;
     function Headers(const AValue: TJsonDTO): INotifyAction; overload;
+    function EventHeaders: TJsonDTO; overload;
+    function EventHeaders(const AValue: TJsonDTO): INotifyAction; overload;
+    function Validate: INotifyAction;
   end;
 
 implementation
+
+uses
+  System.SysUtils;
 
 { TNofifyAction }
 
@@ -73,19 +79,29 @@ end;
 
 constructor TNofifyAction.Create;
 begin
-  FHeaders := TDictionary<String, String>.Create;
   FMethod := 'POST';
+  FType := TNotifyActionType.VIEW;
 end;
 
 destructor TNofifyAction.Destroy;
 begin
-  FHeaders.Free;
   inherited;
+end;
+
+function TNofifyAction.EventHeaders(const AValue: TJsonDTO): INotifyAction;
+begin
+  Result := Self;
+  FEventHeaders := AValue;
+end;
+
+function TNofifyAction.EventHeaders: TJsonDTO;
+begin
+  Result := FEventHeaders;
 end;
 
 function TNofifyAction.Headers: TJsonDTO;
 begin
-  Result := FHeader;
+  Result := FHeaders;
 end;
 
 function TNofifyAction.Clear: Boolean;
@@ -131,10 +147,19 @@ begin
   FUrl := AValue;
 end;
 
+function TNofifyAction.Validate: INotifyAction;
+begin
+  if FUrl = '' then
+    raise Exception.Create('URL field is missing in one of the action items');
+
+  if FLabel = '' then
+    raise Exception.Create('Label field is missing in one of the action items');
+end;
+
 function TNofifyAction.Headers(const AValue: TJsonDTO): INotifyAction;
 begin
   Result := Self;
-  FHeader := AValue;
+  FHeaders := AValue;
 end;
 
 end.

@@ -11,10 +11,6 @@ uses
 type
   TNotifyNotificationDTO = class(TJsonDTO)
   private
-    [JSONName('id')]
-    FId: String;
-    [JSONName('time')]
-    FTime: Integer;
     [JSONName('attach')]
     FAttach: string;
     [JSONName('click')]
@@ -57,8 +53,6 @@ type
     property Actions: TObjectList<TNotifyActionDTO> read GetActions;
     property Delay: String read FDelay write FDelay;
     property Email: String read FEmail write FEmail;
-    property Id: String read Fid write FId;
-    property Time: Integer read FTime write FTime;
   public
     destructor Destroy; override;
   end;

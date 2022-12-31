@@ -31,7 +31,7 @@ type
     constructor Create;
     destructor Destroy; override;
     class function New: INotifyCore;
-    class function NewInstance: TObject; override;
+    //class function NewInstance: TObject; override;
     function Publish: INotifyCore;
     function Subscribe: INotifyCore; overload;
     procedure Subscribe(const ATopic: String; const ACallBack: TNotifyEventProc); overload;
@@ -58,11 +58,8 @@ type
     function Notification(const ANotification: INotifyNotification): INotifyCore; overload;
     function Filter(const AFilterType: TNotifyFilter; const AValue: String): INotifyCore;
     function ClearFilters: INotifyCore;
-    function Poll: Boolean; overload;
     function Poll(const AValue: Boolean): INotifyCore; overload;
-    function Since: String; overload;
     function Since(const AValue: String): INotifyCore; overload;
-    function Scheduled: Boolean; overload;
     function Scheduled(const AValue: Boolean): INotifyCore; overload;
     function Response: TNotifyApiResponse;
   end;
@@ -103,6 +100,7 @@ function TNotifyCore.ClearFilters: INotifyCore;
 begin
   Result := Self;
   FFilterParameters.Clear;
+  FApi.ClearHeaders;
 end;
 
 constructor TNotifyCore.Create;
@@ -222,12 +220,12 @@ begin
   Result := Self.Create;
 end;
 
-class function TNotifyCore.NewInstance: TObject;
-begin
-  if not (Assigned(NotifyCore)) then
-    NotifyCore := TNotifyCore(inherited NewInstance);
-  Result := NotifyCore;
-end;
+//class function TNotifyCore.NewInstance: TObject;
+//begin
+//  if not (Assigned(NotifyCore)) then
+//    NotifyCore := TNotifyCore(inherited NewInstance);
+//  Result := NotifyCore;
+//end;
 
 function TNotifyCore.Notification(const ANotification: INotifyNotification): INotifyCore;
 begin
@@ -288,11 +286,6 @@ begin
   FConfig.Password(AValue);
 end;
 
-function TNotifyCore.Poll: Boolean;
-begin
-  Result := FPoll;
-end;
-
 function TNotifyCore.Poll(const AValue: Boolean): INotifyCore;
 begin
   Result := Self;
@@ -307,6 +300,8 @@ begin
   Result := Self;
 
   FApi
+    .ClearEndPoint
+    .ClearURLParameters
     .Config(FConfig)
     .ClearHeaders
     .ClearBody;
@@ -357,11 +352,6 @@ begin
   FScheduled := AValue;
 end;
 
-function TNotifyCore.Scheduled: Boolean;
-begin
-  Result := FScheduled;
-end;
-
 function TNotifyCore.SendFile: INotifyCore;
 var
   LFileStream: TSmartPointer<TFileStream>;
@@ -384,11 +374,6 @@ begin
     .AddEndPoint(FNotification.Topic)
     .Put;
 
-end;
-
-function TNotifyCore.Since: String;
-begin
-  Result := FSince;
 end;
 
 function TNotifyCore.Since(const AValue: String): INotifyCore;
@@ -510,6 +495,7 @@ begin
           .Clear(LActionDTO.Clear)
           .Method(LActionDTO.Method)
           .Body(LActionDTO.Body)
+          .EventHeaders(LActionDTO.Headers)
       );
 
     if Assigned(LEventDTO.Value.Attachment) then

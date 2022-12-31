@@ -10,11 +10,13 @@ uses
   const TOPIC = 'notify-delphi-integration-8jh27d';
   const TAGS: array [0..1] of String =  ('construction', 'smiley');
   const PRIORITY = Ord(TNotifyPriority.MAX);
+  const ACTION_URL = 'https://ntfy.sh';
 
   const MSG_WRONG_PRIORITY = 'Published priority differs from received';
   const MSG_WRONG_MESSAGE = 'Published message differs from received';
   const MSG_WRONG_TITLE = 'Published title differs from received';
-  const MSG_WRONG_STATUS_CODE = 'Response status code not expected';
+  const MSG_REQUEST_FAILED = 'Response status code not expected';
+  const MSG_WRONG_HEADERS = 'Published headers differs from freceived';
 
 
   {$SCOPEDENUMS ON}

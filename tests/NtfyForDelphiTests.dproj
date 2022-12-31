@@ -135,6 +135,10 @@
         <DCCReference Include="..\src\NX.Horizon.pas"/>
         <DCCReference Include="src\Test.Simple.Message.pas"/>
         <DCCReference Include="src\Test.Constants.pas"/>
+        <DCCReference Include="src\Test.Action.Header.pas"/>
+        <DCCReference Include="..\src\Notify.Error.pas"/>
+        <DCCReference Include="..\src\Notify.Api.Response.pas"/>
+        <DCCReference Include="..\src\Notify.Response.Data.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

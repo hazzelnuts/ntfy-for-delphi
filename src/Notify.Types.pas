@@ -3,13 +3,12 @@ unit Notify.Types;
 interface
 
 uses
-  Notify.JSON.Parser;
+  Notify.JSON.Parser, System.Generics.Collections;
 
 type
   {$SCOPEDENUMS ON}
 
   TNotifyActionType = (VIEW, BROADCAST, HTTP);
-
   TNotifySubscriptionType = (JSON, SSE, RAW, WEB_SOCKET);
 
   TNotifyPriority = (

@@ -36,21 +36,25 @@ procedure TTestSimpleMessage.SendSimpleMessage;
 begin
   WriteLn('Simple message test...');
 
-
   try
-    Ntfy.Publish;
-    Sleep(1000);
+    try
+      Ntfy.ClearFilters;
+      Ntfy.Publish;
+      Sleep(1000);
+    except on E: Exception do
+      Writeln(E.Message)
+    end;
   finally
     CheckEquals(
       Ord(TStatusCode.OK),
       Ntfy.Response.StatusCode,
-      MSG_WRONG_STATUS_CODE
+      MSG_REQUEST_FAILED
     );
   end;
 
   try
     try
-      Ntfy.Since(Ntfy.Response.Notification.Time.ToString);
+      Ntfy.Since(Ntfy.Response.Data.Time.ToString);
       Ntfy.Subscribe(Topic, CallBack);
     finally
       Ntfy.Unsubscribe;
@@ -77,6 +81,6 @@ begin
 end;
 
 initialization
-  //RegisterTest('Sending simple message', TTestSimpleMessage.Suite);
+ // RegisterTest('Sending simple message', TTestSimpleMessage.Suite);
 
 end.

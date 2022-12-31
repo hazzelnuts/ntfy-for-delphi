@@ -109,11 +109,13 @@ begin
 
   for LAction in FActions.Values do
   begin
+
     LActionDTO := TNotifyActionDTO.Create;
     LActionDTO.Action := NotifyActionTypesArray[LAction.&Type];
     LActionDTO.&Label := LAction.&Label;
     LActionDTO.Clear := LAction.Clear;
     LActionDTO.Url := LAction.Url;
+    LActionDTO.Headers := LAction.Headers;
 
     if LAction.&Type = TNotifyActionType.HTTP then
     begin
@@ -123,6 +125,7 @@ begin
       LActionDTO.Headers := TJsonDTO(LAction.Headers);
     end;
 
+    LAction.Validate;
     LNotificationDTO.Value.Actions.Add(LActionDTO);
   end;
 

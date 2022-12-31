@@ -59,20 +59,22 @@ type
     function Config(const AValue: INotifyConfig): INotifyApi;
     function ClearHeaders: INotifyApi;
     function ClearBody: INotifyApi;
+    function ClearURLParameters: INotifyApi;
+    function ClearEndPoint: INotifyApi;
     function AddHeader(const AName: String; AValue: String): INotifyApi; overload;
     function AddHeader(const AName: String; AValues: array of String): INotifyApi; overload;
     function AddBody(const AValue: String): INotifyApi; overload;
     function AddBody(const AValue: TFileStream): INotifyApi; overload;
     function AddEndPoint(const AValue: String): INotifyApi; overload;
+    function AddURLParameter(const AName: String; AValue: String): INotifyApi;
     function Get: INotifyApi;
     function Post: INotifyApi;
     function Put: INotifyApi;
     function AbortStream: INotifyApi;
-    function AddURLParameter(const AName: String; AValue: String): INotifyApi;
     procedure Destroythread;
     function CreateURL: String;
-    function ClearURLParameters: INotifyApi;
     function Response: TNotifyApiResponse;
+    procedure LogRequest;
   end;
 
 implementation
@@ -82,7 +84,7 @@ uses
   Notify.SmartPointer,
   System.SysUtils,
   Notify.Logs,
-  Notify.Notification.DTO;
+  Notify.Notification.DTO, Notify.Error, Notify.Response.Data;
 
 { TNotityApiIndy }
 
@@ -146,6 +148,12 @@ begin
   FBodyStream.Clear;
 end;
 
+function TNotifyApiIndy.ClearEndPoint: INotifyApi;
+begin
+  Result := Self;
+  FEndPoint := '';
+end;
+
 function TNotifyApiIndy.ClearHeaders: INotifyApi;
 begin
   Result := Self;
@@ -173,14 +181,21 @@ begin
   FIdHTTP.IOHandler := FIOHandlerSSL;
   FIdHTTP.HTTPOptions := [hoNoReadMultipartMIME];
   FURLParametersList := TStringList.Create;
-  FResponse.Notification := TNotifyNotificationDTO.Create;
+  FResponse.ResponseData := TNotifyResponseData.Create;
+  FResponse.ResponseErrors := TNotifyErrors.Create;
+  FResponse.ResponseStream := TMemoryStream.Create;
 end;
 
 function TNotifyApiIndy.CreateURL: String;
 var
   I: Integer;
 begin
-  Result := Format('%s/%s', [FNotifyConfig.BaseURL, FEndPoint]);
+
+  if FEndPoint <> '' then
+    Result := Format('%s/%s', [FNotifyConfig.BaseURL, FEndPoint])
+  else
+    Result := FNotifyConfig.BaseURL;
+
   if FURLParametersList.Count > 0 then
   begin
     Result := Result + '?';
@@ -198,7 +213,9 @@ begin
   try
     Destroythread;
   finally
-    FResponse.Notification.Free;
+    FResponse.ResponseData.Free;
+    FResponse.ResponseErrors.Free;
+    FResponse.ResponseStream.Free;
     FreeAndNil(FIdHTTP);
     FreeAndNil(FIOHandlerSSL);
     FreeAndNil(FBodyStream);
@@ -243,6 +260,17 @@ begin
 
 end;
 
+procedure TNotifyApiIndy.LogRequest;
+begin
+  if FNotifyConfig.SaveLog then
+  begin
+    TNotifyLogs.Log(FNotifyConfig.LogPath, FIdHTTP.URL.GetFullURI());
+    TNotifyLogs.Log(FNotifyConfig.LogPath, FBodyStream);
+    TNotifyLogs.Log(FNotifyConfig.LogPath, FResponse.StatusCode.ToString);
+    TNotifyLogs.Log(FNotifyConfig.LogPath, FResponse.ResponseStream);
+  end;
+end;
+
 class function TNotifyApiIndy.New: INotifyApi;
 begin
   Result := Self.Create;
@@ -251,21 +279,23 @@ end;
 function TNotifyApiIndy.Post: INotifyApi;
 begin
   Result := Self;
-  FResponse.Content := FIdHTTP.Post(TIdURI.URLEncode(CreateURL), FBodyStream);
-  FResponse.Notification.AsJson := FResponse.Content;
-  FResponse.StatusCode := FIdHttp.ResponseCode;
-  if FNotifyConfig.SaveLog then
-    TNotifyLogs.Log(FNotifyConfig.LogPath, FIdHTTP.ResponseText);
+  try
+    FIdHTTP.Post(TIdURI.URLEncode(CreateURL), FBodyStream, FResponse.ResponseStream);
+  finally
+    FResponse.StatusCode := FIdHttp.ResponseCode;
+    LogRequest;
+  end;
 end;
 
 function TNotifyApiIndy.Put: INotifyApi;
 begin
   Result := Self;
-  FResponse.Content := FIdHTTP.Put(TIdURI.URLEncode(CreateURL), FBodyStream);
-  FResponse.Notification.AsJson := FResponse.Content;
-  FResponse.StatusCode := FIdHttp.ResponseCode;
-  if FNotifyConfig.SaveLog then
-    TNotifyLogs.Log(FNotifyConfig.LogPath, FIdHTTP.ResponseText);
+  try
+    FIdHTTP.Put(TIdURI.URLEncode(CreateURL), FBodyStream, FResponse.ResponseStream);
+  finally
+    FResponse.StatusCode := FIdHttp.ResponseCode;
+    LogRequest;
+  end;
 end;
 
 function TNotifyApiIndy.Response: TNotifyApiResponse;
@@ -323,8 +353,6 @@ begin
     FIdHttp.Socket.Close;
 
   NxHorizon.Instance.Post<TNotifySubscriptionEvent>(LEventString);
-  FResponse.Content :=  UnicodeString(LEventString);
-  FResponse.StatusCode := FIdHttp.ResponseCode;
 
 end;
 
@@ -337,11 +365,15 @@ begin
     FIdHttp.Request.CacheControl := 'no-cache';
     FIdHttp.Request.Accept := 'text/event-stream';
     FIdHttp.Response.KeepAlive := True;
+
     while not Terminated do
     begin
       try
-        FIdHttp.Get(FUrl, FIdEventStream);
-        Terminate;
+        try
+          FIdHttp.Get(FUrl, FIdEventStream);
+        finally
+          Terminate;
+        end;
       except on E: Exception do
         begin
           Exit;

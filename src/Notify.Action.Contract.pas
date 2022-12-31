@@ -23,6 +23,9 @@ type
     function Body(const AValue: String): INotifyAction; overload;
     function Headers: TJsonDTO; overload;
     function Headers(const AValue: TJsonDTO): INotifyAction; overload;
+    function EventHeaders(const AValue: TJsonDTO): INotifyAction; overload;
+    function EventHeaders: TJsonDTO; overload;
+    function Validate: INotifyAction;
   end;
 
 implementation

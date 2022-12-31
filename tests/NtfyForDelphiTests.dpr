@@ -43,7 +43,11 @@ uses
   Notify.Types in '..\src\Notify.Types.pas',
   NX.Horizon in '..\src\NX.Horizon.pas',
   Test.Simple.Message in 'src\Test.Simple.Message.pas',
-  Test.Constants in 'src\Test.Constants.pas';
+  Test.Constants in 'src\Test.Constants.pas',
+  Test.Action.Header in 'src\Test.Action.Header.pas',
+  Notify.Error in '..\src\Notify.Error.pas',
+  Notify.Api.Response in '..\src\Notify.Api.Response.pas',
+  Notify.Response.Data in '..\src\Notify.Response.Data.pas';
 
 {$R *.RES}
 

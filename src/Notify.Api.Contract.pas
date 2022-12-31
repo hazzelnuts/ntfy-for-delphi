@@ -15,16 +15,17 @@ type
     function Post: INotifyApi;
     function Put: INotifyApi;
     function ClearHeaders: INotifyApi;
+    function ClearBody: INotifyApi;
+    function ClearURLParameters: INotifyApi;
+    function ClearEndPoint: INotifyApi;
     function AddHeader(const PName: String; AValue: String): INotifyApi; overload;
     function AddHeader(const AName: String; AValues: array of String): INotifyApi; overload;
     function AddBody(const AValue: String): INotifyApi; overload;
     function AddBody(const AValue: TFileStream): INotifyApi; overload;
     function AddEndPoint(const AValue: String): INotifyApi; overload;
-    function ClearBody: INotifyApi;
-    function Config(const AValue: INotifyConfig): INotifyApi;
     function AddURLParameter(const AName: String; AValue: String): INotifyApi;
+    function Config(const AValue: INotifyConfig): INotifyApi;
     function AbortStream: INotifyApi;
-    function ClearURLParameters: INotifyApi;
   end;
 
 implementation

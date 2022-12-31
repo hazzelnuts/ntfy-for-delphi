@@ -38,6 +38,7 @@ begin
     Ntfy.Notification(New.Notification
       .Action(New.Action
         .&Type(TNotifyActionType.HTTP)
+        .&Label('Action Headers')
         .Url('http://someurl.com')
         .Body('"message":"hello"')
         .Headers(Headers))
