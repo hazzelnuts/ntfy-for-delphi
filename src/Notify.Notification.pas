@@ -114,7 +114,6 @@ begin
     LActionDTO.&Label := LAction.&Label;
     LActionDTO.Clear := LAction.Clear;
     LActionDTO.Url := LAction.Url;
-    LActionDTO.Headers := LAction.Headers;
     LActionDTO.Method := LAction.Method;
     LActionDTO.Body := LAction.Body;
     LActionDTO.Method := LAction.Method;

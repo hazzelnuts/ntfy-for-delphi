@@ -74,7 +74,6 @@ procedure TTestActionHeader.SetUp;
 begin
   inherited;
   FHeaders := TNotifyActionHeaders.Create;
-  FEventHeaders := TNotifyActionHeaders.Create;
   FHeaders.Cmd := 'systeminfo';
   FHeaders.Parameter := '/FO LIST';
   FHeaders.SystemDate := 'date';
@@ -104,7 +103,6 @@ procedure TTestActionHeader.TearDown;
 begin
   inherited;
   FHeaders.Free;
-  FEventHeaders.Free;
 end;
 
 end.

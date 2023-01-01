@@ -53,14 +53,13 @@ uses
   Test.Action.View in 'src\Test.Action.View.pas',
   Test.Attachments in 'src\Test.Attachments.pas',
   Test.Email in 'src\Test.Email.pas',
-  Test.Emojis in 'src\Test.Emojis.pas',
   Test.Icons in 'src\Test.Icons.pas',
-  Test.URL.Attachments in 'src\Test.URL.Attachments.pas',
-  Index in 'src\Index.pas';
-
-{$R *.RES}
+  Index in 'src\Index.pas',
+  Test.Emojis in 'src\Test.Emojis.pas',
+  Test.URL.Attachments in 'src\Test.URL.Attachments.pas', Winapi.Windows;
 
 begin
+  SetWindowText(0, 'Test cases');
   DUnitTestRunner.RunRegisteredTests;
   Readln;
 end.

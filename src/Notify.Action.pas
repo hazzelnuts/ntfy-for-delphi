@@ -86,13 +86,14 @@ end;
 
 destructor TNofifyAction.Destroy;
 begin
+  FEventHeaders.Free;
   inherited;
 end;
 
 function TNofifyAction.EventHeaders(const AValue: TNotifyActionHeaders): INotifyAction;
 begin
   Result := Self;
-  FEventHeaders := AValue;
+  FEventHeaders := TNotifyActionHeaders(AValue);
 end;
 
 function TNofifyAction.EventHeaders: TNotifyActionHeaders;

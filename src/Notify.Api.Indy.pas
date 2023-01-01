@@ -213,8 +213,8 @@ begin
     FreeAndNil(FResponse);
     FreeAndNil(FIdHTTP);
     FreeAndNil(FIOHandlerSSL);
-    FreeAndNil(FBodyStream);
     FreeAndNil(FURLParametersList);
+    FreeAndNil(FBodyStream);
   end;
   inherited;
 end;

@@ -144,16 +144,10 @@
         <DCCReference Include="src\Test.Action.View.pas"/>
         <DCCReference Include="src\Test.Attachments.pas"/>
         <DCCReference Include="src\Test.Email.pas"/>
-        <DCCReference Include="src\Test.Emojis.pas">
-            <Form>$R *.RES</Form>
-        </DCCReference>
         <DCCReference Include="src\Test.Icons.pas"/>
-        <DCCReference Include="src\Test.URL.Attachments.pas">
-            <Form>$R *.RES</Form>
-        </DCCReference>
-        <DCCReference Include="src\Index.pas">
-            <Form>$R *.RES</Form>
-        </DCCReference>
+        <DCCReference Include="src\Index.pas"/>
+        <DCCReference Include="src\Test.Emojis.pas"/>
+        <DCCReference Include="src\Test.URL.Attachments.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
