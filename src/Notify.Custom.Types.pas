@@ -22,10 +22,13 @@ type
     FParameter: String;
     [JSONName('systemdate')]
     FSystemDate: String;
+    [JSONName('auth')]
+    FAuth: String;
   published
     property Cmd: String read FCmd write FCmd;
     property Parameter: String read FParameter write FParameter;
     property SystemDate: String read FSystemDate write FSystemDate;
+    property Auth: String read FAuth write FAuth;
   end;
 
 implementation

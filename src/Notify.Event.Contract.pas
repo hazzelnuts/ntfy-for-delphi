@@ -38,6 +38,8 @@ type
     function Actions: INotifyEventActions;
     function Attachment: INotifyAttachment; overload;
     function Attachment(const AValue: INotifyAttachment): INotifyEvent; overload;
+    function Icon: String; overload;
+    function Icon(const AValue: String): INotifyEvent; overload;
   end;
 
   TNotifyEventProc = TProc<INotifyEvent>;

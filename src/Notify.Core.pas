@@ -477,7 +477,8 @@ begin
       .Title(LEventDTO.Value.Title)
       .Tags(LEventDTO.Value.Tags.ToArray)
       .Priority(TNotifyPriority(LEventDTO.Value.Priority))
-      .Click(LEventDTO.Value.Click);
+      .Click(LEventDTO.Value.Click)
+      .Icon(LEventDTO.Value.Icon);
 
     for LActionDTO in LEventDTO.Value.Actions do
       FEventMessage.Action(

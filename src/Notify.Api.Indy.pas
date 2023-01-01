@@ -34,11 +34,10 @@ type
     const FCloseConnectionMessage = '/\/\';
     procedure DoOnWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
   public
-    constructor Create(AUrl: String; var AIdHttp: TIdHTTP);
+    constructor Create(AUrl: String; var AIdHttp: TIdHTTP; var AResponse: TNotifyApiResponse);
     procedure Execute; override;
     destructor Destroy; override;
     procedure AbortStream;
-    property Response: TNotifyApiResponse read FResponse write FResponse;
   end;
 
   TNotifyApiIndy = class(TInterfacedObject, INotifyApi)
@@ -211,7 +210,7 @@ begin
   try
     Destroythread;
   finally
-    FResponse.Free;
+    FreeAndNil(FResponse);
     FreeAndNil(FIdHTTP);
     FreeAndNil(FIOHandlerSSL);
     FreeAndNil(FBodyStream);
@@ -245,8 +244,7 @@ begin
     if Assigned(FConnectionThread) then
       Destroythread;
   finally
-    FConnectionThread := TSSEThread.Create(TIdURI.URLEncode(CreateURL), FIdHTTP);
-    FResponse := FConnectionThread.Response;
+    FConnectionThread := TSSEThread.Create(TIdURI.URLEncode(CreateURL), FIdHTTP, FResponse);
     FConnectionThread.Start;
   end;
 
@@ -317,12 +315,13 @@ begin
   end;
 end;
 
-constructor TSSEThread.Create(AUrl: String; var AIdHttp: TIdHTTP);
+constructor TSSEThread.Create(AUrl: String; var AIdHttp: TIdHTTP; var AResponse: TNotifyApiResponse);
 begin
   inherited Create(True);
   FreeOnTerminate := False;
   FUrl := AUrl;
   FIdHttp := AIdHttp;
+  FResponse := AResponse;
 end;
 
 destructor TSSEThread.Destroy;

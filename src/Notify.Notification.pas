@@ -41,10 +41,10 @@ type
     function Tags(const AValue: INotifyTags): INotifyNotification; overload;
     function Priority: TNotifyPriority; overload;
     function Priority(const AValue: TNotifyPriority): INotifyNotification; overload;
-    function Attach(const AValue: String): INotifyNotification; overload;
+    function AttachURL(const AValue: String): INotifyNotification; overload;
     function FileName: String; overload;
     function FilePath: String; overload;
-    function FilePath(const AValue: String): INotifyNotification; overload;
+    function AttachFile(const AValue: String): INotifyNotification; overload;
     function Click: String overload;
     function Click(const AValue: String): INotifyNotification; overload;
     function Action: INotifyAction; overload;
@@ -126,7 +126,7 @@ begin
   Result := LNotificationDTO.Value.AsJson;
 end;
 
-function TNotifyNotification.Attach(const AValue: String): INotifyNotification;
+function TNotifyNotification.AttachURL(const AValue: String): INotifyNotification;
 begin
   Result := Self;
   FAttachment := AValue;
@@ -194,7 +194,7 @@ begin
   Result := FFileName;
 end;
 
-function TNotifyNotification.FilePath(const AValue: String): INotifyNotification;
+function TNotifyNotification.AttachFile(const AValue: String): INotifyNotification;
 begin
   Result := Self;
   FFileName := ExtractFileName(AValue);

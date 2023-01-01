@@ -28,6 +28,8 @@ type
     FTitle: String;
     [JSONName('message')]
     FMessage: String;
+    [JSONName('icon')]
+    FIcon: String;
     [JSONName('tags')]
     FTagsArray: TArray<string>;
     [JSONMarshalled(False)]
@@ -54,6 +56,7 @@ type
     property Tags: TList<string> read GetTags;
     property Actions: TObjectList<TNotifyActionDTO> read GetActions;
     property Attachment: TNotifyAttachmentDTO read FAttachment write FAttachment;
+    property Icon: String read FIcon write FIcon;
   public
     constructor Create; override;
     destructor Destroy; override;

@@ -2,6 +2,10 @@ unit Notify.Api.Response;
 
 interface
 
+  ///
+  ///  Response is only used for publishing
+  ///
+
 uses
   Notify.Error,
   Notify.Response.Data,
@@ -32,6 +36,9 @@ type
 
 implementation
 
+uses
+  System.SysUtils;
+
 { TNotifyApiResponse }
 
 constructor TNotifyApiResponse.Create;
@@ -43,9 +50,9 @@ end;
 
 destructor TNotifyApiResponse.Destroy;
 begin
-  FResponseData.Free;
-  FResponseErrors.Free;
-  FResponseStream.Free;
+  FreeAndNil(FResponseData);
+  FreeAndNil(FResponseErrors);
+  FreeAndNil(FResponseStream);
   inherited
 end;
 

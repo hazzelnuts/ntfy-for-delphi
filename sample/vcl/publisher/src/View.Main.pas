@@ -166,8 +166,8 @@ begin
   FNotification.MessageContent(lbeMessage.Text);
   FNotification.Priority(TNotifyPriority(CbPriority.ItemIndex + 1));
   FNotification.Icon(lbeIconAttachment.Text);
-  FNotification.FilePath(lbeFileAttachment.Text);
-  FNotification.Attach(lbeURLAttachment.Text);
+  FNotification.AttachFile(lbeFileAttachment.Text);
+  FNotification.AttachURL(lbeURLAttachment.Text);
   FNotification.Email(lbeEmail.Text);
   FNotification.Delay(lbeDelay.Text);
   //FNotification.Tags(CkTags.Items.ToStringArray);

@@ -22,6 +22,7 @@ type
     FAction: INotifyAction;
     FActions: INotifyEventActions;
     FAttachment: INotifyAttachment;
+    FIcon: String;
   public
     class function New: INotifyEvent;
     constructor Create;
@@ -49,6 +50,8 @@ type
     function Actions: INotifyEventActions;
     function Attachment: INotifyAttachment; overload;
     function Attachment(const AValue: INotifyAttachment): INotifyEvent; overload;
+    function Icon: String; overload;
+    function Icon(const AValue: String): INotifyEvent; overload;
   end;
 
 implementation
@@ -124,6 +127,17 @@ function TNotifyEvent.Event(const AValue: String): INotifyEvent;
 begin
   Result := Self;
   FEvent := AValue;
+end;
+
+function TNotifyEvent.Icon(const AValue: String): INotifyEvent;
+begin
+  Result := Self;
+  FIcon := AValue;
+end;
+
+function TNotifyEvent.Icon: String;
+begin
+  Result := FIcon;
 end;
 
 function TNotifyEvent.Id(const AValue: String): INotifyEvent;
