@@ -61,6 +61,9 @@ type
     function Since(const AValue: String): INotifyCore; overload;
     function Scheduled(const AValue: Boolean): INotifyCore; overload;
     function Response: TNotifyApiResponse;
+    procedure BasicValidation;
+    procedure DoLoadLibrary;
+    procedure LoadLibraries(const ALibName: String);
   end;
 
 implementation
@@ -76,7 +79,8 @@ uses
   Notify.Action.DTO,
   Notify.Attachment.DTO,
   Notify.Action.Contract,
-  Notify.Attachment.Contract;
+  Notify.Attachment.Contract,
+  Winapi.Windows;
 
 { TNotifyCore }
 
@@ -84,6 +88,16 @@ function TNotifyCore.BaseURL(const AValue: String): INotifyCore;
 begin
   Result := Self;
   FConfig.BaseURL(AValue);
+end;
+
+procedure TNotifyCore.BasicValidation;
+begin
+  if FNotification.Topic = '' then
+    raise Exception.Create('Topic cannot be empty');
+
+  if FConfig.BaseURL = '' then
+    raise Exception.Create('Base Url cannot be empty');
+
 end;
 
 function TNotifyCore.Cache(const AValue: Boolean): INotifyCore;
@@ -119,6 +133,16 @@ function TNotifyCore.DisableFireBase(const AValue: Boolean): INotifyCore;
 begin
   Result := Self;
   FConfig.DisableFireBase(AValue);
+end;
+
+procedure TNotifyCore.DoLoadLibrary;
+begin
+  try
+    LoadLibraries('libeay32.dll');
+    LoadLibraries('ssleay32.dll');
+  except on E: Exception do
+    raise Exception.Create(E.Message);
+  end;
 end;
 
 procedure TNotifyCore.DoSubscribe;
@@ -205,6 +229,29 @@ begin
 
 end;
 
+procedure TNotifyCore.LoadLibraries(const ALibName: String);
+var
+  LSavedCW: Word;
+  DLLHandle: HWND;
+  LError: String;
+  LRet: Cardinal;
+begin
+  LSavedCW := Get8087CW;
+  Set8087CW(LSavedCW or $7);
+  DLLHandle := LoadLibrary(PWideChar(ALibName));
+  Set8087CW(LSavedCW);
+  if DLLHandle = 0 then
+  begin
+    LRet := GetLastError();
+    LError := SysErrorMessage(LRet);
+    {$IFDEF CONSOLE}
+      WriteLn(Format('Could not load %s library. Errors: %s', [ALibName, LError]));
+      ReadLn;
+    {$ENDIF}
+    raise Exception.Create(Format('Could not load %s library. Errors: %s', [ALibName, LError]));
+  end
+end;
+
 function TNotifyCore.LogPath(const AValue: String): INotifyCore;
 begin
   Result := Self;
@@ -224,6 +271,8 @@ end;
 
 procedure TNotifyCore.Subscribe(const ATopic: String; const ACallBack: TNotifyEventProc);
 begin
+  DoLoadLibrary;
+  BasicValidation;
   FNotification.Topic(ATopic);
   FCallBack := ACallBack;
   Subscribe;
@@ -295,6 +344,8 @@ var
   LBasicAuth: String;
 begin
   Result := Self;
+  DoLoadLibrary;
+  BasicValidation;
 
   FApi
     .ClearEndPoint
