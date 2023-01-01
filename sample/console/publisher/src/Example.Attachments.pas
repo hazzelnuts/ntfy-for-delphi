@@ -25,7 +25,7 @@ begin
   Ntfy.Notification(
     New.Notification
       .Topic('your-very-secret-topic')
-      .FilePath(LFilePath)
+      .AttachFile(LFilePath)
   );
 
 end;

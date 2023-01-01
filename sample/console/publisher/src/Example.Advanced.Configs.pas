@@ -17,7 +17,7 @@ procedure UseAdvancedConfigs;
 begin
 
   // Username and password for protected topics
-  // Careful! Username and password are not encrypted, only encoded! Use HTTPS
+  // Be careful! Username and password are not encrypted, only encoded! Use HTTPS
   Ntfy.UserName('username').Password('password');
 
   // Disabling Firebase will significantly increase the amount of time messages

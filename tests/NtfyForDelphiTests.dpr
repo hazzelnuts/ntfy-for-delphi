@@ -48,7 +48,15 @@ uses
   NX.Horizon in '..\src\NX.Horizon.pas',
   Test.Simple.Message in 'src\Test.Simple.Message.pas',
   Test.Action.Header in 'src\Test.Action.Header.pas',
-  Test.Constants in 'src\Test.Constants.pas';
+  Test.Constants in 'src\Test.Constants.pas',
+  Test.Action.HTTP in 'src\Test.Action.HTTP.pas',
+  Test.Action.View in 'src\Test.Action.View.pas',
+  Test.Attachments in 'src\Test.Attachments.pas',
+  Test.Email in 'src\Test.Email.pas',
+  Test.Emojis in 'src\Test.Emojis.pas',
+  Test.Icons in 'src\Test.Icons.pas',
+  Test.URL.Attachments in 'src\Test.URL.Attachments.pas',
+  Index in 'src\Index.pas';
 
 {$R *.RES}
 

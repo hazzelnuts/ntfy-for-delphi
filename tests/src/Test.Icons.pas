@@ -1,16 +1,15 @@
-﻿unit Test.Simple.Message;
+unit Test.Icons;
 
 interface
 
 uses
-  Notify, TestFramework;
+  TestFramework, Notify;
 
 type
-  TTestSimpleMessage = class(TTestCase)
+  TTestIcons = class(TTestCase)
   private
-    FTitle: String;
-    FMessage: String;
-    FPriority: TNotifyPriority;
+    FIconURL: String;
+    const IconURL = 'https://styles.redditmedia.com/t5_32uhe/styles/communityIcon_xnt6chtnr2j21.png';
     procedure CallBack(AEvent: INotifyEvent);
   public
     procedure SetUp; override;
@@ -22,35 +21,31 @@ type
 implementation
 
 uses
-  Test.Constants, Winapi.Windows, System.SysUtils;
+  System.SysUtils, Test.Constants;
 
 var
   Id, Time: String;
 
-{ TTestSimpleMessage }
+{ TTestIcons }
 
-procedure TTestSimpleMessage.CallBack(AEvent: INotifyEvent);
+procedure TTestIcons.CallBack(AEvent: INotifyEvent);
 begin
-  FTitle := AEvent.Title;
-  FMessage := AEvent.MessageContent;
-  FPriority := AEvent.Priority;
+  FIconURL := AEvent.Icon;
 end;
 
-procedure TTestSimpleMessage.Publish;
+procedure TTestIcons.Publish;
 begin
 
   Ntfy := New.Notify;
   Ntfy.Notification(
     New.Notification
       .Topic(TOPIC)
-      .Title(TITLE)
-      .MessageContent(MESSAGECONTENT)
-      .Priority(TNotifyPriority.MAX)
+      .Icon(IconURL)
   );
 
   try
     try
-      WriteLn('Simple message test: Publish');
+      WriteLn('Send icons: Publish');
       Sleep(TIME_DELAY);
       Ntfy.ClearFilters;
       Ntfy.Publish;
@@ -68,17 +63,16 @@ begin
   end;
 end;
 
-procedure TTestSimpleMessage.SetUp;
+procedure TTestIcons.SetUp;
 begin
   inherited;
-
 end;
 
-procedure TTestSimpleMessage.Subscribe;
+procedure TTestIcons.Subscribe;
 begin
   try
     try
-      WriteLn('Simple message test: Subscribe');
+      WriteLn('Send icons: Subscribe');
       Sleep(TIME_DELAY);
       Ntfy := New.Notify;
       Ntfy.Poll(True);
@@ -88,9 +82,7 @@ begin
       Ntfy.Unsubscribe;
     end;
   finally
-    CheckEquals(TITLE, FTitle, MSG_WRONG_TITLE);
-    CheckEquals(MESSAGECONTENT, FMessage, MSG_WRONG_MESSAGE);
-    CheckEquals(Ord(PRIORITY), Ord(FPriority), MSG_WRONG_PRIORITY);
+    CheckEquals(FIconURL, IconURL, MSG_WRONG_ICON);
   end;
 end;
 

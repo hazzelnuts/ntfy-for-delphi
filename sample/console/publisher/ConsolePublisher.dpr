@@ -16,7 +16,6 @@ uses
   Example.Icons in 'src\Example.Icons.pas',
   Example.Email in 'src\Example.Email.pas',
   Example.Advanced.Configs in 'src\Example.Advanced.Configs.pas',
-
   Notify;
 
 begin

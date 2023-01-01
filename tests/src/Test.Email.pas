@@ -1,16 +1,16 @@
-﻿unit Test.Simple.Message;
+unit Test.Email;
 
 interface
 
 uses
-  Notify, TestFramework;
+  TestFramework, Notify;
 
 type
-  TTestSimpleMessage = class(TTestCase)
+  TTestEmail = class(TTestCase)
   private
-    FTitle: String;
-    FMessage: String;
     FPriority: TNotifyPriority;
+    FTitle: String;
+    FMessageContent: String;
     procedure CallBack(AEvent: INotifyEvent);
   public
     procedure SetUp; override;
@@ -22,35 +22,35 @@ type
 implementation
 
 uses
-  Test.Constants, Winapi.Windows, System.SysUtils;
+  System.SysUtils, Test.Constants;
 
 var
   Id, Time: String;
 
-{ TTestSimpleMessage }
+{ TTestEmail }
 
-procedure TTestSimpleMessage.CallBack(AEvent: INotifyEvent);
+procedure TTestEmail.CallBack(AEvent: INotifyEvent);
 begin
   FTitle := AEvent.Title;
-  FMessage := AEvent.MessageContent;
+  FMessageContent := AEvent.MessageContent;
   FPriority := AEvent.Priority;
 end;
 
-procedure TTestSimpleMessage.Publish;
+procedure TTestEmail.Publish;
 begin
-
-  Ntfy := New.Notify;
-  Ntfy.Notification(
-    New.Notification
-      .Topic(TOPIC)
-      .Title(TITLE)
-      .MessageContent(MESSAGECONTENT)
-      .Priority(TNotifyPriority.MAX)
-  );
-
   try
+    Ntfy := New.Notify;
+    Ntfy.Notification(
+      New.Notification
+        .Topic(TOPIC)
+        .Title(TITLE)
+        .MessageContent(MESSAGECONTENT)
+        .Priority(TNotifyPriority.HIGH)
+        .Email('hazzelnuts.contact@gmail.com')
+    );
+
     try
-      WriteLn('Simple message test: Publish');
+      WriteLn('Send email: Publish');
       Sleep(TIME_DELAY);
       Ntfy.ClearFilters;
       Ntfy.Publish;
@@ -68,17 +68,17 @@ begin
   end;
 end;
 
-procedure TTestSimpleMessage.SetUp;
+procedure TTestEmail.SetUp;
 begin
   inherited;
 
 end;
 
-procedure TTestSimpleMessage.Subscribe;
+procedure TTestEmail.Subscribe;
 begin
   try
     try
-      WriteLn('Simple message test: Subscribe');
+      WriteLn('Send email: Subscribe');
       Sleep(TIME_DELAY);
       Ntfy := New.Notify;
       Ntfy.Poll(True);
@@ -89,8 +89,8 @@ begin
     end;
   finally
     CheckEquals(TITLE, FTitle, MSG_WRONG_TITLE);
-    CheckEquals(MESSAGECONTENT, FMessage, MSG_WRONG_MESSAGE);
-    CheckEquals(Ord(PRIORITY), Ord(FPriority), MSG_WRONG_PRIORITY);
+    CheckEquals(MESSAGECONTENT, FMessageContent, MSG_WRONG_MESSAGE);
+    CheckEquals(Ord(TNotifyPriority.HIGH), Ord(FPriority), MSG_WRONG_PRIORITY);
   end;
 end;
 

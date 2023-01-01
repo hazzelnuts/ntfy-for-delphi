@@ -12,25 +12,14 @@ implementation
 
 uses
   Notify,
+  Notify.Custom.Types,
   REST.Json.Types;
-
-type
-  THeaders = class(TJsonDTO)
-  private
-    [JSONName('auth')]
-    FAuth: String;
-    [JSONName('cmd')]
-    FCmd: String;
-  published
-    property Auth: String read FAuth write FAuth;
-    property Cmd: String read FCmd write FCmd;
-  end;
 
 procedure UseActionHeader;
 var
-  Headers: THeaders;
+  Headers: TNotifyActionHeaders;
 begin
-  Headers := THeaders.Create;
+  Headers := TNotifyActionHeaders.Create;
   try
     Headers.Auth := 'Bearer 982j38sdfhj2181jcznxc81234b9as-i34';
     Headers.Cmd := 'OPEN XOAUTH .\crs\main\lib';

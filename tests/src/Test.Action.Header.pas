@@ -3,7 +3,7 @@ unit Test.Action.Header;
 interface
 
 uses
-  TestFrameWork, REST.Json.Types, Notify.Custom.Types, Notify;
+  TestFrameWork, Notify.Custom.Types, Notify;
 
 type
 
@@ -25,11 +25,14 @@ implementation
 uses
   Test.Constants, System.SysUtils;
 
+var
+  Id, Time: String;
+
 { TestActionHeader }
 
 procedure TTestActionHeader.CallBack(AEvent: INotifyEvent);
 begin
-  FEventHeaders := AEvent.Action.EventHeaders;
+  FEventHeaders := AEvent.Actions.Items[ACTION_LABEL].EventHeaders;
 end;
 
 procedure TTestActionHeader.Publish;
@@ -41,16 +44,19 @@ begin
       .Topic(TOPIC)
       .Action(New.Action
         .&Type(TNotifyActionType.VIEW)
-        .&Label('Test Action Header')
+        .&Label(ACTION_LABEL)
         .Url(ACTION_URL)
         .Headers(FHeaders)
   ));
 
   try
     try
+      WriteLn('Action headers test: Publish');
       Sleep(TIME_DELAY);
       Ntfy.ClearFilters;
       Ntfy.Publish;
+      Id := Ntfy.Response.Data.Id;
+      Time := Ntfy.Response.Data.Time.ToString;
     except on E: Exception do
       WriteLn(E.Message);
     end;
@@ -69,7 +75,6 @@ begin
   inherited;
   FHeaders := TNotifyActionHeaders.Create;
   FEventHeaders := TNotifyActionHeaders.Create;
-  WriteLn('Action headers test');
   FHeaders.Cmd := 'systeminfo';
   FHeaders.Parameter := '/FO LIST';
   FHeaders.SystemDate := 'date';
@@ -79,10 +84,11 @@ procedure TTestActionHeader.Subscribe;
 begin
   try
     try
+      WriteLn('Action headers test: Subscribe');
       Sleep(TIME_DELAY);
       Ntfy := New.Notify;
       Ntfy.Poll(True);
-      Ntfy.Since(Ntfy.Response.Data.Id);
+      Ntfy.Since(Time);
       Ntfy.Subscribe(TOPIC, CallBack);
     finally
       Ntfy.Unsubscribe;
@@ -100,8 +106,5 @@ begin
   FHeaders.Free;
   FEventHeaders.Free;
 end;
-
-initialization
-  RegisterTest('Sending Action Headers', TTestActionHeader.Suite);
 
 end.
