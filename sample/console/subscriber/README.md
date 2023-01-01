@@ -2,17 +2,29 @@
   <img src="../../../img/delphi-notify.png">
 </div>
 
-## ⚠ Observations
-You must have SSL libraries in order to run this project.
-
 <div align="center">
 
 # Console Samples (Subscribing) 🧪
 
 </div>
 
-## Subscribe to a topic
+## Subscribing to a topic
+
+Subscription mechanism is event based. 
 
 ``` pascal
-  Ntfy.Topic('your-very-secret-topic').Subscribe;
+uses
+  Notify;
+
+begin
+  Ntfy.Subscribe('your-very-secret-topic', 
+    procedure (AEvent: INotifyEvent);
+    begin
+      WriteLn('You received a message: ' + AEvent.MessageContent)
+    end);
+end;
+
 ```
+
+## ⚠ Observations
+You must have SSL libraries in order to run this project.

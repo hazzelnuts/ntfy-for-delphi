@@ -271,9 +271,9 @@ end;
 
 procedure TNotifyCore.Subscribe(const ATopic: String; const ACallBack: TNotifyEventProc);
 begin
+  FNotification.Topic(ATopic);
   DoLoadLibrary;
   BasicValidation;
-  FNotification.Topic(ATopic);
   FCallBack := ACallBack;
   Subscribe;
 end;
