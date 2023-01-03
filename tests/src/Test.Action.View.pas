@@ -53,6 +53,7 @@ begin
       WriteLn('Send action view: Publish');
       Sleep(TIME_DELAY);
       Ntfy.ClearFilters;
+      Ntfy.BaseURL('http://localhost:80');
       Ntfy.Publish;
       Id := Ntfy.Response.Data.Id;
       Time := Ntfy.Response.Data.Time.ToString;
@@ -80,6 +81,7 @@ begin
       WriteLn('Send action view: Subscribe');
       Sleep(TIME_DELAY);
       Ntfy := New.Notify;
+      Ntfy.BaseURL('http://localhost:80');
       Ntfy.Poll(True);
       Ntfy.Since(Time);
       Ntfy.Subscribe(TOPIC, CallBack);

@@ -30,7 +30,6 @@ type
     lbActionMethod: TLabel;
     MemActionBody: TMemo;
     lblActionBody: TLabel;
-    btnPublish: TButton;
     DBGrid1: TDBGrid;
     btnAddAction: TButton;
     btnDeleteAction: TButton;
@@ -52,6 +51,8 @@ type
     TableActionsURL: TStringField;
     Image1: TImage;
     lbeDelay: TLabeledEdit;
+    btnPublish: TButton;
+    LbeBaseURL: TLabeledEdit;
     procedure FormCreate(Sender: TObject);
     procedure btnFileAttachmentClick(Sender: TObject);
     procedure CbActionTypeChange(Sender: TObject);
@@ -189,6 +190,7 @@ begin
     end;
   end;
 
+  Ntfy.BaseURL(LbeBaseURL.Text);
   Ntfy.Topic(CbTopic.Text);
   Ntfy.Notification(FNotification).Publish;
 

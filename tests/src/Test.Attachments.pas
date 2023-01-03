@@ -46,6 +46,7 @@ begin
   try
     try
       Sleep(TIME_DELAY);
+      Ntfy.BaseURL('http://localhost:80');
       Ntfy.ClearFilters;
       Ntfy.Publish;
       Id := Ntfy.Response.Data.Id;
@@ -75,6 +76,7 @@ begin
   try
     Sleep(TIME_DELAY);
     Ntfy := New.Notify;
+    Ntfy.BaseURL('http://localhost:80');
     Ntfy.Poll(True);
     Ntfy.Since(Time);
     Ntfy.Subscribe(TOPIC, CallBack);

@@ -52,6 +52,7 @@ begin
     try
       WriteLn('Send email: Publish');
       Sleep(TIME_DELAY);
+      Ntfy.BaseURL('http://localhost:80');
       Ntfy.ClearFilters;
       Ntfy.Publish;
       Id := Ntfy.Response.Data.Id;
@@ -81,6 +82,7 @@ begin
       WriteLn('Send email: Subscribe');
       Sleep(TIME_DELAY);
       Ntfy := New.Notify;
+      Ntfy.BaseURL('http://localhost:80');
       Ntfy.Poll(True);
       Ntfy.Since(Time);
       Ntfy.Subscribe(Topic, CallBack);

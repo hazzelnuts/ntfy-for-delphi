@@ -53,6 +53,7 @@ begin
       WriteLn('Action http test: Publish');
       Sleep(TIME_DELAY);
       Ntfy.ClearFilters;
+      Ntfy.BaseURL('http://localhost:80');
       Ntfy.Publish;
       Id := Ntfy.Response.Data.Id;
       Time := Ntfy.Response.Data.Time.ToString;
@@ -82,6 +83,7 @@ begin
       Ntfy := New.Notify;
       Ntfy.Poll(True);
       Ntfy.Since(Time);
+      Ntfy.BaseURL('http://localhost:80');
       Ntfy.Subscribe(TOPIC, CallBack);
     finally
       Ntfy.Unsubscribe;

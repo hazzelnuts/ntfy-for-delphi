@@ -39,6 +39,7 @@ type
     CkFilters: TCheckBox;
     BtnClearTable: TButton;
     Image1: TImage;
+    LbeBaseURL: TLabeledEdit;
     procedure BtnSubscribeClick(Sender: TObject);
     procedure BtnUnsubscribeClick(Sender: TObject);
     procedure GbSinceClick(Sender: TObject);
@@ -85,6 +86,7 @@ begin
     CheckButtons;
 
   Ntfy
+    .BaseURL(LbeBaseURL.Text)
     .Poll(CkPoll.Checked)
     .Since(LSince)
     .Scheduled(CkScheduled.Checked);
