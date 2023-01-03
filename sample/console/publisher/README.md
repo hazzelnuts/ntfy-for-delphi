@@ -1,9 +1,9 @@
 <div align="center">
-  <img src="../../../img/delphi-notify.png">
+  <img src="../../../img/delphi-notify.png" width="65%">
 </div>
 
 ## ⚠ Observations
-Never forget to include which topic are you publishing. You must also have SSL libraries in order to run this project.
+Provide a topic for publishing messages. You also must have SSL libraries for running this project.
 
 ``` pascal
   Ntfy.Notification(

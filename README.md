@@ -1,24 +1,28 @@
 <div align="center">
-  <img src="./img/delphi-notify.png">
+  <img src="./img/delphi-notify.png" width="65%">
 </div>
 
 <br/>
 
- Ntfy was made by [Philipp C. Heckel](https://github.com/binwiederhier) as an open source project. Consider leaving a star in [his project](https://github.com/binwiederhier/ntfy). As [Philipp C. Heckel](https://github.com/binwiederhier) stated, it will always be free, so any kind of support to afford costs help with cloud hosting will be warmly received. Visit [docs.ntfy.sh](https://docs.ntfy.sh/) to get started with documentation.
+ Ntfy was made by [Philipp C. Heckel](https://github.com/binwiederhier). Consider leaving a star in [his project](https://github.com/binwiederhier/ntfy). As [Philipp C. Heckel](https://github.com/binwiederhier) stated, this service will stay free, so any kind of support to afford costs help with cloud hosting will be warmly received. You can also self-host ntfy server. Visit [docs.ntfy.sh](https://docs.ntfy.sh/) to get started with documentation.
  
 <br/>
 
-# 🔔 Ntfy for Delphi 
+## 🔔 Ntfy for Delphi 
 
 Ntfy for Delphi it's a friendly library to work with [ntfy.sh](https://docs.ntfy.sh/) endpoints in Delphi. It allows you publishing messages and subscribing on topics to receive instant notifications. 
 
-# ⚙️ Installation
+<br>
+
+## ⚙️ Installation
 
 You need to add ```src``` folder to your library path or search path. 
 
-# ⚡️ Quickstart
+<br>
 
-Push a notification on a specif topic. Topics are the same as channels and the topic's name you choose will become a public url, so remember to make difficult to guess it.
+## ⚡️ Quickstart
+
+Push a notification on a specif topic. Topics are the same as channels and the name you choose will become a public url, so remember to make difficult to guess it.
 
 ``` pascal
 
@@ -37,8 +41,9 @@ begin
 end;
 
 ```
+<br>
 
-# 💬 Subscribe to a topic
+## 💬 Subscribe to a topic
 
 You can subscribe to a topic through several ways. For instance, the [Web App](https://ntfy.sh/app), [Android](https://docs.ntfy.sh/subscribe/phone/), [CLI](https://docs.ntfy.sh/subscribe/cli/) or you can use this library as follows: 
 
@@ -57,21 +62,19 @@ end;
 ```
 
 There is a [VCL Sample](https://github.com/p-samuel/delphi-notify/tree/main/sample/vcl) demonstration showing you how to use Delphi Ntfy subscription mechanism into your project.
+<br>
+
+## ⚙️ Supported Version & Platforms
+
+<img src="https://img.shields.io/badge/Delphi%20Supported%20Version%20-v10.1%2B%20-blue"></img>
+<img src="https://img.shields.io/badge/Supported%20Platforms-Win32%20%26%20Win64-green"></img>
 
 
-# ⚙️ Supported Editions
 
-|       Version        |  Supported   |       Version        |  Supported   |  
-|----------------------|:------------:|----------------------|:------------:| 
-| Delphi 5             |      ❌      |  Delphi 7             |      ❌     |
-| Delphi XE            |      ❓      |  Delphi 11 Alexandria |      ❓     |
-| Delphi 10 Seattle    |      ❓      |  Delphi 10.1 Berlin   |      ❓     |
-| Delphi 10.2 Tokyo    |      ❓      |  Delphi 10.3 Rio      |      ✔      |
-| Delphi 10.4 Sydney   |      ✔       | 
+It hasn't been tested in some Delphi versions yet. You can help finding out informing with a PR update to this README file. In the PR, inform the selected badged.
+<br>
 
-It hasn't been tested in some Delphi versions yet. You can help finding out informing with a PR update to this README table file. In the PR, change the flag to a ✔ or a ❌.
-
-# ⛔ Limitations
+## ⛔ Limitations
 
 Support to notifications that contains ```broadcast``` actions has not been implemented. Likewise, some advanced specific resources has not yet been implemented as well.
 
@@ -88,7 +91,9 @@ Support to notifications that contains ```broadcast``` actions has not been impl
 | sse                     | ❌       |
 | websocket               | ❌       |
 
-# 🔗 Dependencies
+<br>
+
+## 🔗 Dependencies
 
 Ntfy for Delphi uses a few libraries in the messages subscription and publishing mechanism. There is no need to install. The respective credit adviced.
 
@@ -96,8 +101,9 @@ Ntfy for Delphi uses a few libraries in the messages subscription and publishing
 * [Indy10](https://github.com/IndySockets/Indy) by IndySockets.
 * [JsonToDelphiClass](https://github.com/PKGeorgiev) by Petar Georgiev.
 
+<br>
 
-# 🌱 Consider Contributing
+## 🌱 Consider Contributing
 
 Ntfy for Delphi it's an open source project under the MIT license. Feel free to use or contribute! 
 

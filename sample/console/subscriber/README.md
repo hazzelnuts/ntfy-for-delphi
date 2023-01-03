@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="../../../img/delphi-notify.png">
+  <img src="../../../img/delphi-notify.png" width="65%">
 </div>
 
 <div align="center">

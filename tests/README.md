@@ -1,10 +1,23 @@
 <div align="center">
-  <img src="../img/delphi-notify.png">
+  <img src="../img/delphi-notify.png" width="65%">
 </div>
 
-## Test cases 🧪
+## Test cases 
 
-Provided some DUnit tests for main ntfy's methods.
+Providing some DUnit tests for ntfy main methods. Ntfy disponibilizes a docker image for self-hosting the server. This project contains a docker compose file and a server yml file with settings for deploying locally in your machine.
+
+## ⚙ Settings
+Install Docker in your machine and run these commands after:
+
+``` cmd
+docker compose create
+docker cp .\server.yml ntfy:/etc/ntfy
+docker compose up
+```
+
+## 🧪 DUnit Tests
+Access http://localhost:80 in your browser and subscribe to ```notify-delphi-integration-8jh27d```. You should be ready to receive messages coming from this test project.
+
 
 ``` pascal
   RegisterTest('Send simple message', TTestSimpleMessage.Suite);
@@ -16,7 +29,6 @@ Provided some DUnit tests for main ntfy's methods.
   RegisterTest('Send tags', TTestEmojis.Suite);
   RegisterTest('Send icons', TTestIcons.Suite);
   RegisterTest('Send url attachments', TTestURLAttachments.Suite);
-
 ```
 <br/>
 
