@@ -90,3 +90,5 @@ Ntfy for Delphi uses a few libraries in the messages subscription and publishing
 
 Ntfy for Delphi it's an open source project under the MIT license. Feel free to use or contribute! 
 
+## ⚠ Observations
+For the moment this library uses OpenSSL and is necessary to have it in the executable's folder. Plannings to implementeing future versions which supports NetHttp are being under analyses.

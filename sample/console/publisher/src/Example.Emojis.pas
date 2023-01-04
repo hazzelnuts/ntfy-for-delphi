@@ -19,7 +19,7 @@ begin
   Ntfy.Notification(
     New.Notification
       .Topic('your-very-secret-topic')
-      .Tags(['partying_face', 'warning', 'rotating_light'])
+      .Tags(TArray<String>.Create('partying_face', 'warning', 'rotating_light'))
   );
 
 end;
