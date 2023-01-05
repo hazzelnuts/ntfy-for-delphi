@@ -63,7 +63,7 @@ begin
 end;
 ```
 
-## Filtering priorities
+## Filtering
 
 ``` pascal
   Ntfy.Filter(TNotifyFilter.ID, 'xY77dh389');
