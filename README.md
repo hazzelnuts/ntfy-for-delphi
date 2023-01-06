@@ -25,8 +25,8 @@ begin
   Ntfy.Notification(
     New.Notification
       .Topic('your-very-secret-topic')
-      .Title('🐶 Parking with dog')
-      .MessageContent('Today at 16:00hs ') 
+      .Title('⚾ Go to the game')
+      .MessageContent('Tomorrow at 10:00hs ') 
   );
 
   Ntfy.Publish;
