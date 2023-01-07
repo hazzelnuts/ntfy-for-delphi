@@ -8,13 +8,19 @@
 
 Ntfy for Delphi it's a friendly library to work with [ntfy.sh](https://docs.ntfy.sh/) servers in Delphi. It allows you publishing messages and subscribing to topics to receive instant notifications. 
 
-## ⚙️ Installation
+## ⚙️ Manual Installation
 
 You need to add ```src``` folder to your library path or search path. 
 
+## ⚙️ Boss Installation
+
+```
+  boss install github.com/hazzelnuts/ntfy-for-delphi
+```
+
 ## ⚡️ Quickstart
 
-Push a notification on a specif topic. Topics are the same as channels and the name you choose will become a public url, so remember to make difficult to guess it.
+Push a notification on a specific topic. Topics are the same as channels and the name you choose will become a public url, so remember to make difficult to guess it.
 
 ``` pascal
 
@@ -44,7 +50,7 @@ uses
 
 begin
   Ntfy.Subscribe('your-very-secret-topic', 
-    procedure (AEvent: INotifyEvent);
+    procedure (AEvent: INotifyEvent)
     begin
       WriteLn('You received a message: ' +  AEvent.MessageContent)
     end);
@@ -91,4 +97,4 @@ Ntfy for Delphi uses a few libraries in the messages subscription and publishing
 Ntfy for Delphi it's an open source project under the MIT license. Feel free to use or contribute! 
 
 ## ⚠ Observations
-For the moment this library uses OpenSSL and is necessary to have it in the executable's folder. Plannings for implementing future versions which supports NetHttp are being under analyses.
+For the moment this library uses OpenSSL and is necessary to have it in the executable's folder. Plannings for implementing future versions which supports NetHttp are under development.

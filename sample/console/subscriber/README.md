@@ -51,7 +51,7 @@ end;
 ```
 
 
-## Shceduled only
+## Scheduled only
 
 ``` pascal
 uses
