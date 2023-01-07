@@ -119,7 +119,7 @@ Provide a topic for publishing messages. You also must have SSL libraries for ru
 
 ``` pascal
   // Username and password for protected topics
-  // Becareful! Username and password are not 
+  // Warning! Username and password are not 
   // encrypted, only encoded! Use HTTPS. You can
   // use this option when you are self-hosting
   Ntfy.UserName('username').Password('password');
@@ -130,7 +130,7 @@ Provide a topic for publishing messages. You also must have SSL libraries for ru
   Ntfy.DisableFireBase(True);
 
   // Disabling cache will cause messages no longer  
-  // to be delivered for whom is unsubscribed
+  // to be delivered to unsubscribed clients
   Ntfy.Cache(False);
 
 ```
