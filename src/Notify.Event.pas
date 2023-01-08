@@ -3,9 +3,10 @@ unit Notify.Event;
 interface
 
 uses
+  Notify.Types,
   Notify.Event.Contract,
   Notify.Action.Contract,
-  Notify.Attachment.Contract, Notify;
+  Notify.Attachment.Contract;
 
 type
   TNotifyEvent = class(TInterfacedObject, INotifyEvent)
@@ -57,6 +58,7 @@ type
 implementation
 
 uses
+  Notify.Facade,
   System.Generics.Collections;
 
 { TNotifySubscription }
@@ -105,6 +107,7 @@ end;
 constructor TNotifyEvent.Create;
 begin
   FActions := TDictionary<String, INotifyAction>.Create();
+  FAttachment := TNotifyCoreFacade.New.Attachment;
 end;
 
 destructor TNotifyEvent.Destroy;
