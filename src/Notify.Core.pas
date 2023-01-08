@@ -32,10 +32,10 @@ type
     destructor Destroy; override;
     class function New: INotifyCore;
     function Publish: INotifyCore;
-    function Subscribe: INotifyCore; overload;
     procedure Subscribe(const ATopic: String; const ACallBack: TNotifyEventProc); overload;
     function Unsubscribe: INotifyCore;
   private
+    function Subscribe: INotifyCore; overload;
     procedure DoSubscribe;
     procedure SubscribeAsWebSocket;
     procedure SubscribeAsJSONString;
@@ -64,6 +64,7 @@ type
     procedure BasicValidation;
     procedure DoLoadLibrary;
     procedure LoadLibraries(const ALibName: String);
+    procedure WithAuthentication;
   end;
 
 implementation
@@ -160,6 +161,9 @@ end;
 function TNotifyCore.Filter(const AFilterType: TNotifyFilter; const AValue: String): INotifyCore;
 begin
   Result := Self;
+
+  if AValue = '' then
+    Exit;
 
   if FFilterParameters.ContainsValue(NotifyFilterTypeDescription[AFilterType])
     then Exit;
@@ -339,9 +343,6 @@ begin
 end;
 
 function TNotifyCore.Publish: INotifyCore;
-var
-  LUserNamePassword: String;
-  LBasicAuth: String;
 begin
   Result := Self;
   DoLoadLibrary;
@@ -360,13 +361,7 @@ begin
   if (FConfig.DisableFireBase) then
     FApi.AddHeader('Firebase', 'no');
 
-  if (FConfig.Password <> '') and (FConfig.UserName <> '') then
-  begin
-    LUserNamePassword := Format('%s:%s', [FConfig.UserName, FConfig.Password]);
-    LUserNamePassword := TNetEncoding.Base64.Encode(LUserNamePassword);
-    LBasicAuth := Format('Basic %s', [LUserNamePassword]);
-    FApi.AddHeader('Authorization', LBasicAuth);
-  end;
+  WithAuthentication;
 
   if FNotification.FileName <> '' then
   begin
@@ -460,6 +455,8 @@ begin
     FApi.AddURLParameter(LFilterKey, LFilterValue);
   end;
 
+  WithAuthentication;
+
   DoSubscribe;
 
 end;
@@ -497,6 +494,20 @@ function TNotifyCore.UserName(const AValue: String): INotifyCore;
 begin
   Result := Self;
   FConfig.UserName(AValue);
+end;
+
+procedure TNotifyCore.WithAuthentication;
+var
+  LUserNamePassword: String;
+  LBasicAuth: String;
+begin
+  if (FConfig.Password <> '') and (FConfig.UserName <> '') then
+  begin
+    LUserNamePassword := Format('%s:%s', [FConfig.UserName, FConfig.Password]);
+    LUserNamePassword := TNetEncoding.Base64.Encode(LUserNamePassword);
+    LBasicAuth := Format('Basic %s', [LUserNamePassword]);
+    FApi.AddHeader('Authorization', LBasicAuth);
+  end;
 end;
 
 procedure TNotifyCore.SubscriptionEvent(const AEvent: TNotifySubscriptionEvent);

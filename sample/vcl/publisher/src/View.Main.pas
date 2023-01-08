@@ -16,7 +16,6 @@ type
     gbActions: TGroupBox;
     CbPriority: TComboBox;
     lbPriority: TLabel;
-    CkTags: TCheckListBox;
     Label1: TLabel;
     lbeFileAttachment: TLabeledEdit;
     btnFileAttachment: TButton;
@@ -33,7 +32,6 @@ type
     DBGrid1: TDBGrid;
     btnAddAction: TButton;
     btnDeleteAction: TButton;
-    btnRemoveAction: TButton;
     TableActions: TFDMemTable;
     TableActionsTYPE: TIntegerField;
     DsTableAction: TDataSource;
@@ -44,19 +42,23 @@ type
     lblTopic: TLabel;
     lbeTitle: TLabeledEdit;
     CbTopic: TComboBox;
-    lbeMessage: TLabeledEdit;
     lbeActionLabel: TLabeledEdit;
     lbeActionURL: TLabeledEdit;
     TableActionsLABEL: TStringField;
     TableActionsURL: TStringField;
-    Image1: TImage;
     lbeDelay: TLabeledEdit;
     btnPublish: TButton;
     LbeBaseURL: TLabeledEdit;
+    MemMessage: TMemo;
+    LbMessage: TLabel;
+    LbeUsername: TLabeledEdit;
+    LbePassword: TLabeledEdit;
+    CkDisableFirebase: TCheckBox;
+    CkCache: TCheckBox;
+    MemTags: TMemo;
     procedure FormCreate(Sender: TObject);
     procedure btnFileAttachmentClick(Sender: TObject);
     procedure CbActionTypeChange(Sender: TObject);
-    procedure btnRemoveActionClick(Sender: TObject);
     procedure btnAddActionClick(Sender: TObject);
     procedure btnDeleteActionClick(Sender: TObject);
     published
@@ -64,6 +66,7 @@ type
     private
       FNotification: INotifyNotification;
       procedure SendNotification;
+      procedure AddActions;
   end;
 
 var
@@ -75,6 +78,26 @@ uses
   System.Threading;
 
 {$R *.dfm}
+
+procedure TViewMain.AddActions;
+begin
+  if not TableActions.IsEmpty then
+  begin
+    TableActions.First;
+    while not TableActions.Eof do
+    begin
+      FNotification.Action(New.Action
+        .&Label(TableActionsLABEL.AsString)
+        .&Url(TableActionsURL.AsString)
+        .Method(TableActionsMETHOD.AsString)
+        .Clear(TableActionsCLEAR.AsBoolean)
+        .&Type(TNotifyActionType(Ord(TableActionsTYPE.AsInteger)))
+        .Body(TableActionsBODY.GetAsString)
+      );
+      TableActions.Next;
+    end;
+  end;
+end;
 
 procedure TViewMain.btnAddActionClick(Sender: TObject);
 begin
@@ -96,8 +119,9 @@ end;
 
 procedure TViewMain.btnDeleteActionClick(Sender: TObject);
 begin
+  FNotification.ClearActions;
   if not TableActions.IsEmpty then
-    TableActions.Delete;
+    TableActions.EmptyDataSet;
 end;
 
 procedure TViewMain.btnFileAttachmentClick(Sender: TObject);
@@ -133,11 +157,6 @@ begin
   LTask.Start;
 end;
 
-procedure TViewMain.btnRemoveActionClick(Sender: TObject);
-begin
-  TableActions.EmptyDataSet;
-end;
-
 procedure TViewMain.CbActionTypeChange(Sender: TObject);
 begin
 
@@ -153,46 +172,37 @@ end;
 procedure TViewMain.FormCreate(Sender: TObject);
 begin
   FNotification := New.Notification;
+  btnAddAction.Click;
 end;
 
 procedure TViewMain.SendNotification;
-var
-  LTags: TArray<string>;
-  LTag: String;
 begin
 
   FNotification := New.Notification;
-  FNotification.Topic(CbTopic.Text);
-  FNotification.Title(lbeTitle.Text);
-  FNotification.MessageContent(lbeMessage.Text);
-  FNotification.Priority(TNotifyPriority(CbPriority.ItemIndex + 1));
-  FNotification.Icon(lbeIconAttachment.Text);
-  FNotification.AttachFile(lbeFileAttachment.Text);
-  FNotification.AttachURL(lbeURLAttachment.Text);
-  FNotification.Email(lbeEmail.Text);
-  FNotification.Delay(lbeDelay.Text);
-  //FNotification.Tags(CkTags.Items.ToStringArray);
 
-  if not TableActions.IsEmpty then
-  begin
-    TableActions.First;
-    while not TableActions.Eof do
-    begin
-      FNotification.Action(New.Action
-        .&Label(TableActionsLABEL.AsString)
-        .&Url(TableActionsURL.AsString)
-        .Method(TableActionsMETHOD.AsString)
-        .Clear(TableActionsCLEAR.AsBoolean)
-        .&Type(TNotifyActionType(Ord(TableActionsTYPE.AsInteger)))
-        .Body(TableActionsBODY.GetAsString)
-      );
-      TableActions.Next;
-    end;
-  end;
+  FNotification
+    .Topic(CbTopic.Text)
+    .Title(lbeTitle.Text)
+    .MessageContent(MemMessage.Lines.Text)
+    .Priority(TNotifyPriority(CbPriority.ItemIndex + 1))
+    .Icon(lbeIconAttachment.Text)
+    .AttachFile(lbeFileAttachment.Text)
+    .AttachURL(lbeURLAttachment.Text)
+    .Email(lbeEmail.Text)
+    .Delay(lbeDelay.Text)
+    .Tags(MemTags.Lines.ToStringArray);
 
-  Ntfy.BaseURL(LbeBaseURL.Text);
-  Ntfy.Topic(CbTopic.Text);
-  Ntfy.Notification(FNotification).Publish;
+  AddActions;
+
+  Ntfy
+    .UserName(LbeUsername.Text)
+    .Password(LbePassword.Text)
+    .BaseURL(LbeBaseURL.Text)
+    .Topic(CbTopic.Text)
+    .DisableFireBase(CkDisableFirebase.Checked)
+    .Cache(CkCache.Checked)
+    .Notification(FNotification).Publish;
 
 end;
+
 end.

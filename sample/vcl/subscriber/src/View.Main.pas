@@ -8,7 +8,8 @@ uses
   System.Notification, Data.DB, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.Grids,
-  Vcl.DBGrids, Vcl.Imaging.pngimage, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.CheckLst;
+  Vcl.DBGrids, Vcl.Imaging.pngimage, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.CheckLst,
+  Vcl.Menus;
 
 type
   TViewMain = class(TForm)
@@ -34,23 +35,38 @@ type
     lblTopic: TLabel;
     DtSince: TDateTimePicker;
     EdtSince: TEdit;
-    CkTopic1: TCheckBox;
-    CkTopic2: TCheckBox;
-    CkFilters: TCheckBox;
     BtnClearTable: TButton;
-    Image1: TImage;
     LbeBaseURL: TLabeledEdit;
+    MemTopics: TMemo;
+    Tray: TTrayIcon;
+    Pop: TPopupMenu;
+    PopShow: TMenuItem;
+    PopSubscribe: TMenuItem;
+    PopUnsubscribe: TMenuItem;
+    BtnHide: TButton;
+    LbeUsername: TLabeledEdit;
+    LbePassword: TLabeledEdit;
+    PopQuit: TMenuItem;
     procedure BtnSubscribeClick(Sender: TObject);
     procedure BtnUnsubscribeClick(Sender: TObject);
     procedure GbSinceClick(Sender: TObject);
     procedure CkSinceClick(Sender: TObject);
     procedure BtnClearTableClick(Sender: TObject);
+    procedure BtnHideClick(Sender: TObject);
     procedure CkFiltersExit(Sender: TObject);
-    procedure CkFiltersClick(Sender: TObject);
+    procedure PopQuitClick(Sender: TObject);
+    procedure PopShowClick(Sender: TObject);
+    procedure PopSubscribeClick(Sender: TObject);
+    procedure PopUnsubscribeClick(Sender: TObject);
     private
+      FTopics: String;
+      FSince: String;
+      procedure CheckTopics;
+      procedure CheckSince;
       procedure CheckButtons;
+      procedure CheckPops;
+      function CheckPriority: String;
       procedure YourCallBackProcedure(AEvent: INotifyEvent);
-
   end;
 
 var
@@ -61,65 +77,47 @@ implementation
 {$R *.dfm}
 
 uses
-  System.DateUtils,
-  Example.Push.Notifications;
+  Example.Push.Notifications,
+  System.DateUtils;
 
 procedure TViewMain.BtnClearTableClick(Sender: TObject);
 begin
   TableNotification.EmptyDataSet;
 end;
 
+procedure TViewMain.BtnHideClick(Sender: TObject);
+begin
+  Hide;
+  Tray.Visible := True;
+end;
+
 procedure TViewMain.BtnSubscribeClick(Sender: TObject);
 var
-  LSince, LTopics: String;
+  LTopics: String;
 begin
 
-  if CkSince.Checked then
-  begin
-    case GbSince.ItemIndex of
-      0, 1: LSince := EdtSince.Text;
-      2: LSince := DateTimeToUnix(DtSince.DateTime).ToString;
-    end;
-  end;
-
-  if not CkPoll.Checked and (CkTopic1.Checked or CkTopic2.Checked) then
-    CheckButtons;
+  CheckTopics;
+  CheckSince;
+  CheckButtons;
 
   Ntfy
+    .UserName(LbeUsername.Text)
+    .Password(LbePassword.Text)
     .BaseURL(LbeBaseURL.Text)
     .Poll(CkPoll.Checked)
-    .Since(LSince)
+    .Since(FSince)
     .Scheduled(CkScheduled.Checked);
 
-  Ntfy.ClearFilters;
-  
-  if CkFilters.Checked then
-  begin
-    
-    if lbeIdFilter.Text <> '' then
-      Ntfy.Filter(TNotifyFilter.ID, lbeIdFilter.Text);
-    
-    if lbeFilterTitle.Text <> '' then
-      Ntfy.Filter(TNotifyFilter.TITLE, lbeFilterTitle.Text);
-    
-    if lbeFilterMessage.Text <> '' then
-      Ntfy.Filter(TNotifyFilter.MESSAGECONTENT, lbeFilterMessage.Text);
-    
-    if lbeFilterTags.Text <> '' then
-      Ntfy.Filter(TNotifyFilter.TAGS, lbeFilterTags.Text);
-    
-    if CbFilterPriority.ItemIndex <> 5 then
-      Ntfy.Filter(TNotifyFilter.PRIORITY, IntToStr(CbFilterPriority.ItemIndex + 1));      
-  end;  
+  Ntfy
+    .ClearFilters
+    .Filter(TNotifyFilter.ID, lbeIdFilter.Text)
+    .Filter(TNotifyFilter.TITLE, lbeFilterTitle.Text)
+    .Filter(TNotifyFilter.MESSAGECONTENT, lbeFilterMessage.Text)
+    .Filter(TNotifyFilter.TAGS, lbeFilterTags.Text)
+    .Filter(TNotifyFilter.PRIORITY, CheckPriority)
+    .Subscribe(FTopics, YourCallBackProcedure);
 
-  if CkTopic1.Checked then
-    LTopics := CkTopic1.Caption;
-
-  if CkTopic2.Checked then
-    LTopics := Format('%s,%s', [CkTopic1.Caption, CkTopic2.Caption]);
-
-  if (CkTopic1.Checked) or (CkTopic2.Checked) then
-    Ntfy.Subscribe(LTopics, YourCallBackProcedure);
+  CheckPops;
 
 end;
 
@@ -127,18 +125,51 @@ procedure TViewMain.BtnUnsubscribeClick(Sender: TObject);
 begin
   Ntfy.Unsubscribe;
   CheckButtons;
+  CheckPops;
 end;
 
 procedure TViewMain.CheckButtons;
 begin
-  BtnSubscribe.Enabled := not BtnSubscribe.Enabled;
-  BtnUnsubscribe.Enabled := not BtnUnsubscribe.Enabled;
+  if (not CkPoll.Checked)  then
+  begin
+    BtnSubscribe.Enabled := not BtnSubscribe.Enabled;
+    BtnUnsubscribe.Enabled := not BtnUnsubscribe.Enabled;
+  end;
 end;
 
-procedure TViewMain.CkFiltersClick(Sender: TObject);
+procedure TViewMain.CheckPops;
 begin
-  if CkFilters.Checked then
-    GbFilters.Enabled := not GbFilters.Enabled;
+  PopSubscribe.Enabled := not PopSubscribe.Enabled;
+  PopUnsubscribe.Enabled := not PopUnsubscribe.Enabled;
+end;
+
+function TViewMain.CheckPriority: String;
+begin
+  Result := '';
+  if CbFilterPriority.ItemIndex > 0 then
+    IntToStr(CbFilterPriority.ItemIndex + 1);
+end;
+
+procedure TViewMain.CheckSince;
+begin
+  FSince := '';
+  if CkSince.Checked then
+    case GbSince.ItemIndex of
+      0, 1: FSince := EdtSince.Text;
+      2: FSince := DateTimeToUnix(DtSince.DateTime).ToString;
+    end;
+end;
+
+procedure TViewMain.CheckTopics;
+var
+  LTopic: String;
+begin
+  FTopics := '';
+  for LTopic in MemTopics.Lines do
+    if FTopics = '' then
+      FTopics := LTopic
+    else
+      FTopics := Format('%s,%s', [FTopics, LTopic]);
 end;
 
 procedure TViewMain.CkFiltersExit(Sender: TObject);
@@ -165,6 +196,26 @@ begin
       DtSince.Enabled := True;
     end;
   end;
+end;
+
+procedure TViewMain.PopQuitClick(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TViewMain.PopShowClick(Sender: TObject);
+begin
+  Show;
+end;
+
+procedure TViewMain.PopSubscribeClick(Sender: TObject);
+begin
+  BtnSubscribe.Click;
+end;
+
+procedure TViewMain.PopUnsubscribeClick(Sender: TObject);
+begin
+  BtnUnsubscribe.Click;
 end;
 
 procedure TViewMain.YourCallBackProcedure(AEvent: INotifyEvent);
