@@ -10,18 +10,16 @@ uses
 
 implementation
 
-uses
-  View.Main;
-
   procedure PushWindowsNotification(AEvent: INotifyEvent);
   var
     LNotificationCenter: TNotificationCenter;
     LNotification: TNotification;
   begin
-    LNotificationCenter := TNotificationCenter.Create(ViewMain);
+    LNotificationCenter := TNotificationCenter.Create(nil);
     try
       LNotification := LNotificationCenter.CreateNotification();
       try
+        LNotification.Name := 'Ntfy';
         LNotification.Title := AEvent.Title;
         LNotification.AlertBody := AEvent.MessageContent;
         LNotificationCenter.PresentNotification(LNotification);
