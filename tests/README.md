@@ -21,7 +21,7 @@ docker compose up
 
 ## 🧪 DUnit Tests
 * Access http://localhost:80 in your browser and subscribe to ```notify-delphi-integration-8jh27d```. 
-* Run ```tests\bin\NtfyForDelphiTests.exe```. You should receive the test messages sent from this project.
+* Run ```bin\NtfyForDelphiTests.exe```. You should receive the test messages sent from this project.
 
 
 ``` pascal

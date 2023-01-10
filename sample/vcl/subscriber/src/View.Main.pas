@@ -33,8 +33,6 @@ type
     lbPriority: TLabel;
     lbeFilterTags: TLabeledEdit;
     lblTopic: TLabel;
-    DtSince: TDateTimePicker;
-    EdtSince: TEdit;
     BtnClearTable: TButton;
     LbeBaseURL: TLabeledEdit;
     MemTopics: TMemo;
@@ -47,6 +45,11 @@ type
     LbeUsername: TLabeledEdit;
     LbePassword: TLabeledEdit;
     PopQuit: TMenuItem;
+    DtSince: TDateTimePicker;
+    EdtSince: TEdit;
+    TableNotificationTIME: TStringField;
+    TableNotificationTOPIC: TStringField;
+    TableNotificationPRIORITY: TStringField;
     procedure BtnSubscribeClick(Sender: TObject);
     procedure BtnUnsubscribeClick(Sender: TObject);
     procedure GbSinceClick(Sender: TObject);
@@ -77,8 +80,8 @@ implementation
 {$R *.dfm}
 
 uses
-  Example.Push.Notifications,
-  System.DateUtils;
+  System.DateUtils,
+  Example.Push.Notifications;
 
 procedure TViewMain.BtnClearTableClick(Sender: TObject);
 begin
@@ -147,7 +150,7 @@ function TViewMain.CheckPriority: String;
 begin
   Result := '';
   if CbFilterPriority.ItemIndex > 0 then
-    IntToStr(CbFilterPriority.ItemIndex + 1);
+    Result := IntToStr(Ord(TNotifyPriority(CbFilterPriority.ItemIndex)));
 end;
 
 procedure TViewMain.CheckSince;
@@ -223,9 +226,13 @@ begin
   TableNotification.Open;
   TableNotification.AppendRecord([
     AEvent.Id,
+    FormatDateTime('dd/MM/yyyy hh:mm:ss', UnixToDateTime(AEvent.Time)),
+    IntToStr(Ord(AEvent.Priority)),
     AEvent.Title,
-    AEvent.MessageContent
+    AEvent.MessageContent,
+    AEvent.Topic
   ]);
+
   PushWindowsNotification(AEvent);
 end;
 
