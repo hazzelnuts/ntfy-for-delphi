@@ -91,10 +91,11 @@ Ntfy for Delphi uses a few libraries in the messages subscription and publishing
 * [NxHorizon](https://github.com/dalijap/nx-horizon) by Dalija Prasnikar. 
 * [Indy10](https://github.com/IndySockets/Indy) by IndySockets.
 * [JsonToDelphiClass](https://github.com/PKGeorgiev) by Petar Georgiev.
+* NetHTTP (On development 🛠)
 
 ## 🌱 Consider Contributing
 
 Ntfy for Delphi it's an open source project under the MIT license. Feel free to use or contribute! 
 
 ## ⚠ Observations
-For the moment this library uses OpenSSL and is necessary to have it in the executable's folder. Plannings for implementing future versions which supports NetHttp are under development.
+For the moment this library uses OpenSSL and is necessary to have it in the executable's folder. Support for NetHTTP is on work.
