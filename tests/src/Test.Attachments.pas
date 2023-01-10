@@ -66,7 +66,7 @@ end;
 procedure TTestAttachments.SetUp;
 begin
   inherited;
-  FFilePath := '..\..\img\delphi-notify.png';
+  FFilePath := '..\img\delphi-notify.png';
   FFileName := ExtractFileName(FFilePath);
 end;
 

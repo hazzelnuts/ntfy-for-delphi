@@ -1,7 +1,7 @@
 object ViewMain: TViewMain
   Left = 960
   Top = 256
-  Caption = 'Subscriber'
+  Caption = 'Ntfy Subscriber'
   ClientHeight = 527
   ClientWidth = 724
   Color = clBtnFace
@@ -18,11 +18,11 @@ object ViewMain: TViewMain
   PixelsPerInch = 96
   TextHeight = 13
   object lblTopic: TLabel
-    Left = 271
-    Top = 17
-    Width = 164
+    Left = 445
+    Top = 13
+    Width = 260
     Height = 13
-    Caption = 'Topics - for each topic break a line'
+    Caption = 'Topics - Break a line for each. Don'#39't leave empty lines.'
   end
   object BtnSubscribe: TButton
     Left = 16
@@ -61,19 +61,36 @@ object ViewMain: TViewMain
       item
         Expanded = False
         FieldName = 'ID'
-        Width = 67
+        Width = 50
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'TIME'
+        Width = 118
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'PRIORITY'
         Visible = True
       end
       item
         Expanded = False
         FieldName = 'TITLE'
-        Width = 140
+        Width = 146
         Visible = True
       end
       item
         Expanded = False
         FieldName = 'MSG'
-        Width = 318
+        Width = 700
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'TOPIC'
+        Width = 300
         Visible = True
       end>
   end
@@ -88,7 +105,7 @@ object ViewMain: TViewMain
   object GbSince: TRadioGroup
     Left = 16
     Top = 17
-    Width = 249
+    Width = 89
     Height = 71
     Caption = 'Since'
     Enabled = False
@@ -105,7 +122,7 @@ object ViewMain: TViewMain
     Top = 155
     Width = 132
     Height = 17
-    Caption = 'Fectch only scheduled'
+    Caption = 'Fectch scheduled only'
     TabOrder = 5
   end
   object CkSince: TCheckBox
@@ -113,7 +130,7 @@ object ViewMain: TViewMain
     Top = 173
     Width = 132
     Height = 17
-    Caption = 'Fetch Cached Messages'
+    Caption = 'Fetch cached messages'
     TabOrder = 6
     OnClick = CkSinceClick
   end
@@ -171,15 +188,15 @@ object ViewMain: TViewMain
       Width = 104
       Height = 21
       Style = csDropDownList
-      ItemIndex = 5
+      ItemIndex = 0
       TabOrder = 3
       Items.Strings = (
+        ''
         'Min'
         'Low'
         'Default'
         'High'
-        'Maximum'
-        '')
+        'Maximum')
     end
     object lbeFilterTags: TLabeledEdit
       Left = 15
@@ -193,30 +210,13 @@ object ViewMain: TViewMain
       TextHint = 'Tags'
     end
   end
-  object DtSince: TDateTimePicker
-    Left = 114
-    Top = 59
-    Width = 137
-    Height = 21
-    Date = 44911.000000000000000000
-    Time = 0.858430219908768800
-    TabOrder = 8
-  end
-  object EdtSince: TEdit
-    Left = 114
-    Top = 32
-    Width = 137
-    Height = 21
-    TabOrder = 9
-    TextHint = 'Message id or Unix time'
-  end
   object BtnClearTable: TButton
     Left = 680
-    Top = 63
+    Top = 107
     Width = 25
     Height = 25
     Caption = #9851
-    TabOrder = 10
+    TabOrder = 8
     OnClick = BtnClearTableClick
   end
   object LbeBaseURL: TLabeledEdit
@@ -227,20 +227,20 @@ object ViewMain: TViewMain
     EditLabel.Width = 45
     EditLabel.Height = 13
     EditLabel.Caption = 'Base URL'
-    TabOrder = 11
+    TabOrder = 9
     Text = 'https://ntfy.sh'
     TextHint = 'Tags'
   end
   object MemTopics: TMemo
-    Left = 271
-    Top = 36
+    Left = 462
+    Top = 32
     Width = 243
     Height = 52
     BorderStyle = bsNone
     Lines.Strings = (
       'your-very-secret-topic'
       'notify-delphi-integration-8jh27d')
-    TabOrder = 12
+    TabOrder = 10
   end
   object BtnHide: TButton
     Left = 16
@@ -248,7 +248,7 @@ object ViewMain: TViewMain
     Width = 132
     Height = 25
     Caption = 'Hide'
-    TabOrder = 13
+    TabOrder = 11
     OnClick = BtnHideClick
   end
   object LbeUsername: TLabeledEdit
@@ -259,7 +259,7 @@ object ViewMain: TViewMain
     EditLabel.Width = 48
     EditLabel.Height = 13
     EditLabel.Caption = 'Username'
-    TabOrder = 14
+    TabOrder = 12
     TextHint = '(optional)'
   end
   object LbePassword: TLabeledEdit
@@ -271,8 +271,25 @@ object ViewMain: TViewMain
     EditLabel.Height = 13
     EditLabel.Caption = 'Password'
     PasswordChar = '*'
-    TabOrder = 15
+    TabOrder = 13
     TextHint = '(optional)'
+  end
+  object DtSince: TDateTimePicker
+    Left = 111
+    Top = 63
+    Width = 137
+    Height = 21
+    Date = 44911.000000000000000000
+    Time = 0.858430219908768800
+    TabOrder = 14
+  end
+  object EdtSince: TEdit
+    Left = 111
+    Top = 36
+    Width = 137
+    Height = 21
+    TabOrder = 15
+    TextHint = 'Message id or Unix time'
   end
   object TableNotification: TFDMemTable
     FetchOptions.AssignedValues = [evMode]
@@ -285,16 +302,33 @@ object ViewMain: TViewMain
     Left = 568
     Top = 336
     object TableNotificationID: TStringField
+      DisplayLabel = 'Id'
       FieldName = 'ID'
       Size = 30
     end
+    object TableNotificationTIME: TStringField
+      DisplayLabel = 'Time'
+      FieldName = 'TIME'
+    end
+    object TableNotificationPRIORITY: TStringField
+      DisplayLabel = 'Priority'
+      FieldName = 'PRIORITY'
+      Size = 10
+    end
     object TableNotificationTITLE: TStringField
+      DisplayLabel = 'Title'
       FieldName = 'TITLE'
       Size = 50
     end
     object TableNotificationMSG: TStringField
+      DisplayLabel = 'Message'
       FieldName = 'MSG'
-      Size = 60
+      Size = 500
+    end
+    object TableNotificationTOPIC: TStringField
+      DisplayLabel = 'Topic'
+      FieldName = 'TOPIC'
+      Size = 100
     end
   end
   object DsTable: TDataSource

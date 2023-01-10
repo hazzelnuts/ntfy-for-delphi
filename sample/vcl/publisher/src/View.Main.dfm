@@ -214,7 +214,7 @@ object ViewMain: TViewMain
       EditLabel.Height = 13
       EditLabel.Caption = 'Username'
       TabOrder = 12
-      TextHint = 'Only for protected topics/servers'
+      TextHint = '(optional)'
     end
     object LbePassword: TLabeledEdit
       Left = 364

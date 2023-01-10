@@ -19,7 +19,7 @@ implementation
     try
       LNotification := LNotificationCenter.CreateNotification();
       try
-        LNotification.Name := 'Ntfy';
+        LNotification.Name := AEvent.Id;
         LNotification.Title := AEvent.Title;
         LNotification.AlertBody := AEvent.MessageContent;
         LNotificationCenter.PresentNotification(LNotification);
