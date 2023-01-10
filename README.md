@@ -6,7 +6,7 @@
 
 ## 🔔 Ntfy for Delphi 
 
-Ntfy for Delphi it's a friendly library to work with [ntfy.sh](https://docs.ntfy.sh/) servers in Delphi. It allows you publishing messages and subscribing to topics to receive instant notifications. 
+Ntfy for Delphi it's a friendly library to work with [ntfy.sh](https://docs.ntfy.sh/) servers in Delphi. Allows you publishing messages and subscribing to topics to receive instant notifications. 
 
 ## ⚙️ Manual Installation
 
