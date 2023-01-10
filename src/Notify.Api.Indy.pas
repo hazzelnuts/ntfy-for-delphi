@@ -82,8 +82,12 @@ uses
   IdURI,
   Notify.SmartPointer,
   System.SysUtils,
+  System.StrUtils,
+  System.Types,
   Notify.Logs,
-  Notify.Notification.DTO, Notify.Error, Notify.Response.Data;
+  Notify.Notification.DTO,
+  Notify.Error,
+  Notify.Response.Data;
 
 { TNotityApiIndy }
 
@@ -333,6 +337,8 @@ end;
 procedure TSSEThread.DoOnWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
 var
   LEventString: UTF8String;
+  LStrings: TArray<String>;
+  LString: UTF8String;
 begin
 
   if Terminated then
@@ -347,7 +353,10 @@ begin
   if LEventString = FCloseConnectionMessage then
     FIdHttp.Socket.Close;
 
-  NxHorizon.Instance.Post<TNotifySubscriptionEvent>(LEventString);
+  LStrings := SplitString(LEventString, #$A);
+
+  for LString in LStrings do
+    NxHorizon.Instance.Post<TNotifySubscriptionEvent>(LString);
 
 end;
 

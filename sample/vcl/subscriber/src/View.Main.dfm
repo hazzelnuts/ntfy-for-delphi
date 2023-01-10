@@ -140,7 +140,6 @@ object ViewMain: TViewMain
     Width = 132
     Height = 225
     Caption = 'Filters'
-    Enabled = False
     TabOrder = 7
     object lbPriority: TLabel
       Left = 15
