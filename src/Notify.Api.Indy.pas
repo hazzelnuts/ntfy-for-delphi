@@ -338,7 +338,7 @@ procedure TSSEThread.DoOnWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount
 var
   LEventString: UTF8String;
   LStrings: TArray<String>;
-  LString: UTF8String;
+  LString: String;
 begin
 
   if Terminated then
@@ -353,10 +353,10 @@ begin
   if LEventString = FCloseConnectionMessage then
     FIdHttp.Socket.Close;
 
-  LStrings := SplitString(LEventString, #$A);
+  LStrings := SplitString(UTF8ToString(LEventString) , #$A);
 
   for LString in LStrings do
-    NxHorizon.Instance.Post<TNotifySubscriptionEvent>(LString);
+    NxHorizon.Instance.Post<TNotifySubscriptionEvent>(Utf8String(LString));
 
 end;
 
