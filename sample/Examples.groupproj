@@ -18,6 +18,9 @@
         <Projects Include="..\tests\NtfyForDelphiTests.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="win-service\NtfyService.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -71,14 +74,23 @@
     <Target Name="NtfyForDelphiTests:Make">
         <MSBuild Projects="..\tests\NtfyForDelphiTests.dproj" Targets="Make"/>
     </Target>
+    <Target Name="NtfyService">
+        <MSBuild Projects="win-service\NtfyService.dproj"/>
+    </Target>
+    <Target Name="NtfyService:Clean">
+        <MSBuild Projects="win-service\NtfyService.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="NtfyService:Make">
+        <MSBuild Projects="win-service\NtfyService.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="VCLPublisher;VCLSubscriber;ConsolePublisher;ConsoleSubscriber;NtfyForDelphiTests"/>
+        <CallTarget Targets="VCLPublisher;VCLSubscriber;ConsolePublisher;ConsoleSubscriber;NtfyForDelphiTests;NtfyService"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="VCLPublisher:Clean;VCLSubscriber:Clean;ConsolePublisher:Clean;ConsoleSubscriber:Clean;NtfyForDelphiTests:Clean"/>
+        <CallTarget Targets="VCLPublisher:Clean;VCLSubscriber:Clean;ConsolePublisher:Clean;ConsoleSubscriber:Clean;NtfyForDelphiTests:Clean;NtfyService:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="VCLPublisher:Make;VCLSubscriber:Make;ConsolePublisher:Make;ConsoleSubscriber:Make;NtfyForDelphiTests:Make"/>
+        <CallTarget Targets="VCLPublisher:Make;VCLSubscriber:Make;ConsolePublisher:Make;ConsoleSubscriber:Make;NtfyForDelphiTests:Make;NtfyService:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
