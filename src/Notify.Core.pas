@@ -138,12 +138,30 @@ end;
 
 procedure TNotifyCore.DoLoadLibrary;
 begin
+  {$IF DEFINED(INDY)}
   try
+    {$IFDEF WIN32 or WIN64}
     LoadLibraries('libeay32.dll');
     LoadLibraries('ssleay32.dll');
+    {$ENDIF}
+
+    {$IFDEF ANDROID}
+    LoadLibraries('libeay32.so');
+    LoadLibraries('ssleay32.so');
+    {$ENDIF}
+
+    {$IFDEF IOS}
+    // IOS specific code here
+    {$ENDIF}
+
+    {$IFDEF MACOS}
+    // OS X specific code here
+    {$ENDIF}
+
   except on E: Exception do
     raise Exception.Create(E.Message);
   end;
+  {$IFEND}
 end;
 
 procedure TNotifyCore.DoSubscribe;

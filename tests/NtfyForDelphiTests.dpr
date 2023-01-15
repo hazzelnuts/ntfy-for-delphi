@@ -45,6 +45,8 @@ uses
   Notify.Api.Response in '..\src\Notify.Api.Response.pas',
   Notify.Response.Data in '..\src\Notify.Response.Data.pas',
   Notify.Custom.Types in '..\src\Notify.Custom.Types.pas',
+  Notify.Api.NetHTTP in '..\src\Notify.Api.NetHTTP.pas',
+  Notify.Api.Factory in '..\src\Notify.Api.Factory.pas',
   NX.Horizon in '..\src\NX.Horizon.pas',
   Test.Simple.Message in 'src\Test.Simple.Message.pas',
   Test.Action.Header in 'src\Test.Action.Header.pas',
@@ -54,12 +56,11 @@ uses
   Test.Attachments in 'src\Test.Attachments.pas',
   Test.Email in 'src\Test.Email.pas',
   Test.Icons in 'src\Test.Icons.pas',
-  Index in 'src\Index.pas',
   Test.Emojis in 'src\Test.Emojis.pas',
-  Test.URL.Attachments in 'src\Test.URL.Attachments.pas', Winapi.Windows;
+  Test.URL.Attachments in 'src\Test.URL.Attachments.pas',
+  Index in 'src\Index.pas';
 
 begin
-  SetWindowText(0, 'Test cases');
   DUnitTestRunner.RunRegisteredTests;
   Readln;
 end.

@@ -43,7 +43,7 @@ Provide a topic for publishing messages. You also must have SSL libraries for ru
 ``` pascal
   Ntfy.Notification(
     New.Notification
-      .Tags(['partying_face', 'warning', 'rotating_light'])
+      .Tags(TArray<String>.Create('partying_face', 'warning', 'rotating_light'))
   );
 ```
 
@@ -132,5 +132,8 @@ Provide a topic for publishing messages. You also must have SSL libraries for ru
   // Disabling cache will cause messages no longer  
   // to be delivered to unsubscribed clients
   Ntfy.Cache(False);
+
+  // You can delay messages up to three days
+  Ntfy.Delay('4hs');
 
 ```

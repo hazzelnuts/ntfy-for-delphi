@@ -6,9 +6,9 @@ uses
   REST.Json.Types;
 
   /// Custom types defined by the user. You can modify the classes members
-  /// on this unit adjusting it for your needs. Do not rename the classes'
-  /// declarations as it's being used underneath the library. You only need
-  /// renaming field names.
+  /// on this unit adjusting it for your needs. Do not rename the class
+  /// declarations because it's being used underneath the library. You only need
+  /// to rename fields/properties.
 
 type
 

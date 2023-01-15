@@ -13,7 +13,10 @@ uses
 
 type
   TNotifyCoreFacade = class sealed(TInterfacedObject, INotifyCoreFacade)
+  private
+    FApiFactory: INotifyApiFactory;
   public
+    constructor Create;
     class function New: INotifyCoreFacade;
     function Api: INotifyApi;
     function Notification: INotifyNotification;
@@ -27,6 +30,7 @@ type
 implementation
 
 uses
+  Notify.Api.Factory,
   Notify.Api.Indy,
   Notify.Notification,
   Notify.Core,
@@ -57,6 +61,11 @@ begin
   Result := TNotifyConfig.New
 end;
 
+constructor TNotifyCoreFacade.Create;
+begin
+  FApiFactory := TNotifyApiFactory.New;
+end;
+
 class function TNotifyCoreFacade.New: INotifyCoreFacade;
 begin
   Result := Self.Create;
@@ -64,7 +73,7 @@ end;
 
 function TNotifyCoreFacade.Api: INotifyApi;
 begin
-  Result := TNotifyApiIndy.New;
+  Result := FApiFactory.Api;
 end;
 
 function TNotifyCoreFacade.Attachment: INotifyAttachment;

@@ -20,16 +20,16 @@ type
   private
     FStatusCode: Integer;
     FResponseStream: TMemoryStream;
-    FResponseData: TNotifyResponseData;
+    FResponseData: TNotifyResponseDTO;
     FResponseErrors: TNotifyErrors;
     function GetErros: TNotifyErrors;
-    function GetData: TNotifyResponseData;
+    function GetData: TNotifyResponseDTO;
   public
     constructor Create;
     destructor Destroy; override;
   published
     property Erros: TNotifyErrors read GetErros;
-    property Data: TNotifyResponseData read GetData;
+    property Data: TNotifyResponseDTO read GetData;
     property StatusCode: Integer read FStatusCode write FStatusCode;
     property ResponseStream: TMemoryStream read FResponseStream write FResponseStream;
   end;
@@ -43,7 +43,7 @@ uses
 
 constructor TNotifyApiResponse.Create;
 begin
-  FResponseData := TNotifyResponseData.Create;
+  FResponseData := TNotifyResponseDTO.Create;
   FResponseErrors := TNotifyErrors.Create;
   FResponseStream := TMemoryStream.Create
 end;
@@ -56,7 +56,7 @@ begin
   inherited
 end;
 
-function TNotifyApiResponse.GetData: TNotifyResponseData;
+function TNotifyApiResponse.GetData: TNotifyResponseDTO;
 var
   LRawString: String;
 begin
