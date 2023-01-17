@@ -72,6 +72,3 @@ end;
   Ntfy.Filter(TNotifyFilter.TAGS, 'some text');
   Ntfy.Filter(TNotifyFilter.PRIORITY, IntToStr(Ord(TNotifyPriority.MAX)));      
 ```
-
-## ⚠ Observations
-You must have SSL libraries in order to run this project.

@@ -3,7 +3,7 @@
 </div>
 
 ## ⚠ Observations
-Provide a topic for publishing messages. You also must have SSL libraries for running this project.
+Provide a topic for publishing messages.
 
 ``` pascal
   Ntfy.Notification(

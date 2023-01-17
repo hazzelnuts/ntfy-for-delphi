@@ -205,11 +205,11 @@ begin
   try
     Destroythread;
   finally
-    FreeAndNil(FResponse);
-    FreeAndNil(FNetClient);
-    FreeAndNil(FNetHTTPRequest);
-    FreeAndNil(FURLParametersList);
-    FreeAndNil(FBodyStream);
+    FResponse.Free;
+    FNetClient.Free;
+    FNetHTTPRequest.Free;
+    FURLParametersList.Free;
+    FBodyStream.Free;
   end;
   inherited;
 end;

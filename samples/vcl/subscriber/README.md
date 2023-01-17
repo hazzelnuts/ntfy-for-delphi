@@ -55,6 +55,3 @@ docker compose create
 docker cp .\server.yml ntfy:/etc/ntfy
 docker compose up
 ```
-
-## ⚠ Observations
-You must have SSL libraries in order to run this project.

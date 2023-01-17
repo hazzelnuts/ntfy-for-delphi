@@ -22,7 +22,7 @@ uses
 
 function TNotifyApiFactory.Api: INotifyApi;
 begin
-  {$IFDEF INDY}
+  {$IFDEF NTFY_HTTP_INDY}
   Result := TNotifyApiIndy.New
   {$ELSE}
   Result := TNotifyApiNetHTTP.New;

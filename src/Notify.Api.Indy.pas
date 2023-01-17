@@ -214,11 +214,11 @@ begin
   try
     Destroythread;
   finally
-    FreeAndNil(FResponse);
-    FreeAndNil(FIdHTTP);
-    FreeAndNil(FIOHandlerSSL);
-    FreeAndNil(FURLParametersList);
-    FreeAndNil(FBodyStream);
+    FResponse.Free;
+    FIdHTTP.Free;
+    FIOHandlerSSL.Free;
+    FURLParametersList.Free;
+    FBodyStream.Free;
   end;
   inherited;
 end;

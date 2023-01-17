@@ -138,7 +138,7 @@ end;
 
 procedure TNotifyCore.DoLoadLibrary;
 begin
-  {$IF DEFINED(INDY)}
+  {$IF DEFINED(NTFY_HTTP_INDY)}
   try
     {$IFDEF WIN32 or WIN64}
     LoadLibraries('libeay32.dll');

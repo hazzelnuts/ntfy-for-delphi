@@ -89,13 +89,15 @@ Support to notifications that contains ```broadcast``` actions has not been impl
 Ntfy for Delphi uses a few libraries in the messages subscription and publishing mechanism. There is no need to install. The respective credit adviced.
 
 * [NxHorizon](https://github.com/dalijap/nx-horizon) by Dalija Prasnikar. 
-* [Indy10](https://github.com/IndySockets/Indy) by IndySockets.
 * [JsonToDelphiClass](https://github.com/PKGeorgiev) by Petar Georgiev.
-* NetHTTP (On development 🛠)
+* [NetHTTP](https://docwiki.embarcadero.com/RADStudio/Rio/en/Using_an_HTTP_Client) native components.
+* [Indy10](https://github.com/IndySockets/Indy) by IndySockets. (optional)
+
+## ♻ Switching between NetHTTP and Indy
+
+The library's default behavior is to use NetHTTP for managing the HTTP communications. However, if you are like to use Indy over NetHTTP, you can go to `Project > Options > Building > Delphi Compiler > Conditional Defines` and add `NTFY_HTTP_INDY` in the conditional defines list.
+
 
 ## 🌱 Consider Contributing
 
 Ntfy for Delphi it's an open source project under the MIT license. Feel free to use or contribute! 
-
-## ⚠ Observations
-For the moment this library uses OpenSSL and is necessary to have it in the executable's folder. Support for NetHTTP is on work.
