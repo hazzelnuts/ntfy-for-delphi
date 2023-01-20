@@ -18,7 +18,11 @@ type
 
   TNotifyApiResponse = class
   private
+  {$IFDEF WIN32}
     FStatusCode: Integer;
+  {$ELSE}
+    FStatusCode: Int64;
+  {$ENDIF}
     FResponseStream: TMemoryStream;
     FResponseData: TNotifyResponseData;
     FResponseErrors: TNotifyErrors;
@@ -30,7 +34,7 @@ type
   published
     property Erros: TNotifyErrors read GetErros;
     property Data: TNotifyResponseData read GetData;
-    property StatusCode: Integer read FStatusCode write FStatusCode;
+    property {$IFDEF WIN32} StatusCode: Integer {$ELSE} StatusCode: Int64 {$ENDIF} read FStatusCode write FStatusCode;
     property ResponseStream: TMemoryStream read FResponseStream write FResponseStream;
   end;
 
