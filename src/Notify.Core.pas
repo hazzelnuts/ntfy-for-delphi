@@ -63,8 +63,10 @@ type
     function Response: TNotifyApiResponse;
     procedure BasicValidation;
     procedure DoLoadLibrary;
-    procedure LoadLibraries(const ALibName: String);
     procedure WithAuthentication;
+    {$IF DEFINED(NTFY_HTTP_INDY)}
+    procedure LoadLibraries(const ALibName: String);
+    {$IFEND}
   end;
 
 implementation
@@ -80,8 +82,10 @@ uses
   Notify.Action.DTO,
   Notify.Attachment.DTO,
   Notify.Action.Contract,
-  Notify.Attachment.Contract,
-  Winapi.Windows;
+  Notify.Attachment.Contract
+  {$IF DEFINED(NTFY_HTTP_INDY)}
+  Winapi.Windows
+  {$IFEND};
 
 { TNotifyCore }
 
@@ -251,6 +255,7 @@ begin
 
 end;
 
+{$IF DEFINED(NTFY_HTTP_INDY)}
 procedure TNotifyCore.LoadLibraries(const ALibName: String);
 var
   LSavedCW: Word;
@@ -273,6 +278,7 @@ begin
     raise Exception.Create(Format('Could not load %s library. Errors: %s', [ALibName, LError]));
   end
 end;
+{$IFEND}
 
 function TNotifyCore.LogPath(const AValue: String): INotifyCore;
 begin
