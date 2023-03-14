@@ -337,7 +337,13 @@ end;
 procedure TSSEThread.DoOnWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
 var
   LEventString: UTF8String;
-  LStrings: TArray<String>;
+
+  {$IFDEF VER310}
+  LStrings: TStringDynArray;
+  {$ELSE}
+  LStrings: TArray<string>;
+  {$ENDIF}
+
   LString: UTF8String;
 begin
 
