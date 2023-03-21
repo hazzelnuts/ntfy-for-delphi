@@ -6,9 +6,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Layouts,
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.Objects, FMX.Edit,
-  FMX.Memo.Types, FMX.ScrollBox, FMX.Memo, REST.Backend.PushTypes, System.JSON,
-  System.PushNotification, Data.Bind.Components, Data.Bind.ObjectScope,
-  REST.Backend.BindSource, REST.Backend.PushDevice;
+  FMX.Memo.Types, FMX.ScrollBox, FMX.Memo;
 
 type
   TViewMain = class(TForm)
@@ -29,7 +27,6 @@ type
     Layout8: TLayout;
     edtTopic: TEdit;
     btnPublish: TCornerButton;
-    PushEvents1: TPushEvents;
     procedure btnPublishClick(Sender: TObject);
   private
     procedure SendNotification;
