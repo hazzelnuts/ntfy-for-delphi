@@ -21,6 +21,9 @@
         <Projects Include="win-service\NtfyService.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="android\publisher\AndroidPublisher.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -83,14 +86,23 @@
     <Target Name="NtfyService:Make">
         <MSBuild Projects="win-service\NtfyService.dproj" Targets="Make"/>
     </Target>
+    <Target Name="AndroidPublisher">
+        <MSBuild Projects="android\publisher\AndroidPublisher.dproj"/>
+    </Target>
+    <Target Name="AndroidPublisher:Clean">
+        <MSBuild Projects="android\publisher\AndroidPublisher.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="AndroidPublisher:Make">
+        <MSBuild Projects="android\publisher\AndroidPublisher.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="VCLPublisher;VCLSubscriber;ConsolePublisher;ConsoleSubscriber;NtfyForDelphiTests;NtfyService"/>
+        <CallTarget Targets="VCLPublisher;VCLSubscriber;ConsolePublisher;ConsoleSubscriber;NtfyForDelphiTests;NtfyService;AndroidPublisher"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="VCLPublisher:Clean;VCLSubscriber:Clean;ConsolePublisher:Clean;ConsoleSubscriber:Clean;NtfyForDelphiTests:Clean;NtfyService:Clean"/>
+        <CallTarget Targets="VCLPublisher:Clean;VCLSubscriber:Clean;ConsolePublisher:Clean;ConsoleSubscriber:Clean;NtfyForDelphiTests:Clean;NtfyService:Clean;AndroidPublisher:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="VCLPublisher:Make;VCLSubscriber:Make;ConsolePublisher:Make;ConsoleSubscriber:Make;NtfyForDelphiTests:Make;NtfyService:Make"/>
+        <CallTarget Targets="VCLPublisher:Make;VCLSubscriber:Make;ConsolePublisher:Make;ConsoleSubscriber:Make;NtfyForDelphiTests:Make;NtfyService:Make;AndroidPublisher:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
