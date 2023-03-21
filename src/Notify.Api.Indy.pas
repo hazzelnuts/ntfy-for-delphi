@@ -214,11 +214,11 @@ begin
   try
     Destroythread;
   finally
-    FResponse.Free;
-    FIdHTTP.Free;
-    FIOHandlerSSL.Free;
-    FURLParametersList.Free;
-    FBodyStream.Free;
+    FreeAndNil(FResponse);
+    FreeAndNil(FIdHTTP);
+    FreeAndNil(FIOHandlerSSL);
+    FreeAndNil(FURLParametersList);
+    FreeAndNil(FBodyStream);
   end;
   inherited;
 end;
@@ -337,8 +337,14 @@ end;
 procedure TSSEThread.DoOnWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
 var
   LEventString: UTF8String;
-  LStrings: TArray<String>;
-  LString: String;
+
+  {$IFDEF VER310}
+  LStrings: TStringDynArray;
+  {$ELSE}
+  LStrings: TArray<string>;
+  {$ENDIF}
+
+  LString: UTF8String;
 begin
 
   if Terminated then
@@ -353,10 +359,10 @@ begin
   if LEventString = FCloseConnectionMessage then
     FIdHttp.Socket.Close;
 
-  LStrings := SplitString(UTF8ToString(LEventString) , #$A);
+  LStrings := SplitString(LEventString, #$A);
 
   for LString in LStrings do
-    NxHorizon.Instance.Post<TNotifySubscriptionEvent>(Utf8String(LString));
+    NxHorizon.Instance.Post<TNotifySubscriptionEvent>(LString);
 
 end;
 

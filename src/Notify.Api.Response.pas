@@ -18,19 +18,23 @@ type
 
   TNotifyApiResponse = class
   private
+  {$IFDEF WIN32}
     FStatusCode: Integer;
+  {$ELSE}
+    FStatusCode: Int64;
+  {$ENDIF}
     FResponseStream: TMemoryStream;
-    FResponseData: TNotifyResponseDTO;
+    FResponseData: TNotifyResponseData;
     FResponseErrors: TNotifyErrors;
     function GetErros: TNotifyErrors;
-    function GetData: TNotifyResponseDTO;
+    function GetData: TNotifyResponseData;
   public
     constructor Create;
     destructor Destroy; override;
   published
     property Erros: TNotifyErrors read GetErros;
-    property Data: TNotifyResponseDTO read GetData;
-    property StatusCode: Integer read FStatusCode write FStatusCode;
+    property Data: TNotifyResponseData read GetData;
+    property {$IFDEF WIN32} StatusCode: Integer {$ELSE} StatusCode: Int64 {$ENDIF} read FStatusCode write FStatusCode;
     property ResponseStream: TMemoryStream read FResponseStream write FResponseStream;
   end;
 
@@ -43,7 +47,7 @@ uses
 
 constructor TNotifyApiResponse.Create;
 begin
-  FResponseData := TNotifyResponseDTO.Create;
+  FResponseData := TNotifyResponseData.Create;
   FResponseErrors := TNotifyErrors.Create;
   FResponseStream := TMemoryStream.Create
 end;
@@ -56,7 +60,7 @@ begin
   inherited
 end;
 
-function TNotifyApiResponse.GetData: TNotifyResponseDTO;
+function TNotifyApiResponse.GetData: TNotifyResponseData;
 var
   LRawString: String;
 begin

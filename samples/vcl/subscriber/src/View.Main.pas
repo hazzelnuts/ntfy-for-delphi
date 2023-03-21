@@ -95,8 +95,6 @@ begin
 end;
 
 procedure TViewMain.BtnSubscribeClick(Sender: TObject);
-var
-  LTopics: String;
 begin
 
   CheckTopics;

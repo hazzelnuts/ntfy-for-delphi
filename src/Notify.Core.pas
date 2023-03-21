@@ -194,10 +194,12 @@ begin
 end;
 
 procedure TNotifyCore.ConsoleLogEvent;
+{$IFDEF CONSOLE}
 var
   LTag: String;
   LAction: INotifyAction;
   LAttachment: INotifyAttachment;
+ {$ENDIF}
 begin
 
   if not FConfig.SaveLog then
