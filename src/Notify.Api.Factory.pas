@@ -26,7 +26,7 @@ begin
   Result := TNotifyApiIndy.New
   {$ELSE}
   Result := TNotifyApiNetHTTP.New;
-  {$IFEND}
+  {$ENDIF}
 end;
 
 class function TNotifyApiFactory.New: INotifyApiFactory;

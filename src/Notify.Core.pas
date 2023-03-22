@@ -199,7 +199,7 @@ var
   LTag: String;
   LAction: INotifyAction;
   LAttachment: INotifyAttachment;
- {$ENDIF}
+{$ENDIF}
 begin
 
   if not FConfig.SaveLog then

@@ -5,7 +5,7 @@
         <FrameworkType>None</FrameworkType>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">Win64</Platform>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Console</AppType>
         <MainSource>NtfyForDelphiTests.dpr</MainSource>
@@ -46,8 +46,8 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <DCC_DcuOutput>..\..\..\lib\$(Platform)</DCC_DcuOutput>
-        <DCC_ExeOutput>..\..\..\bin\$(Platform)</DCC_ExeOutput>
+        <DCC_DcuOutput>..\lib\$(Platform)</DCC_DcuOutput>
+        <DCC_ExeOutput>..\bin\$(Platform)</DCC_ExeOutput>
         <DCC_E>false</DCC_E>
         <DCC_N>false</DCC_N>
         <DCC_S>false</DCC_S>
