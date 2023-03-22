@@ -31,7 +31,6 @@ implementation
 
 uses
   Notify.Api.Factory,
-  Notify.Api.Indy,
   Notify.Notification,
   Notify.Core,
   Notify.Action,

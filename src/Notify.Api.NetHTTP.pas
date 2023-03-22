@@ -22,9 +22,10 @@ type
     FNetHTTPResquest: TNetHTTPRequest;
     FEventStream: TMemoryStream;
     FResponse: TNotifyApiResponse;
+    FHeaders: TNetHeaders;
     procedure NetHTTPRequestReceiveData(const Sender: TObject; AContentLength, AReadCount: Int64; var AAbort: Boolean);
   public
-    constructor Create(AUrl: String; var ANetHTTPRequest: TNetHTTPRequest; var AResponse: TNotifyApiResponse);
+    constructor Create(const AUrl: String; const AHeaders: TNetHeaders; var ANetHTTPRequest: TNetHTTPRequest; var AResponse: TNotifyApiResponse);
     procedure Execute; override;
     destructor Destroy; override;
     procedure AbortStream;
@@ -39,6 +40,7 @@ type
     FEndPoint: String;
     FConnectionThread: TSSEThread;
     FURLParametersList: TStringList;
+    FNetHeaders: TNetHeaders;
   public
     constructor Create;
     destructor Destroy; override;
@@ -112,6 +114,8 @@ end;
 function TNotifyApiNetHTTP.AddHeader(const AName: String; AValues: array of String): INotifyApi;
 var
   LString, LValue: String;
+  LIndex: Integer;
+  LHeaderPair: TNameValuePair;
 begin
   Result := Self;
   for LString in AValues do
@@ -119,13 +123,27 @@ begin
       LValue := LString
     else
       LValue := Format('%s, %s', [LValue, LString]);
-  FNetClient.CustomHeaders[AName] :=  LValue;
+
+  if LValue <> '' then
+  begin
+    LIndex := Length(FNetHeaders);
+    SetLength(FNetHeaders, LIndex + 1);
+    FNetHeaders[LIndex] := LHeaderPair.Create(AName, StringReplace(LValue, sLineBreak, '', [rfReplaceAll]));
+  end;
 end;
 
 function TNotifyApiNetHTTP.AddHeader(const AName: String; AValue: String): INotifyApi;
+var
+  LHeaderPair: TNameValuePair;
+  LIndex: Integer;
 begin
   Result := Self;
-  FNetClient.CustomHeaders[AName] := AValue;
+  if AValue <> '' then
+  begin
+    LIndex := Length(FNetHeaders);
+    SetLength(FNetHeaders, LIndex + 1);
+    FNetHeaders[LIndex] := LHeaderPair.Create(AName, StringReplace(AValue, sLineBreak, '', [rfReplaceAll]));
+  end;
 end;
 
 function TNotifyApiNetHTTP.AddURLParameter(const AName: String; AValue: String): INotifyApi;
@@ -152,7 +170,7 @@ end;
 function TNotifyApiNetHTTP.ClearHeaders: INotifyApi;
 begin
   Result := Self;
-  FNetHTTPRequest.CustHeaders.Clear;
+  SetLength(FNetHeaders, 0);
 end;
 
 function TNotifyApiNetHTTP.ClearURLParameters: INotifyApi;
@@ -239,7 +257,7 @@ begin
     if Assigned(FConnectionThread) then
       Destroythread;
   finally
-    FConnectionThread := TSSEThread.Create(CreateURL, FNetHTTPRequest, FResponse);
+    FConnectionThread := TSSEThread.Create(CreateURL, FNetHeaders, FNetHTTPRequest, FResponse);
     FConnectionThread.Start;
   end;
 
@@ -274,7 +292,7 @@ begin
   try
     LBodyStringStream := TStringStream.Create(UTF8Encode(FBodyStream.DataString));
     try
-      LHTTPResponse := FNetHTTPRequest.Post(CreateURL, LBodyStringStream, FResponse.ResponseStream);
+      LHTTPResponse := FNetHTTPRequest.Post(CreateURL, LBodyStringStream, FResponse.ResponseStream, FNetHeaders);
     finally
       LBodyStringStream.Free;
     end;
@@ -293,7 +311,7 @@ begin
   try
     LBodyStringStream := TStringStream.Create(FBodyStream.DataString);
     try
-      LHTTPResponse := FNetHTTPRequest.Put(CreateURL, LBodyStringStream, FResponse.ResponseStream);
+      LHTTPResponse := FNetHTTPRequest.Put(CreateURL, LBodyStringStream, FResponse.ResponseStream, FNetHeaders);
     finally
       LBodyStringStream.Free;
     end;
@@ -311,12 +329,15 @@ end;
 { TSSEThread }
 
 procedure TSSEThread.AbortStream;
+var
+  LAbort: Boolean;
 begin
+  LAbort := True;
   FNetHTTPResquest.Cancel;
 end;
 
-constructor TSSEThread.Create(AUrl: String; var ANetHTTPRequest: TNetHTTPRequest;
-  var AResponse: TNotifyApiResponse);
+constructor TSSEThread.Create(const AUrl: String; const AHeaders: TNetHeaders;
+  var ANetHTTPRequest: TNetHTTPRequest; var AResponse: TNotifyApiResponse);
 begin
   inherited Create(True);
   FreeOnTerminate := False;
@@ -341,7 +362,7 @@ begin
     begin
       try
         try
-          FNetHTTPResquest.Get(FUrl, FEventStream);
+          FNetHTTPResquest.Get(FUrl, FEventStream, FHeaders);
         finally
           Terminate;
         end;
@@ -368,7 +389,7 @@ var
 begin
 
   if Terminated then
-    Exit;
+    FNetHTTPResquest.Free;
 
   SetString(LEventString, PAnsiChar(FEventStream.Memory), FEventStream.Size);
 
