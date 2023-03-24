@@ -99,3 +99,14 @@ Ntfy for Delphi it's an open source project under the MIT license. Feel free to 
 
 ## ⚠ Observations
 For the moment this library uses OpenSSL and is necessary to have it in the executable's folder. Support for NetHTTP is on work.
+
+## 🚀 Basic ntfy server
+For purposes of demonstration, I created a small demo showing you how to setup your own server using railway, which is only one of many alternatives to you self-host ntfy server. Click on the link bellow.
+
+> https://youtu.be/L49wM84ivzE
+
+<div width="200px"> 
+
+![Screen Shot 2023-03-24 at 17 56 41](https://user-images.githubusercontent.com/53358247/227638278-c553deda-17fb-4a23-9795-760902010dfc.png)
+
+</div>
