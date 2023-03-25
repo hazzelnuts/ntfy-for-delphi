@@ -462,7 +462,9 @@ begin
       .Instance
       .Subscribe<TNotifySubscriptionEvent>(MainSync, SubscriptionEvent);
 
-  FApi
+
+
+  FApi := TNotifyCoreFacade.New.Api
     .Config(FConfig)
     .ClearURLParameters;
 
@@ -496,14 +498,8 @@ end;
 function TNotifyCore.Unsubscribe: INotifyCore;
 begin
   Result := Self;
-
-  {$IFDEF CONSOLE}
-  //  raise Exception.Create('Unsubscribe for console application is not supported. Kill the process.');
-  {$ENDIF}
-
   UnsubscribeEventBus;
-  FApi.AbortStream;
-
+  FApi := nil;
 end;
 
 procedure TNotifyCore.UnsubscribeEventBus;

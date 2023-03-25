@@ -23,7 +23,7 @@ type
     FEventStream: TMemoryStream;
     FResponse: TNotifyApiResponse;
     FHeaders: TNetHeaders;
-    procedure NetHTTPRequestReceiveData(const Sender: TObject; AContentLength, AReadCount: Int64; var AAbort: Boolean);
+    procedure ReceiveData(const Sender: TObject; AContentLength, AReadCount: Int64; var AAbort: Boolean);
   public
     constructor Create(const AUrl: String; const AHeaders: TNetHeaders; var ANetHTTPRequest: TNetHTTPRequest; var AResponse: TNotifyApiResponse);
     procedure Execute; override;
@@ -329,21 +329,19 @@ end;
 { TSSEThread }
 
 procedure TSSEThread.AbortStream;
-var
-  LAbort: Boolean;
 begin
-  LAbort := True;
-  FNetHTTPResquest.Cancel;
+
 end;
 
 constructor TSSEThread.Create(const AUrl: String; const AHeaders: TNetHeaders;
   var ANetHTTPRequest: TNetHTTPRequest; var AResponse: TNotifyApiResponse);
 begin
   inherited Create(True);
-  FreeOnTerminate := False;
+  FreeOnTerminate := True;
   FUrl := AUrl;
   FNetHTTPResquest := ANetHTTPRequest;
   FResponse := AResponse;
+  FHeaders := AHeaders;
 end;
 
 destructor TSSEThread.Destroy;
@@ -354,24 +352,19 @@ end;
 procedure TSSEThread.Execute;
 begin
   inherited;
+  FEventStream := TMemoryStream.Create;
   try
-    FEventStream := TMemoryStream.Create;
-    FNetHTTPResquest.OnReceiveData := NetHTTPRequestReceiveData;
+    FNetHTTPResquest.OnReceiveData := ReceiveData;
     FNetHTTPResquest.Accept := 'text/event-stream';
     while not Terminated do
     begin
       try
-        try
-          FNetHTTPResquest.Get(FUrl, FEventStream, FHeaders);
-        finally
-          Terminate;
-        end;
+        FNetHTTPResquest.Get(FUrl, FEventStream, FHeaders);
+        Terminate;
+        Break;
       except
-        on E: Exception do
-        begin
-          Terminate;
-          Exit;
-        end;
+        Terminate;
+        Break;
       end;
     end;
 
@@ -380,7 +373,7 @@ begin
   end;
 end;
 
-procedure TSSEThread.NetHTTPRequestReceiveData(const Sender: TObject;
+procedure TSSEThread.ReceiveData(const Sender: TObject;
   AContentLength, AReadCount: Int64; var AAbort: Boolean);
 var
   LEventString: UTF8String;
@@ -389,7 +382,7 @@ var
 begin
 
   if Terminated then
-    FNetHTTPResquest.Free;
+    Exit;
 
   SetString(LEventString, PAnsiChar(FEventStream.Memory), FEventStream.Size);
 

@@ -337,7 +337,7 @@ end;
 procedure TSSEThread.DoOnWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
 var
   LEventString: UTF8String;
-  LString: UTF8String;
+  LString: String;
   {$IFDEF VER310}
   LStrings: TStringDynArray;
   {$ELSE}
@@ -360,7 +360,7 @@ begin
   LStrings := SplitString(UTF8ToString(LEventString), #$A);
 
   for LString in LStrings do
-    NxHorizon.Instance.Post<TNotifySubscriptionEvent>(UTF8ToString(LString));
+    NxHorizon.Instance.Post<TNotifySubscriptionEvent>(Utf8String(LString));
 
 end;
 
