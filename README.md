@@ -103,7 +103,7 @@ For the moment this library uses OpenSSL and is necessary to have it in the exec
 ## 🚀 Basic ntfy server
 For purposes of demonstration, I created a small demo showing you how to setup your own server using railway, which is only one of many alternatives to you self-host ntfy server. Click on the link bellow.
 
-> https://youtu.be/L49wM84ivzE
+> https://youtu.be/auJICXtxoNA
 
 <div width="200px"> 
 
