@@ -34,6 +34,7 @@ type
     function Publish: INotifyCore;
     procedure Subscribe(const ATopic: String; const ACallBack: TNotifyEventProc); overload;
     function Unsubscribe: INotifyCore;
+    function Disconnect: INotifyCore;
   private
     function Subscribe: INotifyCore; overload;
     procedure DoSubscribe;
@@ -82,10 +83,10 @@ uses
   Notify.Action.DTO,
   Notify.Attachment.DTO,
   Notify.Action.Contract,
-  Notify.Attachment.Contract
   {$IF DEFINED(NTFY_HTTP_INDY)}
-  Winapi.Windows
-  {$IFEND};
+  Winapi.Windows,
+  {$IFEND}
+  Notify.Attachment.Contract;
 
 { TNotifyCore }
 
@@ -138,6 +139,12 @@ function TNotifyCore.DisableFireBase(const AValue: Boolean): INotifyCore;
 begin
   Result := Self;
   FConfig.DisableFireBase(AValue);
+end;
+
+function TNotifyCore.Disconnect: INotifyCore;
+begin
+  Result := Self;
+  FApi.Disconnect;
 end;
 
 procedure TNotifyCore.DoLoadLibrary;
@@ -462,9 +469,7 @@ begin
       .Instance
       .Subscribe<TNotifySubscriptionEvent>(MainSync, SubscriptionEvent);
 
-
-
-  FApi := TNotifyCoreFacade.New.Api
+  FApi
     .Config(FConfig)
     .ClearURLParameters;
 
@@ -499,7 +504,7 @@ function TNotifyCore.Unsubscribe: INotifyCore;
 begin
   Result := Self;
   UnsubscribeEventBus;
-  FApi := nil;
+  FApi.AbortStream;
 end;
 
 procedure TNotifyCore.UnsubscribeEventBus;

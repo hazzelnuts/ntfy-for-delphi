@@ -70,10 +70,10 @@ type
     function Post: INotifyApi;
     function Put: INotifyApi;
     function AbortStream: INotifyApi;
-    procedure Destroythread;
     function CreateURL: String;
     function Response: TNotifyApiResponse;
     procedure LogRequest;
+    function Disconnect: INotifyApi;
   end;
 
 implementation
@@ -102,7 +102,20 @@ end;
 
 function TNotifyApiIndy.AbortStream: INotifyApi;
 begin
-  Destroythread;
+  if Assigned(FConnectionThread) then
+  begin
+    try
+      if not FConnectionThread.Terminated then
+      begin
+        FConnectionThread.AbortStream;
+        FConnectionThread.Terminate;
+        FConnectionThread.WaitFor;
+      end;
+    finally
+      FConnectionThread.Free;
+      FConnectionThread := nil;
+    end;
+  end;
 end;
 
 function TNotifyApiIndy.AddBody(const AValue: TFileStream): INotifyApi;
@@ -127,7 +140,10 @@ begin
       LValue := LString
     else
       LValue := Format('%s, %s', [LValue, LString]);
-  FIdHTTP.Request.CustomHeaders.AddValue(AName, LValue);
+  if LValue <> '' then
+  begin
+    FIdHTTP.Request.CustomHeaders.AddValue(AName, LValue);
+  end;
 end;
 
 function TNotifyApiIndy.AddURLParameter(const AName: String; AValue: String): INotifyApi;
@@ -212,7 +228,7 @@ end;
 destructor TNotifyApiIndy.Destroy;
 begin
   try
-    Destroythread;
+    AbortStream;
   finally
     FResponse.Free;
     FIdHTTP.Free;
@@ -223,22 +239,10 @@ begin
   inherited;
 end;
 
-procedure TNotifyApiIndy.Destroythread;
+function TNotifyApiIndy.Disconnect: INotifyApi;
 begin
-  if Assigned(FConnectionThread) then
-  begin
-    try
-      if not FConnectionThread.Terminated then
-      begin
-        FConnectionThread.AbortStream;
-        FConnectionThread.Terminate;
-        FConnectionThread.WaitFor;
-      end;
-    finally
-      FConnectionThread.Free;
-      FConnectionThread := nil;
-    end;
-  end;
+  Result := Self;
+  FIdHTTP.Disconnect;
 end;
 
 function TNotifyApiIndy.Get: INotifyApi;
@@ -246,7 +250,7 @@ begin
   Result := Self;
   try
     if Assigned(FConnectionThread) then
-      Destroythread;
+      AbortStream;
   finally
     FConnectionThread := TSSEThread.Create(TIdURI.URLEncode(CreateURL), FIdHTTP, FResponse);
     FConnectionThread.Start;
@@ -330,7 +334,6 @@ end;
 
 destructor TSSEThread.Destroy;
 begin
-
   inherited;
 end;
 
@@ -367,8 +370,8 @@ end;
 procedure TSSEThread.Execute;
 begin
   inherited;
+  FIdEventStream := TMemoryStream.Create;
   try
-    FIdEventStream := TMemoryStream.Create;
     FIdHttp.OnWork := DoOnWork;
     FIdHttp.Request.CacheControl := 'no-cache';
     FIdHttp.Request.Accept := 'text/event-stream';

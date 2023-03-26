@@ -26,6 +26,7 @@ type
     function AddURLParameter(const AName: String; AValue: String): INotifyApi;
     function Config(const AValue: INotifyConfig): INotifyApi;
     function AbortStream: INotifyApi;
+    function Disconnect: INotifyApi;
   end;
 
   INotifyApiFactory = interface

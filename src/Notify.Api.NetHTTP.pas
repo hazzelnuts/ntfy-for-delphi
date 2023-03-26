@@ -62,10 +62,10 @@ type
     function Post: INotifyApi;
     function Put: INotifyApi;
     function AbortStream: INotifyApi;
-    procedure Destroythread;
     function CreateURL: String;
     function Response: TNotifyApiResponse;
     procedure LogRequest;
+    function Disconnect: INotifyApi;
   end;
 
 implementation
@@ -87,7 +87,20 @@ uses
 
 function TNotifyApiNetHTTP.AbortStream: INotifyApi;
 begin
-  Destroythread;
+  if Assigned(FConnectionThread) then
+  begin
+    try
+      if not FConnectionThread.Terminated then
+      begin
+        FConnectionThread.AbortStream;
+        FConnectionThread.Terminate;
+        FConnectionThread.WaitFor;
+      end;
+    finally
+      FConnectionThread.Free;
+      FConnectionThread := nil;
+    end;
+  end;
 end;
 
 function TNotifyApiNetHTTP.AddBody(const AValue: String): INotifyApi;
@@ -221,7 +234,7 @@ end;
 destructor TNotifyApiNetHTTP.Destroy;
 begin
   try
-    Destroythread;
+    AbortStream;
   finally
     FResponse.Free;
     FNetClient.Free;
@@ -232,22 +245,10 @@ begin
   inherited;
 end;
 
-procedure TNotifyApiNetHTTP.Destroythread;
+function TNotifyApiNetHTTP.Disconnect: INotifyApi;
 begin
-  if Assigned(FConnectionThread) then
-  begin
-    try
-      if not FConnectionThread.Terminated then
-      begin
-        FConnectionThread.AbortStream;
-        FConnectionThread.Terminate;
-        FConnectionThread.WaitFor;
-      end;
-    finally
-      FConnectionThread.Free;
-      FConnectionThread := nil;
-    end;
-  end;
+  Result := Self;
+  FNetHTTPRequest.Cancel;
 end;
 
 function TNotifyApiNetHTTP.Get: INotifyApi;
@@ -255,7 +256,7 @@ begin
   Result := Self;
   try
     if Assigned(FConnectionThread) then
-      Destroythread;
+      AbortStream;
   finally
     FConnectionThread := TSSEThread.Create(CreateURL, FNetHeaders, FNetHTTPRequest, FResponse);
     FConnectionThread.Start;
@@ -330,14 +331,16 @@ end;
 
 procedure TSSEThread.AbortStream;
 begin
-
+  {$IF CompilerVersion >= 34.0}
+    FNetHTTPResquest.Cancel;
+  {$ENDIF}
 end;
 
 constructor TSSEThread.Create(const AUrl: String; const AHeaders: TNetHeaders;
   var ANetHTTPRequest: TNetHTTPRequest; var AResponse: TNotifyApiResponse);
 begin
   inherited Create(True);
-  FreeOnTerminate := True;
+  FreeOnTerminate := False;
   FUrl := AUrl;
   FNetHTTPResquest := ANetHTTPRequest;
   FResponse := AResponse;
@@ -359,12 +362,13 @@ begin
     while not Terminated do
     begin
       try
-        FNetHTTPResquest.Get(FUrl, FEventStream, FHeaders);
-        Terminate;
-        Break;
+        try
+          FNetHTTPResquest.Get(FUrl, FEventStream, FHeaders);
+        finally
+          Terminate;
+        end;
       except
-        Terminate;
-        Break;
+        Exit;
       end;
     end;
 

@@ -50,6 +50,7 @@ type
     TableNotificationTIME: TStringField;
     TableNotificationTOPIC: TStringField;
     TableNotificationPRIORITY: TStringField;
+    CkShowNotification: TCheckBox;
     procedure BtnSubscribeClick(Sender: TObject);
     procedure BtnUnsubscribeClick(Sender: TObject);
     procedure GbSinceClick(Sender: TObject);
@@ -231,7 +232,8 @@ begin
     AEvent.Topic
   ]);
 
-  PushWindowsNotification(AEvent);
+  if CkShowNotification.Checked then
+    PushWindowsNotification(AEvent);
 end;
 
 end.

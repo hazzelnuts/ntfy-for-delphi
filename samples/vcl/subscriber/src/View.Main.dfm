@@ -2,7 +2,7 @@ object ViewMain: TViewMain
   Left = 960
   Top = 256
   Caption = 'Ntfy Subscriber'
-  ClientHeight = 527
+  ClientHeight = 545
   ClientWidth = 724
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -14,7 +14,7 @@ object ViewMain: TViewMain
   Position = poDesktopCenter
   DesignSize = (
     724
-    527)
+    545)
   PixelsPerInch = 96
   TextHeight = 13
   object lblTopic: TLabel
@@ -26,7 +26,7 @@ object ViewMain: TViewMain
   end
   object BtnSubscribe: TButton
     Left = 16
-    Top = 427
+    Top = 446
     Width = 132
     Height = 25
     Caption = 'Subscribe'
@@ -35,7 +35,7 @@ object ViewMain: TViewMain
   end
   object BtnUnsubscribe: TButton
     Left = 16
-    Top = 458
+    Top = 477
     Width = 132
     Height = 25
     Caption = 'Unsubscribe'
@@ -47,7 +47,7 @@ object ViewMain: TViewMain
     Left = 154
     Top = 138
     Width = 551
-    Height = 376
+    Height = 394
     Anchors = [akLeft, akTop, akRight, akBottom]
     DataSource = DsTable
     Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
@@ -136,7 +136,7 @@ object ViewMain: TViewMain
   end
   object GbFilters: TGroupBox
     Left = 16
-    Top = 196
+    Top = 215
     Width = 132
     Height = 225
     Caption = 'Filters'
@@ -243,7 +243,7 @@ object ViewMain: TViewMain
   end
   object BtnHide: TButton
     Left = 16
-    Top = 489
+    Top = 508
     Width = 132
     Height = 25
     Caption = 'Hide'
@@ -289,6 +289,14 @@ object ViewMain: TViewMain
     Height = 21
     TabOrder = 15
     TextHint = 'Message id or Unix time'
+  end
+  object CkShowNotification: TCheckBox
+    Left = 16
+    Top = 192
+    Width = 132
+    Height = 17
+    Caption = 'Show up notifications'
+    TabOrder = 16
   end
   object TableNotification: TFDMemTable
     FetchOptions.AssignedValues = [evMode]
