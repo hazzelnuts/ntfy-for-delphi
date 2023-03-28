@@ -248,7 +248,9 @@ end;
 function TNotifyApiNetHTTP.Disconnect: INotifyApi;
 begin
   Result := Self;
+  {$IF CompilerVersion >= 34.0}
   FNetHTTPRequest.Cancel;
+  {$ENDIF}
 end;
 
 function TNotifyApiNetHTTP.Get: INotifyApi;
