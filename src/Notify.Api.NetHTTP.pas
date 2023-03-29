@@ -390,6 +390,7 @@ begin
   if Terminated then
     Exit;
 
+  FEventStream.Position := 0;
   SetString(LEventString, PAnsiChar(FEventStream.Memory), FEventStream.Size);
 
   if LEventString = '' then
