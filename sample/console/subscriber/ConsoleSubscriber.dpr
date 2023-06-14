@@ -5,7 +5,11 @@ program ConsoleSubscriber;
 {$R *.res}
 
 uses
-  Notify;
+   madExcept,
+  madListHardware,
+  madListProcesses,
+  madListModules,
+ Notify;
 
 begin
 

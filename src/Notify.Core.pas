@@ -1,7 +1,5 @@
 ﻿unit Notify.Core;
-
 interface
-
 uses
   System.SysUtils,
   Notify.Types,
@@ -13,7 +11,6 @@ uses
   Notify.Event.Contract,
   NX.Horizon,
   Notify.Api.Response;
-
 type
   TNotifyCore = class sealed(TInterfacedObject, INotifyCore)
   strict private
@@ -53,6 +50,7 @@ type
     function UserName(const AValue: String): INotifyCore;
     function Password(const AValue: String): INotifyCore;
     function BaseURL(const AValue: String): INotifyCore;
+    function Proxy(const aProxyServer, aProxyUser, aProxyPassword: string; const aProxyPort: integer): INotifyCore;
     function DisableFireBase(const AValue: Boolean): INotifyCore;
     function Notification(const ANotification: INotifyNotification): INotifyCore; overload;
     function Filter(const AFilterType: TNotifyFilter; const AValue: String): INotifyCore;
@@ -66,9 +64,7 @@ type
     procedure LoadLibraries(const ALibName: String);
     procedure WithAuthentication;
   end;
-
 implementation
-
 uses
   System.NetEncoding,
   System.Generics.Collections,
@@ -82,38 +78,30 @@ uses
   Notify.Action.Contract,
   Notify.Attachment.Contract,
   Winapi.Windows;
-
 { TNotifyCore }
-
 function TNotifyCore.BaseURL(const AValue: String): INotifyCore;
 begin
   Result := Self;
   FConfig.BaseURL(AValue);
 end;
-
 procedure TNotifyCore.BasicValidation;
 begin
   if FNotification.Topic = '' then
     raise Exception.Create('Topic cannot be empty');
-
   if FConfig.BaseURL = '' then
     raise Exception.Create('Base Url cannot be empty');
-
 end;
-
 function TNotifyCore.Cache(const AValue: Boolean): INotifyCore;
 begin
   Result := Self;
   FConfig.Cache(AValue);
 end;
-
 function TNotifyCore.ClearFilters: INotifyCore;
 begin
   Result := Self;
   FFilterParameters.Clear;
   FApi.ClearHeaders;
 end;
-
 constructor TNotifyCore.Create;
 begin
   FApi := TNotifyCoreFacade.New.Api;
@@ -122,20 +110,17 @@ begin
   FEventMessage := TNotifyCoreFacade.New.Event;
   FFilterParameters := TDictionary<String, String>.Create;
 end;
-
 destructor TNotifyCore.Destroy;
 begin
   UnsubscribeEventBus;
   FFilterParameters.Free;
   inherited;
 end;
-
 function TNotifyCore.DisableFireBase(const AValue: Boolean): INotifyCore;
 begin
   Result := Self;
   FConfig.DisableFireBase(AValue);
 end;
-
 procedure TNotifyCore.DoLoadLibrary;
 begin
   try
@@ -145,7 +130,6 @@ begin
     raise Exception.Create(E.Message);
   end;
 end;
-
 procedure TNotifyCore.DoSubscribe;
 begin
   if (FConfig.SubscriptionType = TNotifySubscriptionType.JSON) then
@@ -157,20 +141,15 @@ begin
   else
     SubscribeAsWebSocket;
 end;
-
 function TNotifyCore.Filter(const AFilterType: TNotifyFilter; const AValue: String): INotifyCore;
 begin
   Result := Self;
-
   if AValue = '' then
     Exit;
-
   if FFilterParameters.ContainsValue(NotifyFilterTypeDescription[AFilterType])
     then Exit;
-
   FFilterParameters.Add(NotifyFilterTypeDescription[AFilterType], AValue);
 end;
-
 procedure TNotifyCore.ConsoleLogEvent;
 {$IFDEF CONSOLE}
 var
@@ -179,10 +158,8 @@ var
   LAttachment: INotifyAttachment;
  {$ENDIF}
 begin
-
   if not FConfig.SaveLog then
     Exit;
-
   {$IFDEF CONSOLE}
   if FConfig.SaveLog then
   begin
@@ -195,32 +172,25 @@ begin
     Writeln(Format('Title: %s', [FEventMessage.Title]));
     Writeln(Format('Priority: %d', [Ord(FEventMessage.Priority)]));
     Writeln(Format('Click: %s', [FEventMessage.Click]));
-
     for LTag in FEventMessage.Tags do
       Writeln(Format('Tag: %s', [LTag]));
-
     for LAction in FEventMessage.Actions.Values do
     begin
-
       Writeln(Format('Action Type: %s', [GetEnumName(TypeInfo(TNotifyActionType), Integer(LAction.&Type))]));
       Writeln(Format('Action Label: %s', [LAction.&Label])); // comment this line to edit this function
       Writeln(Format('Action Url: %s', [LAction.Url]));
       Writeln(Format('Action Clear: %s', [LAction.Clear.ToString]));
       Writeln(Format('Action Method: %s', [LAction.Method]));
       Writeln(Format('Action Body: %s', [LAction.Body]));
-
       if Assigned(LAction.Headers) then
       begin
         Writeln(Format('Action Headers: %s', [TJsonDto(LAction.Headers).AsJson]));
       end;
-
     end;
   end;
   {$ENDIF}
-
   if not Assigned(FEventMessage.Attachment) then
     Exit;
-
   {$IFDEF CONSOLE}
   if FConfig.SaveLog then
   begin
@@ -232,9 +202,7 @@ begin
     Writeln(Format('Attachment Expires: %s', [LAttachment.Expires.ToString]));
   end;
   {$ENDIF}
-
 end;
-
 procedure TNotifyCore.LoadLibraries(const ALibName: String);
 var
   LSavedCW: Word;
@@ -257,24 +225,20 @@ begin
     raise Exception.Create(Format('Could not load %s library. Errors: %s', [ALibName, LError]));
   end
 end;
-
 function TNotifyCore.LogPath(const AValue: String): INotifyCore;
 begin
   Result := Self;
   FConfig.LogPath(AValue);
 end;
-
 class function TNotifyCore.New: INotifyCore;
 begin
   Result := Self.Create;
 end;
-
 function TNotifyCore.Notification(const ANotification: INotifyNotification): INotifyCore;
 begin
   Result := Self;
   FNotification := ANotification;
 end;
-
 procedure TNotifyCore.Subscribe(const ATopic: String; const ACallBack: TNotifyEventProc);
 begin
   FNotification.Topic(ATopic);
@@ -283,22 +247,18 @@ begin
   FCallBack := ACallBack;
   Subscribe;
 end;
-
 procedure TNotifyCore.SubscribeAsJSONString;
 begin
-
   if FConfig.SaveLog then
   begin
     {$IFDEF CONSOLE}
     Writeln('Subscribing to topic: ' + FNotification.Topic);
     {$ENDIF}
   end;
-
   FApi
     .AddEndPoint(FNotification.Topic + '/json')
     .Get;
 end;
-
 procedure TNotifyCore.SubscribeAsRawStream;
 begin
   raise Exception.Create('Raw string implementation is not supported for the moment');
@@ -307,7 +267,6 @@ begin
 //    .AddEndPoint(FNotification.Topic + '/raw')
 //    .Get;
 end;
-
 procedure TNotifyCore.SubscribeAsSSEStream;
 begin
   raise Exception.Create('SSE implementation is not supported for the moment');
@@ -316,7 +275,6 @@ begin
 //    .AddEndPoint(FNotification.Topic + '/sse')
 //    .ConnectWebSocket;
 end;
-
 procedure TNotifyCore.SubscribeAsWebSocket;
 begin
   raise Exception.Create('Websocket implementation is not supported for the moment');
@@ -325,23 +283,25 @@ begin
 //    .AddEndPoint(FNotification.Topic + '/ws')
 //    .ConnectWebSocket;
 end;
-
 function TNotifyCore.SubscriptionType(const AValue: TNotifySubscriptionType): INotifyCore;
 begin
   Result := Self;
   FConfig.SubscriptionType(AValue);
 end;
-
 function TNotifyCore.Password(const AValue: String): INotifyCore;
 begin
   Result := Self;
   FConfig.Password(AValue);
 end;
-
 function TNotifyCore.Poll(const AValue: Boolean): INotifyCore;
 begin
   Result := Self;
   FPoll := AValue;
+end;
+function TNotifyCore.Proxy(const aProxyServer, aProxyUser,
+  aProxyPassword: string; const aProxyPort: integer): INotifyCore;
+begin
+  FConfig.Proxy(aProxyServer, aProxyUser, aProxyPassword, aProxyPort);
 end;
 
 function TNotifyCore.Publish: INotifyCore;
@@ -349,62 +309,48 @@ begin
   Result := Self;
   DoLoadLibrary;
   BasicValidation;
-
   FApi
     .ClearEndPoint
     .ClearURLParameters
     .Config(FConfig)
     .ClearHeaders
     .ClearBody;
-
   if (FConfig.Cache = False) then
     FApi.AddHeader('Cache', 'no');
-
   if (FConfig.DisableFireBase) then
     FApi.AddHeader('Firebase', 'no');
-
   WithAuthentication;
-
   if FNotification.FileName <> '' then
   begin
     SendFile;
     Exit;
   end;
-
   if FNotification.Icon <> '' then
     FApi.AddHeader('Icon', FNotification.Icon);
-
   FApi
     .AddBody(FNotification.AsJSONString)
     .Post;
-
 end;
-
 function TNotifyCore.Response: TNotifyApiResponse;
 begin
   Result := FApi.Response;
 end;
-
 function TNotifyCore.SaveLog(const AValue: Boolean): INotifyCore;
 begin
   Result := Self;
   FConfig.SaveLog(AValue);
 end;
-
 function TNotifyCore.Scheduled(const AValue: Boolean): INotifyCore;
 begin
   Result := Self;
   FScheduled := AValue;
 end;
-
 function TNotifyCore.SendFile: INotifyCore;
 var
   LFileStream: TSmartPointer<TFileStream>;
 begin
   Result := Self;
-
   LFileStream := TFileStream.Create(FNotification.FilePath, fmOpenRead);
-
   FApi
     .AddBody(LFileStream.Value)
     .AddHeader('Filename', FNotification.FileName)
@@ -418,70 +364,52 @@ begin
     .AddHeader('Topic', FNotification.Topic)
     .AddEndPoint(FNotification.Topic)
     .Put;
-
 end;
-
 function TNotifyCore.Since(const AValue: String): INotifyCore;
 begin
   Result := Self;
   FSince := AValue;
 end;
-
 function TNotifyCore.Subscribe: INotifyCore;
 var
   LFilterKey, LFilterValue: String;
 begin
   Result := Self;
-
   if (not Assigned(FMesssagesSubscription)) or (FMesssagesSubscription.IsCanceled) then
     FMesssagesSubscription := NxHorizon
       .Instance
       .Subscribe<TNotifySubscriptionEvent>(MainSync, SubscriptionEvent);
-
   FApi
     .Config(FConfig)
     .ClearURLParameters;
-
   if FPoll then
     FApi.AddURLParameter('poll', '1');
-
   if FSince <> '' then
     FApi.AddURLParameter('since', FSince);
-
   if FScheduled then
     FApi.AddURLParameter('sched', '1');
-
   for LFilterKey in FFilterParameters.Keys do
   begin
     FFilterParameters.TryGetValue(LFilterKey, LFilterValue);
     FApi.AddURLParameter(LFilterKey, LFilterValue);
   end;
-
   WithAuthentication;
-
   DoSubscribe;
-
 end;
-
 function TNotifyCore.Topic(const AValue: String): INotifyCore;
 begin
   Result := Self;
   FNotification.Topic(AValue);
 end;
-
 function TNotifyCore.Unsubscribe: INotifyCore;
 begin
   Result := Self;
-
   {$IFDEF CONSOLE}
   //  raise Exception.Create('Unsubscribe for console application is not supported. Kill the process.');
   {$ENDIF}
-
   UnsubscribeEventBus;
   FApi.AbortStream;
-
 end;
-
 procedure TNotifyCore.UnsubscribeEventBus;
 begin
   if Assigned(FMesssagesSubscription) then
@@ -491,13 +419,11 @@ begin
       NxHorizon.Instance.Unsubscribe(FMesssagesSubscription);
     end;
 end;
-
 function TNotifyCore.UserName(const AValue: String): INotifyCore;
 begin
   Result := Self;
   FConfig.UserName(AValue);
 end;
-
 procedure TNotifyCore.WithAuthentication;
 var
   LUserNamePassword: String;
@@ -511,16 +437,13 @@ begin
     FApi.AddHeader('Authorization', LBasicAuth);
   end;
 end;
-
 procedure TNotifyCore.SubscriptionEvent(const AEvent: TNotifySubscriptionEvent);
 var
   LEventDTO: TSmartPointer<TNotifyEventDTO>;
   LActionDTO: TNotifyActionDTO;
   LEventAttachmentDTO: TSmartPointer<TNotifyAttachmentDTO>;
 begin
-
   LEventDTO.Value.AsJson := UnicodeString(AEvent);
-
   if (LEventDTO.Value.Event = NotifyMessageEventArray[TNotifyMessageEvent.OPEN]) then
   begin
     {$IF DEFINED(CONSOLE)}
@@ -528,7 +451,6 @@ begin
     Writeln('Press Ctrl + C to kill the process.');
     {$IFEND}
   end;
-
   if (LEventDTO.Value.Id <> '') and (LEventDTO.Value.Event = NotifyMessageEventArray[TNotifyMessageEvent.MSG]) then
   begin
     FEventMessage
@@ -543,7 +465,6 @@ begin
       .Priority(TNotifyPriority(LEventDTO.Value.Priority))
       .Click(LEventDTO.Value.Click)
       .Icon(LEventDTO.Value.Icon);
-
     for LActionDTO in LEventDTO.Value.Actions do
       FEventMessage.Action(
         TNotifyCoreFacade.New.Action
@@ -555,7 +476,6 @@ begin
           .Body(LActionDTO.Body)
           .EventHeaders(LActionDTO.Headers)
       );
-
     if Assigned(LEventDTO.Value.Attachment) then
     begin
       LEventAttachmentDTO := LEventDTO.Value.Attachment;
@@ -568,14 +488,9 @@ begin
           .Expires(LEventAttachmentDTO.Value.Expires)
       );
     end;
-
     if Assigned(FCallBack) then
        FCallBack(FEventMessage);
-
     ConsoleLogEvent;
-
   end;
-
 end;
-
 end.

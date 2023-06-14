@@ -36,6 +36,7 @@ type
     function Since(const AValue: String): INotifyCore; overload;
     function Scheduled(const AValue: Boolean): INotifyCore; overload;
     function Response: TNotifyApiResponse;
+    function Proxy(const aProxyServer, aProxyUser, aProxyPassword: string; const aProxyPort: integer): INotifyCore; overload;
   end;
 
   INotifyCoreFacade = interface

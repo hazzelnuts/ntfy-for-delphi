@@ -3,7 +3,11 @@ program ConsolePublisher;
 {$APPTYPE CONSOLE}
 
 uses
-  Example.Basic in 'src\Example.Basic.pas',
+   madExcept,
+  madListHardware,
+  madListProcesses,
+  madListModules,
+ Example.Basic in 'src\Example.Basic.pas',
   Example.Action.Header in 'src\Example.Action.Header.pas',
   Example.Priorities in 'src\Example.Priorities.pas',
   Example.Messages in 'src\Example.Messages.pas',
