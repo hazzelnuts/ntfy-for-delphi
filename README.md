@@ -2,7 +2,7 @@
   <img src="./img/delphi-notify.png" width="80%">
 </div>
 
- Ntfy was made by [Philipp C. Heckel](https://github.com/binwiederhier). Consider leaving a star in [his project](https://github.com/binwiederhier/ntfy). As [Philipp C. Heckel](https://github.com/binwiederhier) stated, this service will stay free, so any kind of support to afford costs help with cloud hosting will be warmly received. You can also self-host ntfy server. Visit [docs.ntfy.sh](https://docs.ntfy.sh/) to get started with documentation.
+ Ntfy was made by [Philipp C. Heckel](https://github.com/binwiederhier). Consider leaving a star on [his project](https://github.com/binwiederhier/ntfy). As [Philipp C. Heckel](https://github.com/binwiederhier) stated, this service will stay free, so any kind of support to afford costs help with cloud hosting will be warmly received. You can also self-host ntfy server. Visit [docs.ntfy.sh](https://docs.ntfy.sh/) to get started with documentation.
 
 ## 🔔 Ntfy for Delphi 
 
