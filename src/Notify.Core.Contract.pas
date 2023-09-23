@@ -37,6 +37,7 @@ type
     function Scheduled(const AValue: Boolean): INotifyCore; overload;
     function Response: TNotifyApiResponse;
     function Disconnect: INotifyCore;
+    function Proxy(const AProxyServer, AProxyUser, AProxyPassword: String; const AProxyPort: Integer): INotifyCore; overload;
   end;
 
   INotifyCoreFacade = interface

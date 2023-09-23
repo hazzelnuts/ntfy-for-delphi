@@ -189,6 +189,15 @@ function TNotifyApiIndy.Config(const AValue: INotifyConfig): INotifyApi;
 begin
   Result := Self;
   FNotifyConfig := AValue;
+
+  if AValue.ProxyServer <> '' then
+  begin
+    FIdHttp.ProxyParams.ProxyServer := AValue.ProxyServer;
+    FIdHttp.ProxyParams.ProxyUsername := AValue.ProxyUser;
+    FIdHttp.ProxyParams.ProxyPassword := AValue.ProxyPassword;
+    FIdHttp.ProxyParams.ProxyPort := AValue.ProxyPort;
+  end;
+
 end;
 
 constructor TNotifyApiIndy.Create;
@@ -256,7 +265,7 @@ begin
     FConnectionThread.Start;
   end;
 
-  {$IFDEF CONSOLE}
+  {$IFDEF CONSOLE OR CONSOLE_TESTRUNNER}
   FConnectionThread.WaitFor;
   {$ENDIF}
 

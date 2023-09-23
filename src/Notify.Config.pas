@@ -17,6 +17,8 @@ type
     FSaveLog: Boolean;
     FLogPath: String;
     FSubscriptionType: TNotifySubscriptionType;
+    FProxyServer, FProxyUser, FProxyPassword: string;
+    FProxyPort: integer;
   public
     class function New: INotifyConfig;
   private
@@ -37,6 +39,11 @@ type
     function LogPath(const AValue: String): INotifyConfig; overload;
     function SubscriptionType: TNotifySubscriptionType; overload;
     function SubscriptionType(const AValue: TNotifySubscriptionType): INotifyConfig; overload;
+    function ProxyServer: string; overload;
+    function ProxyUser: string; overload;
+    function ProxyPassword: string; overload;
+    function ProxyPort: integer; overload;
+    function Proxy(const aProxyServer, aProxyUser, aProxyPassword: string; const aProxyPort: integer): INotifyConfig; overload;
   end;
 
 implementation
@@ -112,6 +119,34 @@ function TNotifyConfig.Password(const AValue: String): INotifyConfig;
 begin
   Result := Self;
   FPassword := AValue;
+end;
+
+function TNotifyConfig.Proxy(const AProxyServer, AProxyUser, AProxyPassword: string; const aProxyPort: integer): INotifyConfig;
+begin
+  FProxyServer := AProxyServer;
+  FProxyUser := AProxyUser;
+  FProxyPassword := AProxyPassword;
+  FProxyPort := AProxyPort;
+end;
+
+function TNotifyConfig.ProxyPassword: string;
+begin
+  Result := FProxyPassword;
+end;
+
+function TNotifyConfig.ProxyPort: integer;
+begin
+  Result := FProxyPort;
+end;
+
+function TNotifyConfig.ProxyServer: string;
+begin
+  Result := FProxyServer;
+end;
+
+function TNotifyConfig.ProxyUser: string;
+begin
+  Result := FProxyUser;
 end;
 
 function TNotifyConfig.SaveLog(const AValue: Boolean): INotifyConfig;

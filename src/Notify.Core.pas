@@ -54,6 +54,7 @@ type
     function UserName(const AValue: String): INotifyCore;
     function Password(const AValue: String): INotifyCore;
     function BaseURL(const AValue: String): INotifyCore;
+    function Proxy(const aProxyServer, aProxyUser, aProxyPassword: string; const aProxyPort: integer): INotifyCore;
     function DisableFireBase(const AValue: Boolean): INotifyCore;
     function Notification(const ANotification: INotifyNotification): INotifyCore; overload;
     function Filter(const AFilterType: TNotifyFilter; const AValue: String): INotifyCore;
@@ -373,6 +374,12 @@ function TNotifyCore.Poll(const AValue: Boolean): INotifyCore;
 begin
   Result := Self;
   FPoll := AValue;
+end;
+
+function TNotifyCore.Proxy(const aProxyServer, aProxyUser,
+  aProxyPassword: string; const aProxyPort: integer): INotifyCore;
+begin
+  FConfig.Proxy(aProxyServer, aProxyUser, aProxyPassword, aProxyPort);
 end;
 
 function TNotifyCore.Publish: INotifyCore;
