@@ -1,11 +1,7 @@
 program VCLSubscriber;
 
 uses
-   madExcept,
-  madListHardware,
-  madListProcesses,
-  madListModules,
- Vcl.Forms,
+  Vcl.Forms,
   View.Main in 'src\View.Main.pas' {ViewMain},
   Example.Push.Notifications in 'src\Example.Push.Notifications.pas',
   Vcl.Themes,

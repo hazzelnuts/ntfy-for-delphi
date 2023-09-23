@@ -24,11 +24,6 @@ type
     function LogPath(const AValue: String): INotifyConfig; overload;
     function SubscriptionType: TNotifySubscriptionType; overload;
     function SubscriptionType(const AValue: TNotifySubscriptionType): INotifyConfig; overload;
-    function ProxyServer: string; overload;
-    function ProxyUser: string; overload;
-    function ProxyPassword: string; overload;
-    function ProxyPort: integer; overload;
-    function Proxy(const aProxyServer, aProxyUser, aProxyPassword: string; const aProxyPort: integer): INotifyConfig; overload;
   end;
 
 implementation

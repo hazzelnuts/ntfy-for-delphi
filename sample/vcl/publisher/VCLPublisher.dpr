@@ -1,11 +1,7 @@
 program VCLPublisher;
 
 uses
-   madExcept,
-  madListHardware,
-  madListProcesses,
-  madListModules,
- Vcl.Forms,
+  Vcl.Forms,
   View.Main in 'src\View.Main.pas' {ViewMain},
   Vcl.Themes,
   Vcl.Styles;

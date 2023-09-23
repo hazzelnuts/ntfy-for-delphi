@@ -8,7 +8,7 @@ uses
   Vcl.Imaging.pngimage, Notify, Vcl.CheckLst, Data.DB, Vcl.Grids, Vcl.DBGrids,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
-  FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.Mask;
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client;
 
 type
   TViewMain = class(TForm)

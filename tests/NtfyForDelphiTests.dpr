@@ -15,11 +15,7 @@ program NtfyForDelphiTests;
 {$ENDIF}
 
 uses
-   madExcept,
-  madListHardware,
-  madListProcesses,
-  madListModules,
- DUnitTestRunner,
+  DUnitTestRunner,
   Notify in '..\src\Notify.pas',
   Notify.Action.Contract in '..\src\Notify.Action.Contract.pas',
   Notify.Action.DTO in '..\src\Notify.Action.DTO.pas',

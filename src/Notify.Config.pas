@@ -17,8 +17,6 @@ type
     FSaveLog: Boolean;
     FLogPath: String;
     FSubscriptionType: TNotifySubscriptionType;
-    FProxyServer, FProxyUser, FProxyPassword: string;
-    FProxyPort: integer;
   public
     class function New: INotifyConfig;
   private
@@ -39,11 +37,6 @@ type
     function LogPath(const AValue: String): INotifyConfig; overload;
     function SubscriptionType: TNotifySubscriptionType; overload;
     function SubscriptionType(const AValue: TNotifySubscriptionType): INotifyConfig; overload;
-    function ProxyServer: string; overload;
-    function ProxyUser: string; overload;
-    function ProxyPassword: string; overload;
-    function ProxyPort: integer; overload;
-    function Proxy(const aProxyServer, aProxyUser, aProxyPassword: string; const aProxyPort: integer): INotifyConfig; overload;
   end;
 
 implementation
@@ -71,10 +64,6 @@ begin
   FCache := True;
   FLogPath := ExtractFilePath(ParamStr(0));
   FSubscriptionType := TNotifySubscriptionType.JSON;
-  FProxyServer := '';
-  FProxyUser := '';
-  FProxyPassword := '';
-  FProxyPort := 0;
 end;
 
 function TNotifyConfig.DisableFireBase(const AValue: Boolean): INotifyConfig;
@@ -123,35 +112,6 @@ function TNotifyConfig.Password(const AValue: String): INotifyConfig;
 begin
   Result := Self;
   FPassword := AValue;
-end;
-
-function TNotifyConfig.Proxy(const aProxyServer, aProxyUser,
-  aProxyPassword: string; const aProxyPort: integer): INotifyConfig;
-begin
-  FProxyServer := aProxyServer;
-  FProxyUser := aProxyUser;
-  FProxyPassword := aProxyPassword;
-  FProxyPort := aProxyPort;
-end;
-
-function TNotifyConfig.ProxyPassword: string;
-begin
-  Result := FProxyPassword;
-end;
-
-function TNotifyConfig.ProxyPort: integer;
-begin
-  Result := FProxyPort;
-end;
-
-function TNotifyConfig.ProxyServer: string;
-begin
-  Result := FProxyServer;
-end;
-
-function TNotifyConfig.ProxyUser: string;
-begin
-  Result := FProxyUser;
 end;
 
 function TNotifyConfig.SaveLog(const AValue: Boolean): INotifyConfig;

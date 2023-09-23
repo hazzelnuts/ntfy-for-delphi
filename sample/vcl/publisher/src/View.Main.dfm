@@ -10,8 +10,10 @@ object ViewMain: TViewMain
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
+  PixelsPerInch = 96
   TextHeight = 13
   object gpInfo: TGroupBox
     AlignWithMargins = True
@@ -30,8 +32,6 @@ object ViewMain: TViewMain
     Padding.Right = 3
     Padding.Bottom = 3
     TabOrder = 0
-    ExplicitWidth = 567
-    ExplicitHeight = 667
     object lbPriority: TLabel
       Left = 12
       Top = 488
@@ -85,7 +85,6 @@ object ViewMain: TViewMain
       EditLabel.Height = 13
       EditLabel.Caption = 'File'
       TabOrder = 5
-      Text = ''
       TextHint = 'Attach file...'
     end
     object btnFileAttachment: TButton
@@ -106,7 +105,6 @@ object ViewMain: TViewMain
       EditLabel.Height = 13
       EditLabel.Caption = 'URL Attachment'
       TabOrder = 7
-      Text = ''
       TextHint = 'Url to an attachment...'
     end
     object lbeIconAttachment: TLabeledEdit
@@ -118,7 +116,6 @@ object ViewMain: TViewMain
       EditLabel.Height = 13
       EditLabel.Caption = 'Icon Attachment'
       TabOrder = 4
-      Text = ''
       TextHint = 'Attach icon url...'
     end
     object lbeEmail: TLabeledEdit
@@ -130,7 +127,6 @@ object ViewMain: TViewMain
       EditLabel.Height = 13
       EditLabel.Caption = 'Email'
       TabOrder = 3
-      Text = ''
       TextHint = 'someone@mail.com'
     end
     object lbeTitle: TLabeledEdit
@@ -164,7 +160,6 @@ object ViewMain: TViewMain
       EditLabel.Height = 13
       EditLabel.Caption = 'Delay'
       TabOrder = 8
-      Text = ''
       TextHint = 'Delay (1h, 10min, 15s)'
     end
     object btnPublish: TButton
@@ -219,7 +214,6 @@ object ViewMain: TViewMain
       EditLabel.Height = 13
       EditLabel.Caption = 'Username'
       TabOrder = 12
-      Text = ''
       TextHint = '(optional)'
     end
     object LbePassword: TLabeledEdit
@@ -231,7 +225,6 @@ object ViewMain: TViewMain
       EditLabel.Height = 13
       EditLabel.Caption = 'Password'
       TabOrder = 13
-      Text = ''
       TextHint = '(Optional)'
     end
     object CkDisableFirebase: TCheckBox
