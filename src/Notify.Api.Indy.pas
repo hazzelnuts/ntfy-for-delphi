@@ -252,7 +252,7 @@ begin
     FConnectionThread.Start;
   end;
 
-  {$IFDEF CONSOLE}
+  {$IFDEF CONSOLE OR CONSOLE_TESTRUNNER}
   FConnectionThread.WaitFor;
   {$ENDIF}
 
