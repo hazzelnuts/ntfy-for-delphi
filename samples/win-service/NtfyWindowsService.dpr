@@ -1,4 +1,4 @@
-program NtfyService;
+program NtfyWindowsService;
 
 uses
   Vcl.SvcMgr,
