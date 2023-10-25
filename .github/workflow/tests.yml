@@ -1,0 +1,28 @@
+name: Delphi CI/CD
+
+on:
+  push:
+    branches:
+      - net-http
+
+jobs:
+  build:
+    runs-on: alpine:latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Wine
+        run: sudo apt-get update && sudo apt-get install wine64
+
+      - name: Run Delphi Tests
+        run: |
+          wine ../../bin/win32/NtfyForDelphiTests.exe
+          $status=$?
+          if [ $status -eq 0 ]; then
+            echo "Tests passed"
+          else
+            echo "Tests failed"
+          fi
+          exit $status
