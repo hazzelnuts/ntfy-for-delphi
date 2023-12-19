@@ -6,7 +6,7 @@ uses
   REST.Json.Types, Notify.JSON.Parser;
 
 type
-  TNotifyResponseData = class(TJsonDTO)
+  TNotifyResponseDTO = class(TJsonDTO)
   private
     [JSONName('id')]
     FId: String;

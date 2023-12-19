@@ -26,6 +26,12 @@ type
     function AddURLParameter(const AName: String; AValue: String): INotifyApi;
     function Config(const AValue: INotifyConfig): INotifyApi;
     function AbortStream: INotifyApi;
+    function Disconnect: INotifyApi;
+  end;
+
+  INotifyApiFactory = interface
+    ['{66E16F57-69CD-41CC-9457-866A4E5D396E}']
+    function Api: INotifyApi;
   end;
 
 implementation

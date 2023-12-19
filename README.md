@@ -14,6 +14,8 @@ You need to add ```src``` folder to your library path or search path.
 
 ## ⚙️ Boss Installation
 
+Boss is a dependecy manager for Delphi created by [Hashload](https://github.com/HashLoad) community. 
+
 ```
   boss install github.com/hazzelnuts/ntfy-for-delphi
 ```
@@ -58,55 +60,29 @@ end;
 
 ```
 
-There is a [VCL Sample](https://github.com/p-samuel/delphi-notify/tree/main/sample/vcl) demonstration showing you how to use Delphi Ntfy subscription mechanism into your project.
+There is a [VCL Sample](https://github.com/p-samuel/delphi-notify/tree/main/sample/vcl) demonstration showing you how to utilize the subscription mechanism into your project.
 
 ## ⚙️ Supported Version & Platforms
 
-<img src="https://img.shields.io/badge/Delphi%20Supported%20Version%20-v10.1%2B%20-blue"></img>
-<img src="https://img.shields.io/badge/Supported%20Platforms-Win32%20%26%20Win64-green"></img>
-
-It hasn't been tested in some Delphi versions yet. You can help finding out informing with a PR update to this README file. In the PR, inform the selected badged.
-
-## ⛔ Limitations
-
-Support to notifications that contains ```broadcast``` actions has not been implemented. Likewise, some advanced specific resources has not yet been implemented as well.
-
-|    Action   |  Support |
-|-------------|:--------:|
-| view        | ✔        |
-| broadcast   | ❌       |
-| http        | ✔        |
-
-|    Subscription Type    |  Support |
-|-------------------------|:---------:|
-| json                    | ✔        |
-| raw                     | ❌       |
-| sse                     | ❌       |
-| websocket               | ❌       |
+<img src="https://img.shields.io/badge/Delphi%20-v10.1%2B%20-blue"></img>
+<img src="https://img.shields.io/badge/Windows-32%20%26%2064%20bits-green"></img>
+<img src="https://img.shields.io/badge/Android-gray"></img>
+<img src="https://img.shields.io/badge/IOS-gray"></img>
 
 ## 🔗 Dependencies
 
 Ntfy for Delphi uses a few libraries in the messages subscription and publishing mechanism. There is no need to install. The respective credit adviced.
 
 * [NxHorizon](https://github.com/dalijap/nx-horizon) by Dalija Prasnikar. 
-* [Indy10](https://github.com/IndySockets/Indy) by IndySockets.
 * [JsonToDelphiClass](https://github.com/PKGeorgiev) by Petar Georgiev.
-* NetHTTP (On development 🛠)
+* [NetHTTP](https://docwiki.embarcadero.com/RADStudio/Rio/en/Using_an_HTTP_Client) native components.
+* [Indy10](https://github.com/IndySockets/Indy) by IndySockets. (optional)
+
+
+## 📚 Wiki
+
+Check out the [wiki](https://github.com/hazzelnuts/ntfy-for-delphi/wiki) page for specific instructions or tutorials.
 
 ## 🌱 Consider Contributing
 
 Ntfy for Delphi it's an open source project under the MIT license. Feel free to use or contribute! 
-
-## ⚠ Observations
-For the moment this library uses OpenSSL and is necessary to have it in the executable's folder. Support for NetHTTP is on work.
-
-## 🚀 Basic ntfy server
-For purposes of demonstration, I created a small demo showing you how to setup your own server using railway, which is only one of many alternatives to you self-host ntfy server. Click on the link bellow.
-
-> https://youtu.be/auJICXtxoNA
-
-<div width="200px"> 
-
-![Screen Shot 2023-03-24 at 17 56 41](https://user-images.githubusercontent.com/53358247/227638278-c553deda-17fb-4a23-9795-760902010dfc.png)
-
-</div>

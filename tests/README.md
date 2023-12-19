@@ -36,6 +36,3 @@ docker compose up
   RegisterTest('Send url attachments', TTestURLAttachments.Suite);
 ```
 <br/>
-
-## ⚠ Observations
-You must have SSL libraries in order to run this project. 
