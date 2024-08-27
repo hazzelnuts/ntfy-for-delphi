@@ -138,17 +138,19 @@ end;
 
 procedure TNtfyAndroidServiceModule.DumbProcedure;
 begin
-  // This works
+
   TThread.CreateAnonymousThread(
     procedure
     begin
 
+      // This doesn't work, perhaps because of the mechanism on how Android deal with threads...
       // Ntfy.Subscribe('ntfy-android-test-delphi',
       // procedure (AEvent: INotifyEvent)
       // begin
       // PushNotification(AEvent)
       // end);
 
+      // This works, it displays the notification....
       while True do
       begin
         TThread.Sleep(5000);

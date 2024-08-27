@@ -44,13 +44,20 @@ begin
   LTask := TTask.Create(
     procedure
     begin
-      //LJIntent := TJIntent.Create;
-      //LJIntent.setClassName(
-      //  TAndroidHelper.Context,
-      //  StringToJString('com.embarcadero.services.NtfyAndroidService'));
-      //  TAndroidHelper.Context.startForegroundService(LJIntent);
-      FNtfyService := TLocalServiceConnection.Create;
-      FNtfyService.StartService('NtfyAndroidService');
+
+
+      // You can use both options, broadcasting an intent...
+      LJIntent := TJIntent.Create;
+      LJIntent.setClassName(
+        TAndroidHelper.Context,
+        StringToJString('com.embarcadero.services.NtfyAndroidService'));
+        TAndroidHelper.Context.startForegroundService(LJIntent);
+
+
+      // Or starting the service...
+      //FNtfyService := TLocalServiceConnection.Create;
+      //FNtfyService.StartService('NtfyAndroidService');
+
     end);
 
 
