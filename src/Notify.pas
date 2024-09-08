@@ -33,9 +33,10 @@ uses
   Notify.Facade;
 
 initialization
+  New := nil;
+  Ntfy := nil;
   New := TNotifyCoreFacade.New;
   Ntfy := New.Notify;
 
-finalization
 
 end.

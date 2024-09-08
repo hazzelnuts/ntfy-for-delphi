@@ -24,9 +24,6 @@ type
     FMesssagesSubscription: INxEventSubscription;
     FEventMessage: INotifyEvent;
     FCallBack: TProc<INotifyEvent>;
-    FPoll: Boolean;
-    FSince: String;
-    FScheduled: Boolean;
   public
     constructor Create;
     destructor Destroy; override;
@@ -34,6 +31,7 @@ type
     function Publish: INotifyCore;
     procedure Subscribe(const ATopic: String; const ACallBack: TNotifyEventProc); overload;
     function Unsubscribe: INotifyCore;
+    function Disconnect: INotifyCore;
   private
     function Subscribe: INotifyCore; overload;
     procedure DoSubscribe;
@@ -64,8 +62,10 @@ type
     function Response: TNotifyApiResponse;
     procedure BasicValidation;
     procedure DoLoadLibrary;
-    procedure LoadLibraries(const ALibName: String);
     procedure WithAuthentication;
+    {$IF DEFINED(NTFY_HTTP_INDY)}
+    procedure LoadLibraries(const ALibName: String);
+    {$IFEND}
   end;
 
 implementation
@@ -81,8 +81,10 @@ uses
   Notify.Action.DTO,
   Notify.Attachment.DTO,
   Notify.Action.Contract,
-  Notify.Attachment.Contract,
-  Winapi.Windows;
+  {$IF DEFINED(NTFY_HTTP_INDY)}
+  Winapi.Windows,
+  {$IFEND}
+  Notify.Attachment.Contract;
 
 { TNotifyCore }
 
@@ -137,14 +139,38 @@ begin
   FConfig.DisableFireBase(AValue);
 end;
 
+function TNotifyCore.Disconnect: INotifyCore;
+begin
+  Result := Self;
+  FApi.Disconnect;
+end;
+
 procedure TNotifyCore.DoLoadLibrary;
 begin
+  {$IF DEFINED(NTFY_HTTP_INDY)}
   try
+    {$IFDEF WIN32 or WIN64}
     LoadLibraries('libeay32.dll');
     LoadLibraries('ssleay32.dll');
+    {$ENDIF}
+
+    {$IFDEF ANDROID}
+    LoadLibraries('libeay32.so');
+    LoadLibraries('ssleay32.so');
+    {$ENDIF}
+
+    {$IFDEF IOS}
+    // IOS specific code here
+    {$ENDIF}
+
+    {$IFDEF MACOS}
+    // OS X specific code here
+    {$ENDIF}
+
   except on E: Exception do
     raise Exception.Create(E.Message);
   end;
+  {$IFEND}
 end;
 
 procedure TNotifyCore.DoSubscribe;
@@ -178,7 +204,7 @@ var
   LTag: String;
   LAction: INotifyAction;
   LAttachment: INotifyAttachment;
- {$ENDIF}
+{$ENDIF}
 begin
 
   if not FConfig.SaveLog then
@@ -236,6 +262,7 @@ begin
 
 end;
 
+{$IF DEFINED(NTFY_HTTP_INDY)}
 procedure TNotifyCore.LoadLibraries(const ALibName: String);
 var
   LSavedCW: Word;
@@ -258,6 +285,7 @@ begin
     raise Exception.Create(Format('Could not load %s library. Errors: %s', [ALibName, LError]));
   end
 end;
+{$IFEND}
 
 function TNotifyCore.LogPath(const AValue: String): INotifyCore;
 begin
@@ -342,7 +370,7 @@ end;
 function TNotifyCore.Poll(const AValue: Boolean): INotifyCore;
 begin
   Result := Self;
-  FPoll := AValue;
+  FConfig.Poll(AValue);
 end;
 
 function TNotifyCore.Proxy(const aProxyServer, aProxyUser,
@@ -401,7 +429,7 @@ end;
 function TNotifyCore.Scheduled(const AValue: Boolean): INotifyCore;
 begin
   Result := Self;
-  FScheduled := AValue;
+  FConfig.Scheduled(AValue);
 end;
 
 function TNotifyCore.SendFile: INotifyCore;
@@ -410,7 +438,7 @@ var
 begin
   Result := Self;
 
-  LFileStream := TFileStream.Create(FNotification.FilePath, fmOpenRead);
+  LFileStream := TFileStream.Create(FNotification.FilePath, fmOpenRead or fmShareDenyNone);
 
   FApi
     .AddBody(LFileStream.Value)
@@ -431,7 +459,7 @@ end;
 function TNotifyCore.Since(const AValue: String): INotifyCore;
 begin
   Result := Self;
-  FSince := AValue;
+  FConfig.Since(AValue);
 end;
 
 function TNotifyCore.Subscribe: INotifyCore;
@@ -449,13 +477,13 @@ begin
     .Config(FConfig)
     .ClearURLParameters;
 
-  if FPoll then
+  if FConfig.Poll then
     FApi.AddURLParameter('poll', '1');
 
-  if FSince <> '' then
-    FApi.AddURLParameter('since', FSince);
+  if FConfig.Since <> '' then
+    FApi.AddURLParameter('since', FConfig.Since);
 
-  if FScheduled then
+  if FConfig.Scheduled then
     FApi.AddURLParameter('sched', '1');
 
   for LFilterKey in FFilterParameters.Keys do
@@ -479,14 +507,8 @@ end;
 function TNotifyCore.Unsubscribe: INotifyCore;
 begin
   Result := Self;
-
-  {$IFDEF CONSOLE}
-  //  raise Exception.Create('Unsubscribe for console application is not supported. Kill the process.');
-  {$ENDIF}
-
   UnsubscribeEventBus;
   FApi.AbortStream;
-
 end;
 
 procedure TNotifyCore.UnsubscribeEventBus;

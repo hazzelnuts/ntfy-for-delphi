@@ -31,10 +31,11 @@ type
     FIdHttp: TIdHTTP;
     FIdEventStream: TMemoryStream;
     FResponse: TNotifyApiResponse;
+    FConfig: INotifyConfig;
     const FCloseConnectionMessage = '/\/\';
     procedure DoOnWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
   public
-    constructor Create(AUrl: String; var AIdHttp: TIdHTTP; var AResponse: TNotifyApiResponse);
+    constructor Create(AUrl: String; var AIdHttp: TIdHTTP; var AResponse: TNotifyApiResponse; var AConfig: INotifyConfig);
     procedure Execute; override;
     destructor Destroy; override;
     procedure AbortStream;
@@ -70,10 +71,10 @@ type
     function Post: INotifyApi;
     function Put: INotifyApi;
     function AbortStream: INotifyApi;
-    procedure Destroythread;
     function CreateURL: String;
     function Response: TNotifyApiResponse;
     procedure LogRequest;
+    function Disconnect: INotifyApi;
   end;
 
 implementation
@@ -102,7 +103,20 @@ end;
 
 function TNotifyApiIndy.AbortStream: INotifyApi;
 begin
-  Destroythread;
+  if Assigned(FConnectionThread) then
+  begin
+    try
+      if not FConnectionThread.Terminated then
+      begin
+        FConnectionThread.AbortStream;
+        FConnectionThread.Terminate;
+        FConnectionThread.WaitFor;
+      end;
+    finally
+      FConnectionThread.Free;
+      FConnectionThread := nil;
+    end;
+  end;
 end;
 
 function TNotifyApiIndy.AddBody(const AValue: TFileStream): INotifyApi;
@@ -127,7 +141,10 @@ begin
       LValue := LString
     else
       LValue := Format('%s, %s', [LValue, LString]);
-  FIdHTTP.Request.CustomHeaders.AddValue(AName, LValue);
+  if LValue <> '' then
+  begin
+    FIdHTTP.Request.CustomHeaders.AddValue(AName, LValue);
+  end;
 end;
 
 function TNotifyApiIndy.AddURLParameter(const AName: String; AValue: String): INotifyApi;
@@ -221,33 +238,21 @@ end;
 destructor TNotifyApiIndy.Destroy;
 begin
   try
-    Destroythread;
+    AbortStream;
   finally
-    FreeAndNil(FResponse);
-    FreeAndNil(FIdHTTP);
-    FreeAndNil(FIOHandlerSSL);
-    FreeAndNil(FURLParametersList);
-    FreeAndNil(FBodyStream);
+    FResponse.Free;
+    FIdHTTP.Free;
+    FIOHandlerSSL.Free;
+    FURLParametersList.Free;
+    FBodyStream.Free;
   end;
   inherited;
 end;
 
-procedure TNotifyApiIndy.Destroythread;
+function TNotifyApiIndy.Disconnect: INotifyApi;
 begin
-  if Assigned(FConnectionThread) then
-  begin
-    try
-      if not FConnectionThread.Terminated then
-      begin
-        FConnectionThread.AbortStream;
-        FConnectionThread.Terminate;
-        FConnectionThread.WaitFor;
-      end;
-    finally
-      FConnectionThread.Free;
-      FConnectionThread := nil;
-    end;
-  end;
+  Result := Self;
+  FIdHTTP.Disconnect;
 end;
 
 function TNotifyApiIndy.Get: INotifyApi;
@@ -255,9 +260,9 @@ begin
   Result := Self;
   try
     if Assigned(FConnectionThread) then
-      Destroythread;
+      AbortStream;
   finally
-    FConnectionThread := TSSEThread.Create(TIdURI.URLEncode(CreateURL), FIdHTTP, FResponse);
+    FConnectionThread := TSSEThread.Create(TIdURI.URLEncode(CreateURL), FIdHTTP, FResponse, FNotifyConfig);
     FConnectionThread.Start;
   end;
 
@@ -328,32 +333,30 @@ begin
   end;
 end;
 
-constructor TSSEThread.Create(AUrl: String; var AIdHttp: TIdHTTP; var AResponse: TNotifyApiResponse);
+constructor TSSEThread.Create(AUrl: String; var AIdHttp: TIdHTTP; var AResponse: TNotifyApiResponse; var AConfig: INotifyConfig);
 begin
   inherited Create(True);
   FreeOnTerminate := False;
   FUrl := AUrl;
   FIdHttp := AIdHttp;
   FResponse := AResponse;
+  FConfig := AConfig;
 end;
 
 destructor TSSEThread.Destroy;
 begin
-
   inherited;
 end;
 
 procedure TSSEThread.DoOnWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
 var
   LEventString: UTF8String;
-
+  LString: String;
   {$IFDEF VER310}
   LStrings: TStringDynArray;
   {$ELSE}
-  LStrings: TArray<string>;
+  LStrings: TArray<String>;
   {$ENDIF}
-
-  LString: UTF8String;
 begin
 
   if Terminated then
@@ -368,18 +371,22 @@ begin
   if LEventString = FCloseConnectionMessage then
     FIdHttp.Socket.Close;
 
-  LStrings := SplitString(LEventString, #$A);
+  LStrings := SplitString(UTF8ToString(LEventString), #$A);
 
   for LString in LStrings do
-    NxHorizon.Instance.Post<TNotifySubscriptionEvent>(LString);
+  {$IF DEFINED(ANDROID)}
+    NxHorizon.Instance.Send<TNotifySubscriptionEvent>(Utf8String(LString), Sync);
+  {$ELSE}
+    NxHorizon.Instance.Post<TNotifySubscriptionEvent>(Utf8String(LString));
+  {$ENDIF}
 
 end;
 
 procedure TSSEThread.Execute;
 begin
   inherited;
+  FIdEventStream := TMemoryStream.Create;
   try
-    FIdEventStream := TMemoryStream.Create;
     FIdHttp.OnWork := DoOnWork;
     FIdHttp.Request.CacheControl := 'no-cache';
     FIdHttp.Request.Accept := 'text/event-stream';
@@ -390,12 +397,22 @@ begin
       try
         try
           FIdHttp.Get(FUrl, FIdEventStream);
+          {$IF DEFINED(CONSOLE)}
+            if FConfig.SaveLog then
+              WriteLn(DateTimeToStr(Now) + ' Exiting Get HTTP Call');
+          {$IFEND}
+
+          if not FConfig.Poll then
+            TThread.Sleep(10000);
+
         finally
-          Terminate;
+          if FConfig.Poll then
+            Terminate;
         end;
       except on E: Exception do
         begin
-          Exit;
+          if FConfig.Poll then
+            Exit;
         end;
       end;
     end;

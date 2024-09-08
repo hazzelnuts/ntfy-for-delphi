@@ -4,25 +4,24 @@
 
 ## Test cases 
 
-Providing some DUnit tests for ntfy main methods. Ntfy disponibilizes a docker image for self-hosting the server. This project contains a docker compose file and a server yml file with settings for deploying locally in your machine.
+DUnit tests for basic methods. You can deploy a self-hosted server via Docker images. Here you find a demo docker compose and server yml file.
 
-##  ⚙ Environment
-Install Docker in your machine and run these commands after:
+## Environment
+Run these steps in your enviroment:
 
 ``` cmd
 docker compose create
-docker cp .\server.yml ntfy:/etc/ntfy
+docker cp server.yml ntfy:/etc/ntfy
 docker compose up
 ```
 
-## ⚡ Installation
-* Compile ```sample/Examples.grouppoj``` and select ```NtfyForDelphiTests``` project
-* Paste the SSL libraries into the executable's folder ```bin```  
+## Installation
+* Open ```sample/Examples.grouppoj``` and build ```NtfyForDelphiTests``` project.
+* (Optional) Paste the SSL libraries into the executable's folder ```bin``` if you are using ```NTFY_HTTP_INDY```.  
 
-## 🧪 DUnit Tests
+## DUnit Tests
 * Access http://localhost:80 in your browser and subscribe to ```notify-delphi-integration-8jh27d```. 
-* Run ```bin\NtfyForDelphiTests.exe```. You should receive the test messages sent from this project.
-
+* Run ```bin\NtfyForDelphiTests.exe```. You should receive notifications sent from the test runner.
 
 ``` pascal
   RegisterTest('Send simple message', TTestSimpleMessage.Suite);
@@ -36,6 +35,3 @@ docker compose up
   RegisterTest('Send url attachments', TTestURLAttachments.Suite);
 ```
 <br/>
-
-## ⚠ Observations
-You must have SSL libraries in order to run this project. 
