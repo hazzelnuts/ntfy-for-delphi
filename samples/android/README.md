@@ -7,7 +7,7 @@
 Compile and explore the Android FMX Demo. Also check this [link](https://github.com/p-samuel/delphi-notify/tree/dev-psamuel/sample/console/publisher) for other resources. 
 
 <div align="center">
-  <img src="./assets/android-demo.png">
+  <img src="./assets/android-demo.PNG">
   <img src="./assets/android-intent.png">
   <img src="./assets/android-sync.png">
   <img src="./assets/android-notifi.png">
