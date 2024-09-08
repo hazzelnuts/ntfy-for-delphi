@@ -24,9 +24,6 @@ type
     FMesssagesSubscription: INxEventSubscription;
     FEventMessage: INotifyEvent;
     FCallBack: TProc<INotifyEvent>;
-    FPoll: Boolean;
-    FSince: String;
-    FScheduled: Boolean;
   public
     constructor Create;
     destructor Destroy; override;
@@ -373,7 +370,7 @@ end;
 function TNotifyCore.Poll(const AValue: Boolean): INotifyCore;
 begin
   Result := Self;
-  FPoll := AValue;
+  FConfig.Poll(AValue);
 end;
 
 function TNotifyCore.Proxy(const aProxyServer, aProxyUser,
@@ -432,7 +429,7 @@ end;
 function TNotifyCore.Scheduled(const AValue: Boolean): INotifyCore;
 begin
   Result := Self;
-  FScheduled := AValue;
+  FConfig.Scheduled(AValue);
 end;
 
 function TNotifyCore.SendFile: INotifyCore;
@@ -441,7 +438,7 @@ var
 begin
   Result := Self;
 
-  LFileStream := TFileStream.Create(FNotification.FilePath, fmOpenRead);
+  LFileStream := TFileStream.Create(FNotification.FilePath, fmOpenRead or fmShareDenyNone);
 
   FApi
     .AddBody(LFileStream.Value)
@@ -462,7 +459,7 @@ end;
 function TNotifyCore.Since(const AValue: String): INotifyCore;
 begin
   Result := Self;
-  FSince := AValue;
+  FConfig.Since(AValue);
 end;
 
 function TNotifyCore.Subscribe: INotifyCore;
@@ -480,13 +477,13 @@ begin
     .Config(FConfig)
     .ClearURLParameters;
 
-  if FPoll then
+  if FConfig.Poll then
     FApi.AddURLParameter('poll', '1');
 
-  if FSince <> '' then
-    FApi.AddURLParameter('since', FSince);
+  if FConfig.Since <> '' then
+    FApi.AddURLParameter('since', FConfig.Since);
 
-  if FScheduled then
+  if FConfig.Scheduled then
     FApi.AddURLParameter('sched', '1');
 
   for LFilterKey in FFilterParameters.Keys do

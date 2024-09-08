@@ -4,63 +4,43 @@
 
 <div align="center">
 
-# Console Samples (Subscribing) 🧪
+# Subscriber Console Sample
 
 </div>
 
-## Subscribing to a topic
+## Subscribe to a topic
 
-Subscription mechanism is event based. 
+Subscription is event based. 
 
 ``` pascal
-uses
-  Notify;
-
-begin
   Ntfy.Subscribe('your-very-secret-topic', 
     procedure (AEvent: INotifyEvent);
     begin
       WriteLn('You received a message: ' + AEvent.MessageContent)
-    end);
-end;
+  end);
 
 ```
 
-## Short poll
+Short poll
 
 ``` pascal
-uses
-  Notify;
-
-begin
   Ntfy.Poll(True);
   Ntfy.Subscribe('your-very-secret-topic', CallBack);
-end;
 ```
 
-## Fetching (duration, unix time or id)
+Fetching (duration, unix time or id)
 
 ``` pascal
-uses
-  Notify;
-
-begin
   Ntfy.Since('2hs')
   Ntfy.Subscribe('your-very-secret-topic', CallBack);
-end;
 ```
 
 
-## Scheduled only
+Scheduled only
 
 ``` pascal
-uses
-  Notify;
-
-begin
   Ntfy.Scheduled(True)
   Ntfy.Subscribe('your-very-secret-topic', CallBack);
-end;
 ```
 
 ## Filtering

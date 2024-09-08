@@ -2,24 +2,14 @@
   <img src="../../../img/delphi-notify.png" width="65%">
 </div>
 
-## ⚠ Observations
-Provide a topic for publishing messages.
-
-``` pascal
-  Ntfy.Notification(
-    New.Notification
-      .Topic('your-very-secret-topic')
-  );
-```
-
 <div align="center">
 
-# Console Samples (Publishing) 🧪
+# Console Publisher Sample 
 
 </div>
 
 
-## Simple message
+Simple message
 
 ``` pascal
   Ntfy.Notification(
@@ -29,7 +19,7 @@ Provide a topic for publishing messages.
   );
 ```
 
-## Setup Priority Levels
+Setup Priority Levels
 
 ``` pascal
   Ntfy.Notification(
@@ -38,7 +28,7 @@ Provide a topic for publishing messages.
   );
 ```
 
-## Emojis/Tags
+Emojis/Tags
 
 ``` pascal
   Ntfy.Notification(
@@ -47,7 +37,7 @@ Provide a topic for publishing messages.
   );
 ```
 
-## Actions Buttons (view)
+Actions Buttons (view)
 
 ``` pascal
   Ntfy.Notification(New.Notification
@@ -58,7 +48,7 @@ Provide a topic for publishing messages.
   );
 ```
 
-## Actions Buttons (http)
+Actions Buttons (http)
 
 ``` pascal
   Ntfy.Notification(New.Notification
@@ -70,7 +60,7 @@ Provide a topic for publishing messages.
   );
 ```
 
-## File attachments
+File attachments
 
 ``` pascal
   Ntfy.Notification(
@@ -79,7 +69,7 @@ Provide a topic for publishing messages.
   );
 ```
 
-## URL attachments
+URL attachments
 
 ``` pascal
   Ntfy.Notification(
@@ -88,7 +78,7 @@ Provide a topic for publishing messages.
   );
 ```
 
-## URL icons attachments
+URL icons attachments
 
 ``` pascal
   Ntfy.Notification(
@@ -97,7 +87,7 @@ Provide a topic for publishing messages.
   );
 ```
 
-## Email notifications
+Email notifications
 
 ``` pascal
   Ntfy.Notification(
@@ -108,14 +98,13 @@ Provide a topic for publishing messages.
   );
 ```
 
-## Basic Logs
+Basic Logs
 
 ``` pascal
   Ntfy.SaveLog(True).LogPath('..\logs_folder');
 ```
 
-
-## Other ntfy API configs
+Other ntfy API configs
 
 ``` pascal
   // Username and password for protected topics
@@ -134,6 +123,6 @@ Provide a topic for publishing messages.
   Ntfy.Cache(False);
 
   // You can delay messages up to three days
-  Ntfy.Delay('4hs');
+  Ntfy.Delay('4h');
 
 ```

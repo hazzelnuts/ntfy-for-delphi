@@ -29,6 +29,12 @@ type
     function ProxyPassword: string; overload;
     function ProxyPort: integer; overload;
     function Proxy(const aProxyServer, aProxyUser, aProxyPassword: string; const aProxyPort: integer): INotifyConfig; overload;
+    function Poll: Boolean;  overload;
+    function Poll(const AValue: Boolean): INotifyConfig; overload;
+    function Since: String; overload;
+    function Since(const AValue: String): INotifyConfig; overload;
+    function Scheduled: Boolean; overload;
+    function Scheduled(const AValue: Boolean): INotifyConfig; overload;
   end;
 
 implementation

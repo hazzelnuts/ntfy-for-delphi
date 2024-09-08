@@ -23,9 +23,10 @@ type
     FEventStream: TMemoryStream;
     FResponse: TNotifyApiResponse;
     FHeaders: TNetHeaders;
+    FConfig: INotifyConfig;
     procedure ReceiveData(const Sender: TObject; AContentLength, AReadCount: Int64; var AAbort: Boolean);
   public
-    constructor Create(const AUrl: String; const AHeaders: TNetHeaders; var ANetHTTPRequest: TNetHTTPRequest; var AResponse: TNotifyApiResponse);
+    constructor Create(const AUrl: String; const AHeaders: TNetHeaders; var ANetHTTPRequest: TNetHTTPRequest; var AResponse: TNotifyApiResponse; var AConfig: INotifyConfig);
     procedure Execute; override;
     destructor Destroy; override;
     procedure AbortStream;
@@ -115,6 +116,7 @@ end;
 function TNotifyApiNetHTTP.AddBody(const AValue: TFileStream): INotifyApi;
 begin
   Result := Self;
+  FBodyStream.Clear;
   FBodyStream.CopyFrom(AValue, AValue.Size);
 end;
 
@@ -260,11 +262,11 @@ begin
     if Assigned(FConnectionThread) then
       AbortStream;
   finally
-    FConnectionThread := TSSEThread.Create(CreateURL, FNetHeaders, FNetHTTPRequest, FResponse);
+    FConnectionThread := TSSEThread.Create(CreateURL, FNetHeaders, FNetHTTPRequest, FResponse, FNotifyConfig);
     FConnectionThread.Start;
   end;
 
-  {$IFDEF CONSOLE}
+  {$IF DEFINED(CONSOLE) OR DEFINED(CONSOLE_TESTRUNNER) OR DEFINED(MSWINDOWS)}
   FConnectionThread.WaitFor;
   {$ENDIF}
 
@@ -339,7 +341,7 @@ begin
 end;
 
 constructor TSSEThread.Create(const AUrl: String; const AHeaders: TNetHeaders;
-  var ANetHTTPRequest: TNetHTTPRequest; var AResponse: TNotifyApiResponse);
+  var ANetHTTPRequest: TNetHTTPRequest; var AResponse: TNotifyApiResponse; var AConfig: INotifyConfig);
 begin
   inherited Create(True);
   FreeOnTerminate := False;
@@ -347,6 +349,7 @@ begin
   FNetHTTPResquest := ANetHTTPRequest;
   FResponse := AResponse;
   FHeaders := AHeaders;
+  FConfig := AConfig;
 end;
 
 destructor TSSEThread.Destroy;
@@ -366,14 +369,23 @@ begin
       try
         try
           FNetHTTPResquest.Get(FUrl, FEventStream, FHeaders);
+          {$IF DEFINED(CONSOLE)}
+            if FConfig.SaveLog then
+              WriteLn(DateTimeToStr(Now) + ' Exiting Get HTTP Call');
+          {$IFEND}
+
+          if not FConfig.Poll then
+            TThread.Sleep(10000);
+
         finally
-          Terminate;
+          if FConfig.Poll then
+            Terminate;
         end;
       except
-        Exit;
+        if FConfig.Poll then
+          Exit;
       end;
     end;
-
   finally
     FEventStream.Free;
   end;
@@ -399,7 +411,11 @@ begin
   LStrings := SplitString(UTF8ToString(LEventString) , #$A);
 
   for LString in LStrings do
+  {$IF DEFINED(ANDROID)}
+    NxHorizon.Instance.Send<TNotifySubscriptionEvent>(Utf8String(LString), Sync);
+  {$ELSE}
     NxHorizon.Instance.Post<TNotifySubscriptionEvent>(Utf8String(LString));
+  {$ENDIF}
 
 end;
 

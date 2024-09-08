@@ -31,10 +31,11 @@ type
     FIdHttp: TIdHTTP;
     FIdEventStream: TMemoryStream;
     FResponse: TNotifyApiResponse;
+    FConfig: INotifyConfig;
     const FCloseConnectionMessage = '/\/\';
     procedure DoOnWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
   public
-    constructor Create(AUrl: String; var AIdHttp: TIdHTTP; var AResponse: TNotifyApiResponse);
+    constructor Create(AUrl: String; var AIdHttp: TIdHTTP; var AResponse: TNotifyApiResponse; var AConfig: INotifyConfig);
     procedure Execute; override;
     destructor Destroy; override;
     procedure AbortStream;
@@ -261,7 +262,7 @@ begin
     if Assigned(FConnectionThread) then
       AbortStream;
   finally
-    FConnectionThread := TSSEThread.Create(TIdURI.URLEncode(CreateURL), FIdHTTP, FResponse);
+    FConnectionThread := TSSEThread.Create(TIdURI.URLEncode(CreateURL), FIdHTTP, FResponse, FNotifyConfig);
     FConnectionThread.Start;
   end;
 
@@ -332,13 +333,14 @@ begin
   end;
 end;
 
-constructor TSSEThread.Create(AUrl: String; var AIdHttp: TIdHTTP; var AResponse: TNotifyApiResponse);
+constructor TSSEThread.Create(AUrl: String; var AIdHttp: TIdHTTP; var AResponse: TNotifyApiResponse; var AConfig: INotifyConfig);
 begin
   inherited Create(True);
   FreeOnTerminate := False;
   FUrl := AUrl;
   FIdHttp := AIdHttp;
   FResponse := AResponse;
+  FConfig := AConfig;
 end;
 
 destructor TSSEThread.Destroy;
@@ -372,7 +374,11 @@ begin
   LStrings := SplitString(UTF8ToString(LEventString), #$A);
 
   for LString in LStrings do
+  {$IF DEFINED(ANDROID)}
+    NxHorizon.Instance.Send<TNotifySubscriptionEvent>(Utf8String(LString), Sync);
+  {$ELSE}
     NxHorizon.Instance.Post<TNotifySubscriptionEvent>(Utf8String(LString));
+  {$ENDIF}
 
 end;
 
@@ -391,12 +397,22 @@ begin
       try
         try
           FIdHttp.Get(FUrl, FIdEventStream);
+          {$IF DEFINED(CONSOLE)}
+            if FConfig.SaveLog then
+              WriteLn(DateTimeToStr(Now) + ' Exiting Get HTTP Call');
+          {$IFEND}
+
+          if not FConfig.Poll then
+            TThread.Sleep(10000);
+
         finally
-          Terminate;
+          if FConfig.Poll then
+            Terminate;
         end;
       except on E: Exception do
         begin
-          Exit;
+          if FConfig.Poll then
+            Exit;
         end;
       end;
     end;

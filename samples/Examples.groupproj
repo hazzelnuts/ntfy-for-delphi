@@ -18,9 +18,6 @@
         <Projects Include="..\tests\NtfyForDelphiTests.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="win-service\NtfyWindowsService.dproj">
-            <Dependencies/>
-        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -74,23 +71,14 @@
     <Target Name="NtfyForDelphiTests:Make">
         <MSBuild Projects="..\tests\NtfyForDelphiTests.dproj" Targets="Make"/>
     </Target>
-    <Target Name="NtfyWindowsService">
-        <MSBuild Projects="win-service\NtfyWindowsService.dproj"/>
-    </Target>
-    <Target Name="NtfyWindowsService:Clean">
-        <MSBuild Projects="win-service\NtfyWindowsService.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="NtfyWindowsService:Make">
-        <MSBuild Projects="win-service\NtfyWindowsService.dproj" Targets="Make"/>
-    </Target>
     <Target Name="Build">
-        <CallTarget Targets="VCLPublisher;VCLSubscriber;ConsolePublisher;ConsoleSubscriber;NtfyForDelphiTests;NtfyWindowsService"/>
+        <CallTarget Targets="VCLPublisher;VCLSubscriber;ConsolePublisher;ConsoleSubscriber;NtfyForDelphiTests"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="VCLPublisher:Clean;VCLSubscriber:Clean;ConsolePublisher:Clean;ConsoleSubscriber:Clean;NtfyForDelphiTests:Clean;NtfyWindowsService:Clean"/>
+        <CallTarget Targets="VCLPublisher:Clean;VCLSubscriber:Clean;ConsolePublisher:Clean;ConsoleSubscriber:Clean;NtfyForDelphiTests:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="VCLPublisher:Make;VCLSubscriber:Make;ConsolePublisher:Make;ConsoleSubscriber:Make;NtfyForDelphiTests:Make;NtfyWindowsService:Make"/>
+        <CallTarget Targets="VCLPublisher:Make;VCLSubscriber:Make;ConsolePublisher:Make;ConsoleSubscriber:Make;NtfyForDelphiTests:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

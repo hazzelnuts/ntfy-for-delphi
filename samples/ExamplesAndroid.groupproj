@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{DEF0B80B-12A3-4468-895D-2D1A735A084A}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="android\NtfyAndroid.dproj">
+            <Dependencies>android\services\ntfy-service\NtfyServiceLocal.dproj</Dependencies>
+        </Projects>
+        <Projects Include="android\services\ntfy-service\NtfyServiceLocal.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="NtfyAndroid" DependsOnTargets="NtfyServiceLocal">
+        <MSBuild Projects="android\NtfyAndroid.dproj"/>
+    </Target>
+    <Target Name="NtfyAndroid:Clean" DependsOnTargets="NtfyServiceLocal:Clean">
+        <MSBuild Projects="android\NtfyAndroid.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="NtfyAndroid:Make" DependsOnTargets="NtfyServiceLocal:Make">
+        <MSBuild Projects="android\NtfyAndroid.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="NtfyServiceLocal">
+        <MSBuild Projects="android\services\ntfy-service\NtfyServiceLocal.dproj"/>
+    </Target>
+    <Target Name="NtfyServiceLocal:Clean">
+        <MSBuild Projects="android\services\ntfy-service\NtfyServiceLocal.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="NtfyServiceLocal:Make">
+        <MSBuild Projects="android\services\ntfy-service\NtfyServiceLocal.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="NtfyAndroid;NtfyServiceLocal"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="NtfyAndroid:Clean;NtfyServiceLocal:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="NtfyAndroid:Make;NtfyServiceLocal:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

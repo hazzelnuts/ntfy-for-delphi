@@ -1,21 +1,19 @@
 <div align="center">
 
-# VCL Samples (Subscribing) 🧪
+# Subscriber VCL Sample
 
 </div>
 
-Compile this project to explore the VCL sample showing how subscribing to topics works.
+Compile and explore the VCL sample. Also check this [link](https://github.com/p-samuel/delphi-notify/tree/dev-psamuel/sample/console/publisher) for other resources. 
 
 <div align="center">
   <img src="./img/subscriber-vcl.png">
 </div>
 
-Also check this [link](https://github.com/p-samuel/delphi-notify/tree/dev-psamuel/sample/console/publisher) for some interesting resources. 
 
+## How to subscribe
 
-## Subscribing to a topic
-
-Subscription mechanism it's event based.
+Subscription is event based.
 
 ``` pascal
 uses
@@ -30,7 +28,7 @@ begin
 end;
 ```
 
-You can define your own callback procedure every time a notification is fired. 
+You can define your own callback procedure and use to perform other operations every time a notification is fired. 
 
 ``` pascal
 uses
@@ -52,6 +50,6 @@ Install Docker in your machine and run these commands after:
 ``` cmd
 cd delphi-notify\tests
 docker compose create
-docker cp .\server.yml ntfy:/etc/ntfy
+docker cp server.yml ntfy:/etc/ntfy
 docker compose up
 ```

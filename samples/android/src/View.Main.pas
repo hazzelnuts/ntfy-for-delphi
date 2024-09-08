@@ -1,21 +1,28 @@
-unit View.Main;
+﻿unit View.Main;
 
 interface
 
 uses
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  System.Skia, FMX.Skia, System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
-  FMX.Controls.Presentation, FMX.StdCtrls,  Androidapi.Helpers,
-  Androidapi.JNI.GraphicsContentViewText, System.Android.Service;
+  FMX.Controls.Presentation, FMX.StdCtrls, FMX.Objects, FMX.Layouts,
+  FMX.ExtCtrls, FMX.Edit, FMX.Ani;
 
 type
+
   TForm1 = class(TForm)
-    Button1: TButton;
-    procedure Button1Click(Sender: TObject);
+    CornerButton1: TCornerButton;
+    CornerButton2: TCornerButton;
+    Text1: TText;
+    Edit1: TEdit;
+    SkSvg1: TSkSvg;
+    Spin: TFloatAnimation;
+    Text2: TText;
+    procedure StartService;
+    procedure CornerButton1Click(Sender: TObject);
+    procedure CornerButton2Click(Sender: TObject);
   private
-    FNtfyService: TLocalServiceConnection;
-  public
-    { Public declarations }
+    procedure Toast(const Text: String);
   end;
 
 var
@@ -24,45 +31,68 @@ var
 implementation
 
 uses
-  System.IOUtils,
-  System.Threading;
+  System.Android.Service,
+  Intent.Service.Helper,
+  AndroidAPI.Helpers,
+  AndroidAPI.JNI.Widget,
+  System.Threading,
+  Notify, Androidapi.JNI.JavaTypes;
 
 {$R *.fmx}
 
-procedure TForm1.Button1Click(Sender: TObject);
-var
-  LJIntent: JIntent;
-  LTask: ITask;
+procedure TForm1.CornerButton1Click(Sender: TObject);
 begin
-  /// Sets up a subscription to a push notification service using the Ntfy library.
-  /// The BaseURL method sets the base URL for the service (in this case,
-  /// https://ntfy.sh), and the Subscribe method subscribes to a specific
-  /// channel (ntfy-android-test-delphi) and specifies a callback function to
-  /// handle incoming notifications. The callback function is defined using an
-  /// anonymous procedure that calls the PushNotification function with the
-  /// incoming event as an argument.
-  LTask := TTask.Create(
-    procedure
+  StartService;
+end;
+
+procedure TForm1.CornerButton2Click(Sender: TObject);
+begin
+  TTask.Create(procedure
+  begin
+
+    Ntfy.Notification(
+      New.Notification
+        .Topic(Edit1.Text)
+        .Title('🧪 Android Test')
+        .MessageContent('Should receive in this app')
+    ).Publish;
+
+    TThread.Synchronize(nil, procedure
     begin
-
-
-      // You can use both options, broadcasting an intent...
-      LJIntent := TJIntent.Create;
-      LJIntent.setClassName(
-        TAndroidHelper.Context,
-        StringToJString('com.embarcadero.services.NtfyAndroidService'));
-        TAndroidHelper.Context.startForegroundService(LJIntent);
-
-
-      // Or starting the service...
-      //FNtfyService := TLocalServiceConnection.Create;
-      //FNtfyService.StartService('NtfyAndroidService');
-
+      Spin.Start;
+      Toast('Notification published successfully.');
     end);
+  end).Start;
+end;
 
+procedure TForm1.StartService;
+var
+  LIntentService: TIntentServiceHelper;
+begin
+  try                                                {serice name}        { topic }
+    LIntentService := TIntentServiceHelper.Create('NtfyServiceLocal', 0, Edit1.Text);
+    TAndroidHelper.Activity.startForegroundService(LIntentService.Intent);
+    TThread.Synchronize(nil, procedure
+    begin
+      Spin.Start;
+      Toast('Intent sent successfully, you may close the app now.');
+    end);
+  except
+    on E: Exception do
+      ShowMessage(E.Message);
+  end;
+end;
 
-
-  LTask.Start;
+procedure TForm1.Toast(const Text: String);
+var
+  JText: JString;
+begin
+  JText := StringToJString(Text);
+  TJToast.JavaClass.makeText(
+    TAndroidHelper.Context,
+    TJCharSequence.Wrap(JText),
+    TJToast.JavaClass.LENGTH_SHORT
+  ).show;
 end;
 
 end.

@@ -58,7 +58,8 @@ uses
   Test.Icons in 'src\Test.Icons.pas',
   Test.Emojis in 'src\Test.Emojis.pas',
   Test.URL.Attachments in 'src\Test.URL.Attachments.pas',
-  Index in 'src\Index.pas';
+  Index in 'src\Index.pas',
+  Test.Subscription in 'src\Test.Subscription.pas';
 
 begin
   DUnitTestRunner.RunRegisteredTests;

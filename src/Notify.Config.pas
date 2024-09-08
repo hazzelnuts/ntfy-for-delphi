@@ -19,6 +19,9 @@ type
     FSubscriptionType: TNotifySubscriptionType;
     FProxyServer, FProxyUser, FProxyPassword: string;
     FProxyPort: integer;
+    FPoll: Boolean;
+    FSince: String;
+    FScheduled: Boolean;
   public
     class function New: INotifyConfig;
   private
@@ -44,6 +47,12 @@ type
     function ProxyPassword: string; overload;
     function ProxyPort: integer; overload;
     function Proxy(const aProxyServer, aProxyUser, aProxyPassword: string; const aProxyPort: integer): INotifyConfig; overload;
+    function Poll: Boolean; overload;
+    function Poll(const AValue: Boolean): INotifyConfig; overload;
+    function Since: String; overload;
+    function Since(const AValue: String): INotifyConfig; overload;
+    function Scheduled: Boolean; overload;
+    function Scheduled(const AValue: Boolean): INotifyConfig; overload;
   end;
 
 implementation
@@ -121,6 +130,17 @@ begin
   FPassword := AValue;
 end;
 
+function TNotifyConfig.Poll: Boolean;
+begin
+  Result := FPoll;
+end;
+
+function TNotifyConfig.Poll(const AValue: Boolean): INotifyConfig;
+begin
+  Result := Self;
+  FPoll := AValue;
+end;
+
 function TNotifyConfig.Proxy(const AProxyServer, AProxyUser, AProxyPassword: string; const aProxyPort: integer): INotifyConfig;
 begin
   FProxyServer := AProxyServer;
@@ -153,6 +173,28 @@ function TNotifyConfig.SaveLog(const AValue: Boolean): INotifyConfig;
 begin
   Result := Self;
   FSaveLog := AValue;
+end;
+
+function TNotifyConfig.Scheduled(const AValue: Boolean): INotifyConfig;
+begin
+  Result := Self;
+  FScheduled := AValue;
+end;
+
+function TNotifyConfig.Scheduled: Boolean;
+begin
+  Result := FScheduled;
+end;
+
+function TNotifyConfig.Since: String;
+begin
+  Result := FSince;
+end;
+
+function TNotifyConfig.Since(const AValue: String): INotifyConfig;
+begin
+  Result := Self;
+  FSince := AValue;
 end;
 
 function TNotifyConfig.SubscriptionType(const AValue: TNotifySubscriptionType): INotifyConfig;
