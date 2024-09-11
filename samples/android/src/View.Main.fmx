@@ -131,9 +131,9 @@ object Form1: TForm1
     end
   end
   object Text2: TText
-    Position.X = 96.000000000000000000
-    Position.Y = 527.000000000000000000
-    Size.Width = 193.000000000000000000
+    Align = Bottom
+    Position.Y = 593.000000000000000000
+    Size.Width = 385.000000000000000000
     Size.Height = 48.000000000000000000
     Size.PlatformDefault = False
     Text = 'Demo'

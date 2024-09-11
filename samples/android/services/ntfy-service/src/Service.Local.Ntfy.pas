@@ -9,12 +9,14 @@ uses
   System.Generics.Collections,
   System.Notification,
   System.SyncObjs,
+  System.DateUtils,
   Androidapi.JNI.GraphicsContentViewText,
   Androidapi.JNI.App,
   Androidapi.JNI.Os,
   Androidapi.JNI.JavaTypes,
   Androidapi.JNI.Support,
   Androidapi.JNIBridge,
+  Androidapi.Helpers,
   Notify;
 
 type
@@ -27,7 +29,7 @@ type
   private
     FNotificationManager: JNotificationManager;
     FNotificationBuilder: Japp_NotificationCompat_Builder;
-    FNotificationID: Integer;
+    FChannelId: String;
     FThreads: TObjectList<TThread>;
     FWakeLock: JPowerManager_WakeLock;
     procedure ShowUpNotification(const Text: String);
@@ -40,8 +42,7 @@ var
 implementation
 
 uses
-  System.DateUtils, Androidapi.Helpers, Notify.Facade, Intent.Service.Helper;
-
+  Intent.Service.Helper;
 
 const
   FOREGROUND_SERVICE_TYPE_DATA_SYNC = $00000001;
@@ -64,30 +65,33 @@ begin
     FThreads := TObjectList<TThread>.Create;
 
     // Initialize Notification Manager and Builder
+    FChannelId := 'ntfy-for-delphi';
     FNotificationManager := TJNotificationManager.Wrap((TAndroidHelper.Context.getSystemService(TJContext.JavaClass.NOTIFICATION_SERVICE)));
     FNotificationBuilder := TJapp_NotificationCompat_Builder.JavaClass.init(TAndroidHelper.Context);
     FNotificationBuilder.setSmallIcon(TAndroidHelper.Context.getApplicationInfo.icon);
     FNotificationBuilder.setContentTitle(StrToJCharSequence('Ntfy service started'));
-    FNotificationBuilder.setContentText(StrToJCharSequence('Listening messages'));
+    FNotificationBuilder.setContentText(StrToJCharSequence('Syncing...'));
     FNotificationBuilder.setAutoCancel(True);
-    FNotificationID := 98437;
+    FNotificationBuilder.setChannelId(StringToJString(FChannelId));
 
+    //Creates notification channel if not exists
     if TJBuild_VERSION.JavaClass.SDK_INT >= 26 then
     begin
-      LChannel := TJNotificationChannel.JavaClass.init(
-        StringToJString('ntfy-for-delphi'),
-        StrToJCharSequence('Android Ntfy Subscription'),
-        TJNotificationManager.JavaClass.IMPORTANCE_HIGH);
-      LChannel.setLightColor(TJColor.JavaClass.BLUE);
-      LChannel.setLockscreenVisibility(TJNotification.JavaClass.VISIBILITY_PRIVATE);
-      FNotificationManager.createNotificationChannel(LChannel);
-      FNotificationBuilder.setChannelId(StringToJString(IntToStr(FNotificationID)));
+      if FNotificationManager.getNotificationChannel(StringToJString(FChannelId)) = nil then
+      begin
+        LChannel := TJNotificationChannel.JavaClass.init(
+          StringToJString(FChannelId),
+          StrToJCharSequence('Ntfy Subscription'),
+          TJNotificationManager.JavaClass.IMPORTANCE_HIGH);
+        LChannel.setLightColor(TJColor.JavaClass.BLUE);
+        LChannel.setLockscreenVisibility(TJNotification.JavaClass.VISIBILITY_PRIVATE);
+        FNotificationManager.createNotificationChannel(LChannel);
+      end;
     end;
 
-    // Acquire wake lock
+    // Creates wake lock object
     LPowerManager := TJPowerManager.Wrap(TAndroidHelper.Context.getSystemService(TJContext.JavaClass.POWER_SERVICE));
     FWakeLock := LPowerManager.newWakeLock(TJPowerManager.JavaClass.PARTIAL_WAKE_LOCK, StringToJString('MyApp::NtfyWakeLock'));
-    FWakeLock.acquire();
 
   except
     on E: Exception do
@@ -114,12 +118,14 @@ var
   LIntentService: TIntentServiceHelper;
 begin
   try
+    //1 - Will result to restart the service with the same intent
     Result := TJService.JavaClass.START_REDELIVER_INTENT;
     LIntentService := TIntentServiceHelper.Create(Intent);
 
     if LIntentService.Data.IsEmpty then
       Exit;
 
+    //2 - Create a thread to be inserted in the thread object list to let the service running without stopping
     LThread := TThread.CreateAnonymousThread(
     procedure
       var
@@ -129,12 +135,18 @@ begin
         try
           while True do
           begin
+            //3 - Builds a notification and an event object
             LJNotification := FNotificationBuilder.build();
             LEvent := TEvent.Create;
+
+            //4 - Subscribe to Ntfy
             Ntfy.Subscribe(LIntentService.Data, ShowUpNtfy);
-            TJService.Wrap(JavaService).startForeground(FNotificationID, LJNotification, FOREGROUND_SERVICE_TYPE_DATA_SYNC);
-            FNotificationBuilder.setContentText(StrToJCharSequence('Syncing...'));
-            FNotificationManager.notify(FNotificationID, FNotificationBuilder.build());
+
+            //5 - Starts as foreground and notifies
+            TJService.Wrap(JavaService).startForeground(1, LJNotification, FOREGROUND_SERVICE_TYPE_DATA_SYNC);
+            FNotificationManager.notify(1, LJNotification);
+
+            //6 - Waits until infinite, so that the service can be kept running "forever"
             LEvent.WaitFor(INFINITE);
             JavaService.stopSelf(StartId);
           end;
@@ -144,6 +156,7 @@ begin
         end;
       end);
 
+    // 7 - Insert and start the thread
     LThread.FreeOnTerminate := False;
     FThreads.Add(LThread);
     LThread.Start;
@@ -160,7 +173,7 @@ var
 begin
   LNotification := NotificationCenter.CreateNotification();
   try
-    LNotification.ChannelId := IntToStr(FNotificationID);
+    LNotification.ChannelId := FChannelId;
     LNotification.Name := IntToStr(Random(1000));
     LNotification.Title := 'Ntfy Service';
     LNotification.AlertBody := Text;
@@ -174,15 +187,24 @@ procedure TDM.ShowUpNtfy(AEvent: INotifyEvent);
 var
   LNotification: TNotification;
 begin
-  LNotification := NotificationCenter.CreateNotification();
+  if FWakeLock <> nil then
+    FWakeLock.acquire;
+
   try
-    LNotification.ChannelId := IntToStr(FNotificationID);
-    LNotification.Name := IntToStr(Random(1000));
-    LNotification.Title := AEvent.Title;
-    LNotification.AlertBody := AEvent.MessageContent;
-    NotificationCenter.PresentNotification(LNotification);
+    LNotification := NotificationCenter.CreateNotification();
+    try
+      LNotification.ChannelId := FChannelId;
+      LNotification.Name := IntToStr(Random(1000));
+      LNotification.Title := AEvent.Title;
+      LNotification.AlertBody := AEvent.MessageContent;
+      NotificationCenter.PresentNotification(LNotification);
+    finally
+      LNotification.Free;
+    end;
   finally
-    LNotification.Free;
+    if FWakeLock <> nil then
+      if FWakeLock.isHeld then
+        FWakeLock.release();
   end;
 end;
 

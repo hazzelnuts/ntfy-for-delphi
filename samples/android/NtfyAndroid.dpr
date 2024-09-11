@@ -5,7 +5,7 @@ uses
   FMX.Forms,
   View.Main in 'src\View.Main.pas' {Form1},
   Intent.Service.Helper in 'src\Intent.Service.Helper.pas',
-  Service.Local.Ntfy in 'services\ntfy-service\src\Service.Local.Ntfy.pas',
+  Service.Local.Ntfy in 'services\ntfy-service\src\Service.Local.Ntfy.pas' {DM: TAndroidService},
   FMX.Skia {DM: TAndroidService};
 
 {$R *.res}
