@@ -8,7 +8,7 @@ This library is a client-side implementation for [ntfy](https://ntfy.sh/) server
 
 ## Manual Installation
 
-You need to add ```src``` folder to your library path or search path. 
+You need to add ```src``` folder to the library path or search path of your project. 
 
 ## Quickstart
 
@@ -56,8 +56,8 @@ end;
 <img src="https://img.shields.io/badge/Delphi%20-11(⚠)-orange"></img>
 <img src="https://img.shields.io/badge/Delphi%20-10.1(⚠)-lightgreen"></img>
 <img src="https://img.shields.io/badge/Windows-32%20%26%2064%20bits-green"></img>
-<img src="https://img.shields.io/badge/Android-32%20%26%2064%20bits-green"></img>
-<img src="https://img.shields.io/badge/IOS-32%20%26%2064%20bits (⚠)-red"></img>
+<img src="https://img.shields.io/badge/Android-%2064%20bits-green"></img>
+<img src="https://img.shields.io/badge/IOS-%2064%20bits (⚠)-red"></img>
 <img src="https://img.shields.io/badge/⚠-with limitations-red"></img>
 
 IOS still rely on FCM and "inteligently" decides to kill background/foreground processes when it wants. It was not properly tested yet. All other platforms have been tested and can either publish or maintain a subscription background activity suspended for long hours without having any issues. Refer to these [samples](https://github.com/hazzelnuts/ntfy-for-delphi/tree/main/sample) to learn to use in your project. No tests have been performed on Linux at the present moment.
