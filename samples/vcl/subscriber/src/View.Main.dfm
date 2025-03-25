@@ -2,7 +2,7 @@ object ViewMain: TViewMain
   Left = 960
   Top = 256
   Caption = 'Ntfy Subscriber'
-  ClientHeight = 545
+  ClientHeight = 584
   ClientWidth = 724
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -10,12 +10,12 @@ object ViewMain: TViewMain
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poDesktopCenter
+  OnClose = FormClose
+  OnCreate = FormCreate
   DesignSize = (
     724
-    545)
-  PixelsPerInch = 96
+    584)
   TextHeight = 13
   object lblTopic: TLabel
     Left = 445
@@ -26,7 +26,7 @@ object ViewMain: TViewMain
   end
   object BtnSubscribe: TButton
     Left = 16
-    Top = 446
+    Top = 486
     Width = 132
     Height = 25
     Caption = 'Subscribe'
@@ -35,7 +35,7 @@ object ViewMain: TViewMain
   end
   object BtnUnsubscribe: TButton
     Left = 16
-    Top = 477
+    Top = 517
     Width = 132
     Height = 25
     Caption = 'Unsubscribe'
@@ -47,7 +47,7 @@ object ViewMain: TViewMain
     Left = 154
     Top = 138
     Width = 551
-    Height = 394
+    Height = 433
     Anchors = [akLeft, akTop, akRight, akBottom]
     DataSource = DsTable
     Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
@@ -136,7 +136,7 @@ object ViewMain: TViewMain
   end
   object GbFilters: TGroupBox
     Left = 16
-    Top = 215
+    Top = 253
     Width = 132
     Height = 225
     Caption = 'Filters'
@@ -157,6 +157,7 @@ object ViewMain: TViewMain
       EditLabel.Height = 13
       EditLabel.Caption = 'Message id'
       TabOrder = 0
+      Text = ''
       TextHint = 'Id'
     end
     object lbeFilterTitle: TLabeledEdit
@@ -168,6 +169,7 @@ object ViewMain: TViewMain
       EditLabel.Height = 13
       EditLabel.Caption = 'Message Title'
       TabOrder = 1
+      Text = ''
       TextHint = 'Title'
     end
     object lbeFilterMessage: TLabeledEdit
@@ -179,6 +181,7 @@ object ViewMain: TViewMain
       EditLabel.Height = 13
       EditLabel.Caption = 'Message Text'
       TabOrder = 2
+      Text = ''
       TextHint = 'Message'
     end
     object CbFilterPriority: TComboBox
@@ -206,6 +209,7 @@ object ViewMain: TViewMain
       EditLabel.Height = 13
       EditLabel.Caption = 'Message Tags'
       TabOrder = 4
+      Text = ''
       TextHint = 'Tags'
     end
   end
@@ -243,7 +247,7 @@ object ViewMain: TViewMain
   end
   object BtnHide: TButton
     Left = 16
-    Top = 508
+    Top = 548
     Width = 132
     Height = 25
     Caption = 'Hide'
@@ -259,6 +263,7 @@ object ViewMain: TViewMain
     EditLabel.Height = 13
     EditLabel.Caption = 'Username'
     TabOrder = 12
+    Text = ''
     TextHint = '(optional)'
   end
   object LbePassword: TLabeledEdit
@@ -271,6 +276,7 @@ object ViewMain: TViewMain
     EditLabel.Caption = 'Password'
     PasswordChar = '*'
     TabOrder = 13
+    Text = ''
     TextHint = '(optional)'
   end
   object DtSince: TDateTimePicker
@@ -297,6 +303,22 @@ object ViewMain: TViewMain
     Height = 17
     Caption = 'Show up notifications'
     TabOrder = 16
+  end
+  object CkAutoSaveSubs: TCheckBox
+    Left = 16
+    Top = 211
+    Width = 132
+    Height = 17
+    Caption = 'Auto Save Subs.'
+    TabOrder = 17
+  end
+  object CkAutoSubscribe: TCheckBox
+    Left = 17
+    Top = 231
+    Width = 132
+    Height = 17
+    Caption = 'Auto Subscribe'
+    TabOrder = 18
   end
   object TableNotification: TFDMemTable
     FetchOptions.AssignedValues = [evMode]

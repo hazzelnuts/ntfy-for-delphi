@@ -9,7 +9,7 @@ uses
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.Grids,
   Vcl.DBGrids, Vcl.Imaging.pngimage, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.CheckLst,
-  Vcl.Menus;
+  Vcl.Menus, Vcl.Mask, System.IniFiles;
 
 type
   TViewMain = class(TForm)
@@ -51,6 +51,8 @@ type
     TableNotificationTOPIC: TStringField;
     TableNotificationPRIORITY: TStringField;
     CkShowNotification: TCheckBox;
+    CkAutoSaveSubs: TCheckBox;
+    CkAutoSubscribe: TCheckBox;
     procedure BtnSubscribeClick(Sender: TObject);
     procedure BtnUnsubscribeClick(Sender: TObject);
     procedure GbSinceClick(Sender: TObject);
@@ -62,15 +64,21 @@ type
     procedure PopShowClick(Sender: TObject);
     procedure PopSubscribeClick(Sender: TObject);
     procedure PopUnsubscribeClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
     private
       FTopics: String;
       FSince: String;
+      FIniFileName: String;
       procedure CheckTopics;
       procedure CheckSince;
       procedure CheckButtons;
       procedure CheckPops;
       function CheckPriority: String;
       procedure YourCallBackProcedure(AEvent: INotifyEvent);
+      procedure LoadSettingsFromIni;
+      procedure SaveSettingsToIni;
+      procedure AutoSubscribe;
   end;
 
 var
@@ -97,7 +105,6 @@ end;
 
 procedure TViewMain.BtnSubscribeClick(Sender: TObject);
 begin
-
   CheckTopics;
   CheckSince;
   CheckButtons;
@@ -120,7 +127,6 @@ begin
     .Subscribe(FTopics, YourCallBackProcedure);
 
   CheckPops;
-
 end;
 
 procedure TViewMain.BtnUnsubscribeClick(Sender: TObject);
@@ -183,6 +189,122 @@ end;
 procedure TViewMain.CkSinceClick(Sender: TObject);
 begin
   GbSince.Enabled := not GbSince.Enabled;
+end;
+
+procedure TViewMain.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  SaveSettingsToIni;
+  Ntfy.Unsubscribe;
+end;
+
+procedure TViewMain.FormCreate(Sender: TObject);
+begin
+  FIniFileName := ChangeFileExt(Application.ExeName, '.ini');
+  LoadSettingsFromIni;
+  
+  if CkAutoSubscribe.Checked then
+    AutoSubscribe;
+end;
+
+procedure TViewMain.LoadSettingsFromIni;
+var
+  Ini: TIniFile;
+  TopicsList: TStringList;
+  i: Integer;
+begin
+  if not FileExists(FIniFileName) then
+    Exit;
+    
+  Ini := TIniFile.Create(FIniFileName);
+  try
+    // Load general settings
+    LbeBaseURL.Text := Ini.ReadString('Settings', 'BaseURL', 'https://ntfy.sh');
+    LbeUsername.Text := Ini.ReadString('Settings', 'Username', '');
+    LbePassword.Text := Ini.ReadString('Settings', 'Password', '');
+    CkPoll.Checked := Ini.ReadBool('Settings', 'Poll', True);
+    CkScheduled.Checked := Ini.ReadBool('Settings', 'Scheduled', False);
+    CkShowNotification.Checked := Ini.ReadBool('Settings', 'ShowNotification', True);
+    CkAutoSubscribe.Checked := Ini.ReadBool('Settings', 'AutoSubscribe', False);
+    CkAutoSaveSubs.Checked := Ini.ReadBool('Settings', 'AutoSaveSubs', False);
+    
+    // Load filters
+    lbeIdFilter.Text := Ini.ReadString('Filters', 'ID', '');
+    lbeFilterTitle.Text := Ini.ReadString('Filters', 'Title', '');
+    lbeFilterMessage.Text := Ini.ReadString('Filters', 'Message', '');
+    lbeFilterTags.Text := Ini.ReadString('Filters', 'Tags', '');
+    CbFilterPriority.ItemIndex := Ini.ReadInteger('Filters', 'Priority', 0);
+    
+    // Load Since settings
+    CkSince.Checked := Ini.ReadBool('Since', 'Enabled', False);
+    GbSince.ItemIndex := Ini.ReadInteger('Since', 'Type', 0);
+    EdtSince.Text := Ini.ReadString('Since', 'Value', '');
+    DtSince.DateTime := StrToDateTimeDef(Ini.ReadString('Since', 'DateTime', ''), Now);
+    
+    // Load topics
+    MemTopics.Clear;
+    TopicsList := TStringList.Create;
+    try
+      Ini.ReadSection('Topics', TopicsList);
+      for i := 0 to TopicsList.Count - 1 do
+        MemTopics.Lines.Add(Ini.ReadString('Topics', TopicsList[i], ''));
+    finally
+      TopicsList.Free;
+    end;
+    
+    // Update UI based on loaded settings
+    GbSince.Enabled := CkSince.Checked;
+    GbSinceClick(nil);
+    
+  finally
+    Ini.Free;
+  end;
+end;
+
+procedure TViewMain.SaveSettingsToIni;
+var
+  Ini: TIniFile;
+  i: Integer;
+begin
+  Ini := TIniFile.Create(FIniFileName);
+  try
+    // Save general settings
+    Ini.WriteString('Settings', 'BaseURL', LbeBaseURL.Text);
+    Ini.WriteString('Settings', 'Username', LbeUsername.Text);
+    Ini.WriteString('Settings', 'Password', LbePassword.Text);
+    Ini.WriteBool('Settings', 'Poll', CkPoll.Checked);
+    Ini.WriteBool('Settings', 'Scheduled', CkScheduled.Checked);
+    Ini.WriteBool('Settings', 'ShowNotification', CkShowNotification.Checked);
+    Ini.WriteBool('Settings', 'AutoSubscribe', CkAutoSubscribe.Checked);
+    Ini.WriteBool('Settings', 'AutoSaveSubs', CkAutoSaveSubs.Checked);
+    
+    // Save filters
+    Ini.WriteString('Filters', 'ID', lbeIdFilter.Text);
+    Ini.WriteString('Filters', 'Title', lbeFilterTitle.Text);
+    Ini.WriteString('Filters', 'Message', lbeFilterMessage.Text);
+    Ini.WriteString('Filters', 'Tags', lbeFilterTags.Text);
+    Ini.WriteInteger('Filters', 'Priority', CbFilterPriority.ItemIndex);
+    
+    // Save Since settings
+    Ini.WriteBool('Since', 'Enabled', CkSince.Checked);
+    Ini.WriteInteger('Since', 'Type', GbSince.ItemIndex);
+    Ini.WriteString('Since', 'Value', EdtSince.Text);
+    Ini.WriteString('Since', 'DateTime', DateTimeToStr(DtSince.DateTime));
+    
+    // Save topics
+    Ini.EraseSection('Topics');
+    for i := 0 to MemTopics.Lines.Count - 1 do
+      if MemTopics.Lines[i] <> '' then
+        Ini.WriteString('Topics', 'Topic' + IntToStr(i), MemTopics.Lines[i]);
+        
+  finally
+    Ini.Free;
+  end;
+end;
+
+procedure TViewMain.AutoSubscribe;
+begin
+  if MemTopics.Lines.Count > 0 then
+    BtnSubscribe.Click;
 end;
 
 procedure TViewMain.GbSinceClick(Sender: TObject);
